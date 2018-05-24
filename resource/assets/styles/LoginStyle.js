@@ -76,7 +76,7 @@ export const LoginStyle = StyleSheet.create({
         color: '#666666',
         height: moderateScale(40,2),
         paddingLeft: scale(10),
-        fontSize: moderateScale(18),
+        fontSize: moderateScale(18, 1.5),
         alignSelf: 'stretch'
     }, formPasswordVisibility: {
         position: 'absolute',
@@ -107,16 +107,19 @@ export const LoginStyle = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: moderateScale(16)
     }, formButton: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        paddingTop: verticalScale(5),
-        paddingBottom: verticalScale(10)
+        marginTop: verticalScale(5),
+        marginBottom: verticalScale(25)
     }, formButtonLogin: {
-        backgroundColor: '#da2032',
-        borderRadius: moderateScale(5)
+        position: 'relative',
+        alignSelf: 'stretch',
+        justifyContent: 'center',
+        height: moderateScale(40,2),
+        borderRadius: moderateScale(5, 1.2),
+        padding: moderateScale(10)
     }, formButtonText: {
         fontWeight: 'bold',
-        color: '#fff'
+        fontSize: moderateScale(18, 1.5),
+        textAlign:'center'
     }, formIconContainer: {
         flex: 1,
         justifyContent: 'center',

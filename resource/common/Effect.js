@@ -4,8 +4,8 @@
  * @since: 04/05/2018
  */
 import React, { Component } from 'react';
-import { Text, View, Modal, ActivityIndicator, StyleSheet } from 'react-native';
-import {indicatorResponsive} from '../assets/styles/ScaleIndicator';
+import { Text, View, Modal, ActivityIndicator, StyleSheet, Platform } from 'react-native';
+import {indicatorResponsive, scale,moderateScale, verticalScale} from '../assets/styles/ScaleIndicator';
 
 export function authenticateLoading(isVisible) {
     return (
@@ -14,7 +14,7 @@ export function authenticateLoading(isVisible) {
             transparent={true}
             visible={isVisible}>
             <View style={[styles.alContainer, { backgroundColor: 'rgba(52, 52, 52, 0.8)' }]}>
-                <View style={styles.alBorderBlock}>
+                <View style={[styles.alBorderBlock, alBorderBlockStyle]}>
                     <ActivityIndicator size={indicatorResponsive} color={'#fff'} />
                     <Text style={styles.alText}>
                         ...Đang xác thực
@@ -33,7 +33,7 @@ export function executeLoading(isVisible) {
             transparent={true}
             visible={isVisible}>
             <View style={[styles.alContainer, { backgroundColor: 'rgba(52, 52, 52, 0.8)' }]}>
-                <View style={styles.alExecuteBorderBlock}>
+                <View style={[styles.alExecuteBorderBlock, alBorderBlockStyle]}>
                     <ActivityIndicator size={indicatorResponsive} color={'#F7A30A'} />
                     <Text style={styles.alExecuteText}>
                         ...Đang xử lý
@@ -52,6 +52,8 @@ export function dataLoading(isVisible) {
     )
 }
 
+const alBorderBlockStyle = (Platform.OS === 'ios') ? {backgroundColor: 'rgba(48, 40, 41, 0.8)', width: moderateScale(150, 1.5), height: moderateScale(150, 1.5), flexDirection:'column', borderWidth: 0.5, borderColor: 'black'} : {backgroundColor: '#da2032', width: scale(200), height: verticalScale(100), flexDirection:'row'} ;
+
 const styles = StyleSheet.create({
     alContainer: {
         flex: 1,
@@ -61,27 +63,20 @@ const styles = StyleSheet.create({
         // backgroundColor: 'rgba(52, 52, 52, 0.8)'
     },
     alBorderBlock: {
-        backgroundColor: '#da2032',
-        width: 200,
-        height: 100,
-        borderRadius: 3,
+        borderRadius: moderateScale(15),
         justifyContent: 'center',
         alignItems: 'center',
-        flexDirection: 'row',
         justifyContent: 'space-around'
     }, alText: {
-        marginTop: 10,
-        fontSize: 14,
+        marginTop: verticalScale(10),
+        fontSize: moderateScale(14,1.3),
         color: '#fff'
     },alExecuteText: {
-        marginTop: 10,
-        fontSize: 14,
+        marginTop: verticalScale(10),
+        fontSize: moderateScale(14,1.3),
         color: '#F7A30A'
     },alExecuteBorderBlock:{
-        backgroundColor: '#fff',
-        width: 200,
-        height: 100,
-        borderRadius: 3,
+        borderRadius: moderateScale(15),
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',

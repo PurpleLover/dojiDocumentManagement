@@ -20,6 +20,7 @@ import { EMPTY_STRING, API_URL } from '../../../common/SystemConstant';
 
 //styles
 import { LoginStyle } from '../../../assets/styles/LoginStyle';
+import {moderateScale} from '../../../assets/styles/ScaleIndicator';
 
 import { authenticateLoading } from '../../../common/Effect';
 import { asyncDelay } from '../../../common/Utilities'
@@ -163,7 +164,7 @@ class Login extends Component {
         });
 
         const userLoginJsonResult = await userLoginResult.json();
-        
+
         await asyncDelay(2000);
 
         if (!util.isNull(userLoginJsonResult)) {
@@ -171,10 +172,10 @@ class Login extends Component {
             await FCM.getFCMToken().then(token => {
                 userLoginJsonResult.Token = token;
             });
-            
+
 
             //trường hợp lần đầu cài đặt thiết bị token có thể bị null;
-            if(util.isNull(userLoginJsonResult.Token) || util.isEmpty(userLoginJsonResult.Token)){
+            if (util.isNull(userLoginJsonResult.Token) || util.isEmpty(userLoginJsonResult.Token)) {
                 await FCM.on(FCMEvent.RefreshToken, token => {
                     userLoginJsonResult.Token = token;
                 });
@@ -192,11 +193,11 @@ class Login extends Component {
                     userId: userLoginJsonResult.ID,
                     token: userLoginJsonResult.Token
                 })
-            }).then(response => response.json()).then( responseJson => {
+            }).then(response => response.json()).then(responseJson => {
                 return responseJson;
             });
-            
-            if(activeTokenResult){
+
+            if (activeTokenResult) {
                 AsyncStorage.setItem('userInfo', JSON.stringify(userLoginJsonResult)).then(() => {
                     this.props.setUserInfo(userLoginJsonResult);
                     this.props.navigation.navigate('App');
@@ -207,9 +208,9 @@ class Login extends Component {
                 }, () => {
                     Toast.show({
                         text: 'Hệ thống đang cập nhật! Vui lòng trở lại sau!',
-                        textStyle: { fontSize: 11 },
+                        textStyle: { fontSize: moderateScale(12,1.5) },
                         buttonText: "OK",
-                        buttonStyle:{ backgroundColor: "#acb7b1" },
+                        buttonStyle: { backgroundColor: "#acb7b1" },
                         duration: 5000
                     });
                 });
@@ -219,10 +220,10 @@ class Login extends Component {
                 loading: false
             }, () => {
                 Toast.show({
-                    text: 'Tên đăng nhập hoặc mật khẩu không chính xác!',
-                    textStyle: { fontSize: 11 },
+                    text: 'Thông tin đăng nhập không chính xác!',
+                    textStyle: { fontSize: moderateScale(12,1.5) },
                     buttonText: "OK",
-                    buttonStyle:{ backgroundColor: "#acb7b1" },
+                    buttonStyle: { backgroundColor: "#acb7b1" },
                     duration: 5000
                 });
             });
@@ -230,6 +231,9 @@ class Login extends Component {
     }
 
     render() {
+        const { userName, password } = this.state;
+        const toggleLoginStyleButton = (userName !== EMPTY_STRING && password !== EMPTY_STRING) ? {backgroundColor: '#da2032'} : {backgroundColor: 'lightgrey'};
+        const toggleLoginStyleText = (userName !== EMPTY_STRING && password !== EMPTY_STRING) ? {color: 'white'} : {color: 'grey'};
         return (
             <ImageBackground source={uriBackground} style={{ flex: 1 }}>
                 <Container>
@@ -274,8 +278,8 @@ class Login extends Component {
                                         onChangeText={(userName) => this.onChangeUserNameText(userName)}
                                         value={this.state.userName}
                                         style={LoginStyle.formInputText}
-                                        underlineColorAndroid={'#f7f7f7'} 
-                                        />
+                                        underlineColorAndroid={'#f7f7f7'}
+                                    />
                                 </View>
 
                                 <View style={LoginStyle.formLabel}>
@@ -297,36 +301,15 @@ class Login extends Component {
 
                                 </View>
                             </View>
-
-                            <View style={LoginStyle.formNotes}>
-                                <View style={LoginStyle.formRemember}>
-                                    <TouchableOpacity onPress={() => this.onRememberPassword()} style={LoginStyle.formRememberButton}>
-                                        <CheckBox
-                                            color={'#c4c4c4'}
-                                            checked={this.state.isRememberPassword}
-                                            onPress={() => this.onRememberPassword()} />
-                                        <Text style={LoginStyle.formRememberText}>
-                                            Nhớ mật khẩu
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-
-                                <View style={LoginStyle.formForgot}>
-                                    <TouchableOpacity style={LoginStyle.formForgotButton}>
-                                        <Text style={LoginStyle.formForgotText}>
-                                            Quên mật khẩu?
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-
-                            <View style={LoginStyle.formButton}>
-                                <Button
+                            <View style={LoginStyle.formNotes}></View>
+                            <View style={[LoginStyle.formInputs, LoginStyle.formButton]}>
+                                <TouchableOpacity
                                     disabled={this.state.isDisabledLoginButton}
-                                    color={'#da2032'}
                                     onPress={() => this.onLogin()}
-                                    title={'ĐĂNG NHẬP'}>
-                                </Button>
+                                    style={[LoginStyle.formButtonLogin, toggleLoginStyleButton]}
+                                >
+                                    <Text style={[LoginStyle.formButtonText, toggleLoginStyleText]}>ĐĂNG NHẬP</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     </ImageBackground>
