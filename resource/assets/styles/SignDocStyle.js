@@ -4,6 +4,7 @@
  * @since: 02/05/2018
  */
 import { Dimensions, StyleSheet } from 'react-native';
+import {scale, verticalScale, moderateScale} from './ScaleIndicator';
 
 export const DetailSignDocStyle = StyleSheet.create({
     container: {
@@ -52,7 +53,7 @@ export const ListSignDocStyle = StyleSheet.create({
     },
     emptyMessage: {
         color: '#ccc',
-        fontSize: 16,
+        fontSize: moderateScale(16),
         fontWeight: 'bold',
         textAlign: 'center'
     },
@@ -66,7 +67,7 @@ export const ListSignDocStyle = StyleSheet.create({
         
     },
     abridgment: {
-        fontSize: 12,
+        fontSize: moderateScale(12),
         flexWrap: 'wrap'
     },
     textNormal: {
@@ -74,6 +75,16 @@ export const ListSignDocStyle = StyleSheet.create({
     },
     textRead: {
         color: '#888'
+    },
+    loadMoreButton: {
+        flex: 1, 
+        flexDirection: 'row', 
+        justifyContent: 'center',
+        padding: moderateScale(10),
+        backgroundColor: 'red',
+    }, loadMoreButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
     }
 });
 

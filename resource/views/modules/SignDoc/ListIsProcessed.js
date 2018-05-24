@@ -74,6 +74,8 @@ class ListIsProcessed extends Component {
 
         const url = `${API_URL}/api/VanBanDi/GetListProcessed/${this.state.userId}/${this.state.pageSize}/${this.state.pageIndex}?query=`;
 
+
+
         let result = await fetch(url).then(response => {
             return response.json();
         }).then(responseJson => {
@@ -83,11 +85,17 @@ class ListIsProcessed extends Component {
             return []
         });
 
+        console.log('length', result.length);
+
+
         this.setState({
             loading: false,
             refreshing: false,
             data: isRefreshing ? result : [...this.state.data, ...result]
         });
+
+        console.log('index', this.state.pageIndex);
+        console.log('length', this.state.data.length);
     }
 
     toggleFilter = () => {
@@ -105,73 +113,81 @@ class ListIsProcessed extends Component {
 
     onFilter = () => {
         //tìm kiếm
-        if(util.isNull(this.state.filterValue) || util.isEmpty(this.state.filterValue)){
+        if (util.isNull(this.state.filterValue) || util.isEmpty(this.state.filterValue)) {
             Toast.show({
                 text: 'Vui lòng nhập mã hiệu hoặc trích yếu',
                 type: 'danger',
                 buttonText: "OK",
                 buttonStyle: { backgroundColor: '#fff' },
-                buttonTextStyle: { color: '#FF0033'},
+                buttonTextStyle: { color: '#FF0033' },
                 duration: 2000
             });
         } else {
-             this.props.navigation.navigate('ListFilterSignDocScreen', {
+            this.props.navigation.navigate('ListFilterSignDocScreen', {
                 filterValue: this.state.filterValue,
                 filterType: 2
             })
         }
     }
 
-    renderItem = ({ item }) => {
+    renderItem = ({ item, index }) => {
         return (
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('DetailSignDocScreen', {
-                docId: item.ID,
-                docType: 2
-            })}>
-                <ListItem
-                    hideChevron={true}
-                    badge={{ 
-                        value: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? 'T.KHẨN' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? 'KHẨN': 'THƯỜNG'), 
-                        textStyle: { 
-                            color: '#fff',
-                            fontWeight: 'bold' 
-                        }, 
-                        containerStyle: { 
-                            backgroundColor: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? '#FF0033' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? '#FF6600': '#337321') 
-                        } 
-                    }}
-                    leftIcon={
-                        <View style={ListSignDocStyle.leftSide}>
-                            {
-                                renderIf(item.HAS_FILE)(
-                                    <Icon name='ios-attach' />
-                                )
+            <View>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('DetailSignDocScreen', {
+                    docId: item.ID,
+                    docType: 2
+                })}>
+                    <ListItem
+                        hideChevron={true}
+                        badge={{
+                            value: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? 'T.KHẨN' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? 'KHẨN' : 'THƯỜNG'),
+                            textStyle: {
+                                color: '#fff',
+                                fontWeight: 'bold'
+                            },
+                            containerStyle: {
+                                backgroundColor: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? '#FF0033' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? '#FF6600' : '#337321')
                             }
-                        </View>
-                    }
+                        }}
+                        leftIcon={
+                            <View style={ListSignDocStyle.leftSide}>
+                                {
+                                    renderIf(item.HAS_FILE)(
+                                        <Icon name='ios-attach' />
+                                    )
+                                }
+                            </View>
+                        }
 
-                    title={
-                        <Text style={item.IS_READ === true ? ListSignDocStyle.textRead : ListSignDocStyle.textNormal}>
-                            {'SỐ HIỆU: ' + item.SOHIEU}
-                        </Text>
-                    }
+                        title={
+                            <Text style={item.IS_READ === true ? ListSignDocStyle.textRead : ListSignDocStyle.textNormal}>
+                                {'SỐ HIỆU: ' + item.SOHIEU}
+                            </Text>
+                        }
 
-                    subtitle={
-                        <Text style={[item.IS_READ === true ? ListSignDocStyle.textRead : ListSignDocStyle.textNormal, ListSignDocStyle.abridgment]}>
-                            {formatLongText(item.TRICHYEU, 50)}
-                        </Text>
-                    }
-                />
-            </TouchableOpacity>
+                        subtitle={
+                            <Text style={[item.IS_READ === true ? ListSignDocStyle.textRead : ListSignDocStyle.textNormal, ListSignDocStyle.abridgment]}>
+                                {formatLongText(item.TRICHYEU, 50)}
+                            </Text>
+                        }
+                    />
+                </TouchableOpacity>
+                {
+                    renderIf(index === this.state.data.length - 1)(
+                        <TouchableOpacity style={ListSignDocStyle.loadMoreButton} onPress={() => this.handleEnd()}>
+                            <Text style={ListSignDocStyle.loadMoreButtonText}>TẢI THÊM VĂN BẢN</Text>
+                        </TouchableOpacity>
+                    )
+                }
+            </View>
         );
     }
 
     handleEnd = () => {
-        if (this.state.data.length >= DEFAULT_PAGE_SIZE) {
-            this.setState(state => ({
-                pageIndex: state.pageIndex + 1
-            }), () => this.fetchData());
-        }
+        this.setState(state => ({
+            pageIndex: state.pageIndex + 1
+        }), () => this.fetchData());
+
     }
 
     handleRefresh = () => {
@@ -208,8 +224,7 @@ class ListIsProcessed extends Component {
                 </Header>
                 <Content>
                     <FlatList
-                        onEndReached={() => this.handleEnd()}
-                        onEndReachedThreshold={0.1}
+                        onEndReachedThreshold={0.01}
                         data={this.state.data}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={this.renderItem}
