@@ -26,7 +26,9 @@ export default class Panel extends Component {
             expanded: false,
             rotateAnimation: new Animated.Value(0),
             heightAnimation: new Animated.Value(60),
-        }
+        };
+        this.setMaxHeight = this.setMaxHeight.bind(this);
+        this.setMinHeight = this.setMinHeight.bind(this);
     }
 
     setMaxHeight = (event) => {
@@ -79,8 +81,6 @@ export default class Panel extends Component {
             ]
         }
 
-        const panelChildren = this.state.expanded ? this.props.children : null;
-
         return (
             <Animated.View style={[PanelStyle.container, { height: this.state.heightAnimation }]}>
                 <View style={PanelStyle.titleContainer} onLayout={this.setMinHeight}>
@@ -97,8 +97,8 @@ export default class Panel extends Component {
                     </TouchableOpacity>
                 </View>
 
-                <View style={PanelStyle.body}>
-                    {panelChildren}
+                <View style={PanelStyle.body} onLayout={this.setMaxHeight}>
+                    {this.props.children}
                 </View>
             </Animated.View>
         );

@@ -40,7 +40,7 @@ export default class SideBar extends Component {
     async componentWillMount() {
         const userInfo = await AsyncStorage.getItem('userInfo').then((result) => {
             return JSON.parse(result);
-        }); 
+        });
         this.setState({
             userInfo
         });
@@ -64,11 +64,11 @@ export default class SideBar extends Component {
                         </View>
 
                         <View style={SideBarStyle.headerUserInfoContainer}>
-                            <Text style={[SideBarStyle.headerUserName, {flexWrap: 'wrap'}]}>
+                            <Text style={[SideBarStyle.headerUserName, { flexWrap: 'wrap' }]}>
                                 {this.state.userInfo.Fullname}
                             </Text>
 
-                            <Text style={[SideBarStyle.headerUserJob,{flexWrap: 'wrap'}]}>
+                            <Text style={[SideBarStyle.headerUserJob, { flexWrap: 'wrap' }]}>
                                 {this.state.userInfo.Position}
                             </Text>
                         </View>
@@ -128,7 +128,7 @@ export default class SideBar extends Component {
                                     titleStyle={SideBarStyle.listItemSubTitleContainer}
                                     title={'Đã giao xử lý'} style={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
-        </Panel>
+                        </Panel>
 
                         <TouchableOpacity onPress={() => this.onLogOut()}>
                             <ListItem
@@ -141,7 +141,7 @@ export default class SideBar extends Component {
                     </ScrollView>
                 </View>
 
-                <Confirm ref='confirm' title={'XÁC NHẬN THOÁT'} navigation={this.props.navigation} userInfo={this.state.userInfo}/>
+                <Confirm ref='confirm' title={'XÁC NHẬN THOÁT'} navigation={this.props.navigation} userInfo={this.state.userInfo} />
             </View>
         );
     }

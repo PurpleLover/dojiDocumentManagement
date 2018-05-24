@@ -7,47 +7,49 @@
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 
+import { scale, verticalScale, moderateScale } from './ScaleIndicator'
+
 export const SideBarStyle = StyleSheet.create({
     container: {
         flex: 1
-    }, 
+    },
     header: {
         flex: 1,
-    },headerBackground: {
+    }, headerBackground: {
         flex: 1,
         borderBottomColor: '#d4d4d4',
         borderBottomWidth: 1,
         flexDirection: 'row',
-    },headerAvatarContainer: {
+    }, headerAvatarContainer: {
         justifyContent: 'center',
         alignItems: 'center',
         paddingLeft: 20,
-    },headerUserInfoContainer: {
+    }, headerUserInfoContainer: {
         justifyContent: 'center',
         paddingLeft: 20,
         alignItems: 'flex-start'
-    },headerAvatar: {
+    }, headerAvatar: {
         width: 80,
         height: 80,
         borderRadius: 50,
         resizeMode: 'stretch',
-    },headerUserName: {
+    }, headerUserName: {
         justifyContent: 'center',
         textAlign: 'center',
         fontWeight: 'bold',
         color: '#000',
         fontSize: 16
-    },headerUserJob: {
+    }, headerUserJob: {
         fontSize: 11,
         fontWeight: 'normal'
     },
     body: {
         flex: 3,
         backgroundColor: '#fff'
-    },listItemTitle: {
+    }, listItemTitle: {
         fontWeight: 'bold',
         color: 'black'
-    },listItemContainer: {
+    }, listItemContainer: {
         height: 60,
         justifyContent: 'center',
         borderBottomColor: '#cccccc',
@@ -56,7 +58,7 @@ export const SideBarStyle = StyleSheet.create({
         height: 60,
         justifyContent: 'center',
         borderBottomColor: '#cccccc'
-    },listItemSubTitleContainer: {
+    }, listItemSubTitleContainer: {
         color: '#000',
         marginLeft: 40
     }

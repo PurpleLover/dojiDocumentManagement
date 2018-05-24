@@ -9,7 +9,8 @@ import { StyleSheet } from 'react-native';
 
 export const PanelStyle = StyleSheet.create({
     container: {
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        overflow: 'scroll',
     },titleContainer:{
 
     },body: {
