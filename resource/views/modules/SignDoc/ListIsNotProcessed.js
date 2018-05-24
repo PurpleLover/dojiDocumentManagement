@@ -62,13 +62,13 @@ class ListIsNotProcessed extends Component {
         })
     }
 
-    componentDidMount = ()=> {
+    componentDidMount = () => {
         this.fetchData();
     }
 
     fetchData = async () => {
         const isRefreshing = this.state.refreshing
-        if(!isRefreshing){
+        if (!isRefreshing) {
             this.setState({ loading: true });
         }
 
@@ -104,22 +104,22 @@ class ListIsNotProcessed extends Component {
     }
 
     onFilter = () => {
-        if(util.isNull(this.state.filterValue) || util.isEmpty(this.state.filterValue)){
+        if (util.isNull(this.state.filterValue) || util.isEmpty(this.state.filterValue)) {
             Toast.show({
                 text: 'Vui lòng nhập mã hiệu hoặc trích yếu',
                 type: 'danger',
                 buttonText: "OK",
                 buttonStyle: { backgroundColor: '#fff' },
-                buttonTextStyle: { color: '#FF0033'},
+                buttonTextStyle: { color: '#FF0033' },
                 duration: 2000
             });
         } else {
-             this.props.navigation.navigate('ListFilterSignDocScreen', {
+            this.props.navigation.navigate('ListFilterSignDocScreen', {
                 filterValue: this.state.filterValue,
                 filterType: 1
             })
         }
-       
+
     }
 
     renderItem = ({ item }) => {
@@ -130,17 +130,17 @@ class ListIsNotProcessed extends Component {
             })}>
                 <ListItem
                     hideChevron={true}
-                    badge={{ 
-                        value: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? 'T.KHẨN' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? 'KHẨN': 'THƯỜNG'), 
-                        textStyle: { 
+                    badge={{
+                        value: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? 'T.KHẨN' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? 'KHẨN' : 'THƯỜNG'),
+                        textStyle: {
                             color: '#fff',
-                            fontWeight: 'bold' 
-                        }, 
-                        containerStyle: { 
-                            backgroundColor: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? '#FF0033' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? '#FF6600': '#337321') 
-                        } 
+                            fontWeight: 'bold'
+                        },
+                        containerStyle: {
+                            backgroundColor: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? '#FF0033' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? '#FF6600' : '#337321')
+                        }
                     }}
-                    leftIcon ={
+                    leftIcon={
                         <View style={ListSignDocStyle.leftSide}>
                             {
                                 renderIf(item.HAS_FILE)(
@@ -167,27 +167,28 @@ class ListIsNotProcessed extends Component {
     }
 
     handleEnd = () => {
-        if (this.state.data.length >= DEFAULT_PAGE_SIZE) {
+        if ((this.state.data.length + 1) > DEFAULT_PAGE_SIZE) {
             this.setState(state => ({
                 pageIndex: state.pageIndex + 1
             }), () => this.fetchData());
         }
     }
 
-    handleRefresh = ()=> {
+    handleRefresh = () => {
         this.setState({
             refreshing: true,
             pageIndex: DEFAULT_PAGE_INDEX,
             pageSize: DEFAULT_PAGE_SIZE,
-        }, ()=> {
+        }, () => {
             this.fetchData();
         });
     }
 
-    render() {        
+    render() {
         return (
             <Container>
                 <Header style={{ backgroundColor: HEADER_COLOR }}>
+
                     <Left>
                         <Button transparent onPress={() => openSideBar(this.props.navigation)}>
                             <Icon name='menu' />
@@ -206,6 +207,17 @@ class ListIsNotProcessed extends Component {
                         </Button>
                     </Right>
                 </Header>
+
+                <Header searchBar rounded>
+                    <Item>
+                        <Icon name="ios-search" />
+                        <Input placeholder="Search" autoFocus={true} />
+                    </Item>
+                    <Button transparent>
+                        <Text>Search</Text>
+                    </Button>
+                </Header>
+
                 <Content>
                     <FlatList
                         onEndReached={() => this.handleEnd()}
@@ -230,8 +242,10 @@ class ListIsNotProcessed extends Component {
                                 onRefresh={this.handleRefresh}
                                 title='Kéo để làm mới'
                                 colors={[LOADER_COLOR]}
-                             />
-                          }
+                                tintColor={[LOADER_COLOR]}
+                                titleColor='red'
+                            />
+                        }
                     />
                 </Content>
 

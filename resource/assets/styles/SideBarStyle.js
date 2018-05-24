@@ -23,14 +23,14 @@ export const SideBarStyle = StyleSheet.create({
     }, headerAvatarContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        paddingLeft: 20,
+        paddingLeft: scale(20),
     }, headerUserInfoContainer: {
         justifyContent: 'center',
-        paddingLeft: 20,
+        paddingLeft: scale(20),
         alignItems: 'flex-start'
     }, headerAvatar: {
-        width: 80,
-        height: 80,
+        width: moderateScale(80),
+        height: moderateScale(80),
         borderRadius: 50,
         resizeMode: 'stretch',
     }, headerUserName: {
@@ -38,9 +38,9 @@ export const SideBarStyle = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
         color: '#000',
-        fontSize: 16
+        fontSize: moderateScale(16,1.2)
     }, headerUserJob: {
-        fontSize: 11,
+        fontSize: moderateScale(11,1.7),
         fontWeight: 'normal'
     },
     body: {
@@ -50,16 +50,16 @@ export const SideBarStyle = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black'
     }, listItemContainer: {
-        height: 60,
+        height: verticalScale(60),
         justifyContent: 'center',
         borderBottomColor: '#cccccc',
         backgroundColor: '#fff'
     }, subItemContainer: {
-        height: 60,
+        height: verticalScale(60),
         justifyContent: 'center',
         borderBottomColor: '#cccccc'
     }, listItemSubTitleContainer: {
         color: '#000',
-        marginLeft: 40
+        marginLeft: scale(40)
     }
 });
