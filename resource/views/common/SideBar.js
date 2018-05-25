@@ -19,11 +19,15 @@ import {
 import { ListItem } from 'react-native-elements';
 
 import { SideBarStyle } from '../../assets/styles/SideBarStyle';
+import * as SBIcons from '../../assets/styles/SideBarIcons';
+
 import Panel from './Panel';
 import Confirm from './Confirm';
+import { width } from '../../common/SystemConstant';
 
 const headerBackground = require('../../assets/images/background.png');
 const userAvatar = require('../../assets/images/avatar.png');
+const subItemIconLink = require('../../assets/images/arrow-white-right.png');
 
 export default class SideBar extends Component {
     constructor(props) {
@@ -63,6 +67,7 @@ export default class SideBar extends Component {
     }
 
     render() {
+        const subItemIcon = <Image source={subItemIconLink}></Image>;
         return (
             <View style={SideBarStyle.container}>
                 <View style={SideBarStyle.header}>
@@ -87,56 +92,63 @@ export default class SideBar extends Component {
                         <Panel title='VĂN BẢN TRÌNH KÝ'>
                             <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsNotProcessedScreen', '1')} style={this.state.onFocusNow === '1' && SideBarStyle.listItemFocus}>
                                 <ListItem
+                                    leftIcon={this.state.onFocusNow !== '1' ? <Image source={SBIcons.doc_NotCompleted_Neutral} style={SideBarStyle.listItemLeftIcon}></Image> : <Image source={SBIcons.doc_NotCompleted_Active} style={SideBarStyle.listItemLeftIcon}></Image>}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '1' && SideBarStyle.listItemSubTitleContainerFocus]}
-                                    title={'Chưa xử lý'} contentContainerStyle={SideBarStyle.subItemContainer} hideChevron={true} />
+                                    title={'Chưa xử lý'} contentContainerStyle={SideBarStyle.subItemContainer} rightIcon={this.state.onFocusNow === '1' && subItemIcon} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsProcessedScreen', '2')} style={this.state.onFocusNow === '2' && SideBarStyle.listItemFocus}>
                                 <ListItem
+                                    leftIcon={this.state.onFocusNow !== '2' ? <Image source={SBIcons.doc_IsCompleted_Neutral} style={SideBarStyle.listItemLeftIcon}></Image> : <Image source={SBIcons.doc_IsCompleted_Active} style={SideBarStyle.listItemLeftIcon}></Image>}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '2' && SideBarStyle.listItemSubTitleContainerFocus]}
-                                    title={'Đã xử lý'} contentContainerStyle={SideBarStyle.subItemContainer} />
+                                    title={'Đã xử lý'} contentContainerStyle={SideBarStyle.subItemContainer} rightIcon={this.state.onFocusNow === '2' && subItemIcon} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsNotReviewedScreen', '3')} style={this.state.onFocusNow === '3' && SideBarStyle.listItemFocus}>
                                 <ListItem
+                                    leftIcon={this.state.onFocusNow !== '3' ? <Image source={SBIcons.doc_NotReviewed_Neutral} style={SideBarStyle.listItemLeftIcon}></Image> : <Image source={SBIcons.doc_NotReviewed_Active} style={SideBarStyle.listItemLeftIcon}></Image>}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '3' && SideBarStyle.listItemSubTitleContainerFocus]}
-                                    title={'Cần review'} contentContainerStyle={SideBarStyle.subItemContainer} />
+                                    title={'Cần review'} contentContainerStyle={SideBarStyle.subItemContainer} rightIcon={this.state.onFocusNow === '3' && subItemIcon} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsReviewedScreen', '4')} style={this.state.onFocusNow === '4' && SideBarStyle.listItemFocus}>
                                 <ListItem
-                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '4' 
-                                    && SideBarStyle.listItemSubTitleContainerFocus]}
-                                    title={'Đã review'} contentContainerStyle={SideBarStyle.subItemContainer} />
+                                    leftIcon={this.state.onFocusNow !== '4' ? <Image source={SBIcons.doc_IsReviewed_Neutral} style={SideBarStyle.listItemLeftIcon}></Image> : <Image source={SBIcons.doc_IsReviewed_Active} style={SideBarStyle.listItemLeftIcon}></Image>}
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '4' && SideBarStyle.listItemSubTitleContainerFocus]}
+                                    title={'Đã review'} contentContainerStyle={SideBarStyle.subItemContainer} rightIcon={this.state.onFocusNow === '4' && subItemIcon} />
                             </TouchableOpacity>
                         </Panel>
 
                         <Panel title='VĂN BẢN ĐÃ PHÁT HÀNH'>
                             <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsPublishedScreen', '5')} style={this.state.onFocusNow === '5' && SideBarStyle.listItemFocus}>
                                 <ListItem
-                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '5' 
-                                    && SideBarStyle.listItemSubTitleContainerFocus]}
-                                    title={'Danh sách'} contentContainerStyle={SideBarStyle.subItemContainer} />
+                                    leftIcon={this.state.onFocusNow !== '5' ? <Image source={SBIcons.doc_Published_Neutral} style={SideBarStyle.listItemLeftIcon}></Image> : <Image source={SBIcons.doc_Published_Active} style={SideBarStyle.listItemLeftIcon}></Image>}
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '5' && SideBarStyle.listItemSubTitleContainerFocus]}
+                                    title={'Danh sách'} contentContainerStyle={SideBarStyle.subItemContainer} rightIcon={this.state.onFocusNow === '5' && subItemIcon} />
                             </TouchableOpacity>
                         </Panel>
 
                         <Panel title='CÔNG VIỆC'>
                             <TouchableOpacity onPress={() => this.setCurrentFocus('ListPersonalTaskScreen', '6')} style={this.state.onFocusNow === '6' && SideBarStyle.listItemFocus}>
                                 <ListItem
+                                    leftIcon={this.state.onFocusNow !== '6' ? <Image source={SBIcons.works_Personal_Neutral} style={SideBarStyle.listItemLeftIcon}></Image> : <Image source={SBIcons.works_Personal_Active} style={SideBarStyle.listItemLeftIcon}></Image>}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '6' && SideBarStyle.listItemSubTitleContainerFocus]}
-                                    title={'Cá nhân'} style={SideBarStyle.subItemContainer} />
+                                    title={'Cá nhân'} style={SideBarStyle.subItemContainer} rightIcon={this.state.onFocusNow === '6' && subItemIcon} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.setCurrentFocus('ListAssignedTaskScreen', '7')} style={this.state.onFocusNow === '7' && SideBarStyle.listItemFocus}>
                                 <ListItem
+                                    leftIcon={this.state.onFocusNow !== '7' ? <Image source={SBIcons.works_Quested_Neutral} style={SideBarStyle.listItemLeftIcon}></Image> : <Image source={SBIcons.works_Quested_Active} style={SideBarStyle.listItemLeftIcon}></Image>}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '7' && SideBarStyle.listItemSubTitleContainerFocus]}
-                                    title={'Được giao'} style={SideBarStyle.subItemContainer} />
+                                    title={'Được giao'} style={SideBarStyle.subItemContainer} rightIcon={this.state.onFocusNow === '7' && subItemIcon} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.setCurrentFocus('ListCombinationTaskScreen', '8')} style={this.state.onFocusNow === '8' && SideBarStyle.listItemFocus}>
                                 <ListItem
+                                    leftIcon={this.state.onFocusNow !== '8' ? <Image source={SBIcons.works_Groups_Neutral} style={SideBarStyle.listItemLeftIcon}></Image> : <Image source={SBIcons.works_Groups_Active} style={SideBarStyle.listItemLeftIcon}></Image>}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '8' && SideBarStyle.listItemSubTitleContainerFocus]}
-                                    title={'Phối hợp xử lý'} style={SideBarStyle.subItemContainer} />
+                                    title={'Phối hợp xử lý'} style={SideBarStyle.subItemContainer} rightIcon={this.state.onFocusNow === '8' && subItemIcon} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.setCurrentFocus('ListProcessedTaskScreen', '9')} style={this.state.onFocusNow === '9' && SideBarStyle.listItemFocus}>
                                 <ListItem
+                                    leftIcon={this.state.onFocusNow !== '9' ? <Image source={SBIcons.works_Completed_Neutral} style={SideBarStyle.listItemLeftIcon}></Image> : <Image source={SBIcons.works_Completed_Active} style={SideBarStyle.listItemLeftIcon}></Image>}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '9' && SideBarStyle.listItemSubTitleContainerFocus]}
-                                    title={'Đã giao xử lý'} style={SideBarStyle.subItemContainer} />
+                                    title={'Đã giao xử lý'} style={SideBarStyle.subItemContainer} rightIcon={this.state.onFocusNow === '9' && subItemIcon} />
                             </TouchableOpacity>
                         </Panel>
 

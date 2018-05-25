@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 
-import { scale, verticalScale, moderateScale } from './ScaleIndicator'
+import { scale, verticalScale, moderateScale } from './ScaleIndicator';
 
 export const SideBarStyle = StyleSheet.create({
     container: {
@@ -69,5 +69,10 @@ export const SideBarStyle = StyleSheet.create({
     }, listItemSubTitleContainerFocus: {
         color: '#fff',
         fontWeight: 'bold',
+    }, listItemLeftIcon: {
+        width: scale(30),
+        height: verticalScale(30),
+        resizeMode: 'contain',
+        marginLeft:10
     }
 });
