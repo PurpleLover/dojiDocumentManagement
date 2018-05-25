@@ -17,8 +17,8 @@ export const SideBarStyle = StyleSheet.create({
         flex: 1,
     }, headerBackground: {
         flex: 1,
-        borderBottomColor: '#d4d4d4',
-        borderBottomWidth: 1,
+        //borderBottomColor: '#d4d4d4',
+        //borderBottomWidth: 1,
         flexDirection: 'row',
     }, headerAvatarContainer: {
         justifyContent: 'center',
@@ -45,21 +45,29 @@ export const SideBarStyle = StyleSheet.create({
     },
     body: {
         flex: 3,
-        backgroundColor: '#fff'
+        backgroundColor: '#f2f2f2'
     }, listItemTitle: {
         fontWeight: 'bold',
         color: 'black'
     }, listItemContainer: {
-        height: verticalScale(60),
+        minHeight: verticalScale(60),
+        maxHeight: verticalScale(60),
         justifyContent: 'center',
-        borderBottomColor: '#cccccc',
-        backgroundColor: '#fff'
+        //borderBottomWidth: verticalScale(3),
+        //borderBottomColor: '#e6e6e6',
+        backgroundColor: '#f2f2f2'
     }, subItemContainer: {
-        height: verticalScale(60),
+        // minHeight: verticalScale(60),
         justifyContent: 'center',
-        borderBottomColor: '#cccccc'
+        borderWidth: 0
+        //borderBottomColor: '#fff'
     }, listItemSubTitleContainer: {
         color: '#000',
         marginLeft: scale(40)
+    }, listItemFocus: {
+        backgroundColor: '#cccccc',
+    }, listItemSubTitleContainerFocus: {
+        color: '#fff',
+        fontWeight: 'bold',
     }
 });

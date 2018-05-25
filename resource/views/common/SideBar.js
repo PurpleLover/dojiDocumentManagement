@@ -32,7 +32,8 @@ export default class SideBar extends Component {
             showModal: false,
             userInfo: {
 
-            }
+            },
+            onFocusNow: '',
         }
     }
 
@@ -52,6 +53,13 @@ export default class SideBar extends Component {
 
     onLogOut() {
         this.refs.confirm.showModal();
+    }
+
+    setCurrentFocus(screenName, ref) {
+        this.setState({
+            onFocusNow: ref,
+        });
+        this.navigate(screenName);
     }
 
     render() {
@@ -77,55 +85,57 @@ export default class SideBar extends Component {
                 <View style={SideBarStyle.body}>
                     <ScrollView>
                         <Panel title='VĂN BẢN TRÌNH KÝ'>
-                            <TouchableOpacity onPress={() => this.navigate('ListIsNotProcessedScreen')}>
+                            <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsNotProcessedScreen', '1')} style={this.state.onFocusNow === '1' && SideBarStyle.listItemFocus}>
                                 <ListItem
-                                    titleStyle={SideBarStyle.listItemSubTitleContainer}
-                                    title={'Chưa xử lý'} style={SideBarStyle.subItemContainer} />
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '1' && SideBarStyle.listItemSubTitleContainerFocus]}
+                                    title={'Chưa xử lý'} contentContainerStyle={SideBarStyle.subItemContainer} hideChevron={true} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.navigate('ListIsProcessedScreen')}>
+                            <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsProcessedScreen', '2')} style={this.state.onFocusNow === '2' && SideBarStyle.listItemFocus}>
                                 <ListItem
-                                    titleStyle={SideBarStyle.listItemSubTitleContainer}
-                                    title={'Đã xử lý'} style={SideBarStyle.subItemContainer} />
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '2' && SideBarStyle.listItemSubTitleContainerFocus]}
+                                    title={'Đã xử lý'} contentContainerStyle={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.navigate('ListIsNotReviewedScreen')}>
+                            <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsNotReviewedScreen', '3')} style={this.state.onFocusNow === '3' && SideBarStyle.listItemFocus}>
                                 <ListItem
-                                    titleStyle={SideBarStyle.listItemSubTitleContainer}
-                                    title={'Cần review'} style={SideBarStyle.subItemContainer} />
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '3' && SideBarStyle.listItemSubTitleContainerFocus]}
+                                    title={'Cần review'} contentContainerStyle={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.navigate('ListIsReviewedScreen')}>
+                            <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsReviewedScreen', '4')} style={this.state.onFocusNow === '4' && SideBarStyle.listItemFocus}>
                                 <ListItem
-                                    titleStyle={SideBarStyle.listItemSubTitleContainer}
-                                    title={'Đã review'} style={SideBarStyle.subItemContainer} />
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '4' 
+                                    && SideBarStyle.listItemSubTitleContainerFocus]}
+                                    title={'Đã review'} contentContainerStyle={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
                         </Panel>
 
                         <Panel title='VĂN BẢN ĐÃ PHÁT HÀNH'>
-                            <TouchableOpacity onPress={() => this.navigate('ListIsPublishedScreen')}>
+                            <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsPublishedScreen', '5')} style={this.state.onFocusNow === '5' && SideBarStyle.listItemFocus}>
                                 <ListItem
-                                    titleStyle={SideBarStyle.listItemSubTitleContainer}
-                                    title={'Danh sách'} style={SideBarStyle.subItemContainer} />
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '5' 
+                                    && SideBarStyle.listItemSubTitleContainerFocus]}
+                                    title={'Danh sách'} contentContainerStyle={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
                         </Panel>
 
                         <Panel title='CÔNG VIỆC'>
-                            <TouchableOpacity onPress={() => this.navigate('ListPersonalTaskScreen')}>
+                            <TouchableOpacity onPress={() => this.setCurrentFocus('ListPersonalTaskScreen', '6')} style={this.state.onFocusNow === '6' && SideBarStyle.listItemFocus}>
                                 <ListItem
-                                    titleStyle={SideBarStyle.listItemSubTitleContainer}
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '6' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     title={'Cá nhân'} style={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.navigate('ListAssignedTaskScreen')}>
+                            <TouchableOpacity onPress={() => this.setCurrentFocus('ListAssignedTaskScreen', '7')} style={this.state.onFocusNow === '7' && SideBarStyle.listItemFocus}>
                                 <ListItem
-                                    titleStyle={SideBarStyle.listItemSubTitleContainer}
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '7' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     title={'Được giao'} style={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.navigate('ListCombinationTaskScreen')}>
+                            <TouchableOpacity onPress={() => this.setCurrentFocus('ListCombinationTaskScreen', '8')} style={this.state.onFocusNow === '8' && SideBarStyle.listItemFocus}>
                                 <ListItem
-                                    titleStyle={SideBarStyle.listItemSubTitleContainer}
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '8' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     title={'Phối hợp xử lý'} style={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.navigate('ListProcessedTaskScreen')}>
+                            <TouchableOpacity onPress={() => this.setCurrentFocus('ListProcessedTaskScreen', '9')} style={this.state.onFocusNow === '9' && SideBarStyle.listItemFocus}>
                                 <ListItem
-                                    titleStyle={SideBarStyle.listItemSubTitleContainer}
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '9' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     title={'Đã giao xử lý'} style={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
                         </Panel>
