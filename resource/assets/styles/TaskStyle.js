@@ -6,6 +6,7 @@
 'use strict'
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
+import {scale, verticalScale, moderateScale} from './ScaleIndicator'
 
 export const DetailTaskStyle = StyleSheet.create({
     container: {
@@ -18,21 +19,21 @@ export const DetailTaskStyle = StyleSheet.create({
         borderBottomColor: '#cbd2d9'
     }, 
     listItemContainer: {
-        paddingTop: 10,
-        paddingRight: 10,
-        paddingBottom: 10,
+        paddingTop: verticalScale(10),
+        paddingRight: scale(10),
+        paddingBottom: verticalScale(10),
         borderBottomWidth: 1,
         borderBottomColor: '#e5e5e5'
     }, listItemTitleContainer: {
         fontWeight: 'bold',
         color: 'black',
-        fontSize: 14
+        fontSize: moderateScale(14,1.3)
     }, listItemSubTitleContainer: {
-        fontSize: 13,
+        fontSize: moderateScale(13,1.4),
         color: '#777',
         fontWeight: 'normal'
     }, timelineContainer: {
-        paddingTop: 20,
+        paddingTop: verticalScale(20),
         flex: 1,
     }, timeContainer: {
 
@@ -48,27 +49,27 @@ export const ListTaskStyle = StyleSheet.create({
         alignItems: 'center'
     },
     emptyIcon: {
-        width: 100,
-        height: 100,
+        width: moderateScale(100),
+        height: moderateScale(100),
         resizeMode: 'contain'
     },
     emptyMessage: {
         color: '#ccc',
-        fontSize: 16,
+        fontSize: moderateScale(16,1.5),
         fontWeight: 'bold',
         textAlign: 'center'
     },
     leftSide: {
-        width: 30
+        width: scale(30)
     },
     rightSize: {
-        width: 30
+        width: scale(30)
     },
     leftIcon: {
         
     },
     abridgment: {
-        fontSize: 12,
+        fontSize: moderateScale(12,1.2),
         flexWrap: 'wrap'
     },
     textNormal: {
@@ -76,6 +77,16 @@ export const ListTaskStyle = StyleSheet.create({
     },
     textRead: {
         color: '#888'
+    },
+    loadMoreButton: {
+        flex: 1, 
+        flexDirection: 'row', 
+        justifyContent: 'center',
+        padding: moderateScale(10),
+        backgroundColor: 'red',
+    }, loadMoreButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
     }
 });
 
