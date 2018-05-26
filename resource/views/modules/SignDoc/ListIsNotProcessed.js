@@ -40,6 +40,7 @@ import { indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
 //utilities
 import { formatLongText, closeSideBar, openSideBar, getUserInfo } from '../../../common/Utilities';
+import { authenticateLoading } from '../../../common/Effect';
 
 class ListIsNotProcessed extends Component {
     constructor(props) {
@@ -52,7 +53,8 @@ class ListIsNotProcessed extends Component {
             pageIndex: DEFAULT_PAGE_INDEX,
             pageSize: DEFAULT_PAGE_SIZE,
             filterValue: EMPTY_STRING,
-            showFilter: false
+            showFilter: false,
+            showSearch: 1,
         }
     }
 
@@ -187,37 +189,28 @@ class ListIsNotProcessed extends Component {
     render() {
         return (
             <Container>
-                <Header style={{ backgroundColor: HEADER_COLOR }}>
-
-                    <Left>
+                <Header searchBar rounded style={{ backgroundColor: HEADER_COLOR, justifyContent: 'space-around' }}>
+                    <Left style={{flex:1}}>
                         <Button transparent onPress={() => openSideBar(this.props.navigation)}>
                             <Icon name='menu' />
                         </Button>
                     </Left>
-
-                    <Body>
-                        <Title>
-                            VĂN BẢN TRÌNH KÝ CHƯA XỬ LÝ
-                        </Title>
+                    <Body style={{flex:3}} >
+                        <Item>
+                            <Icon name="ios-arrow-round-back" onPress={() => this.toggleFilter()} />
+                            <Input placeholder="Mã hiệu hoặc trích yếu"
+                                value={this.state.filterValue}
+                                onChangeText={(filterValue) => this.setState({ filterValue })}
+                                onSubmitEditing={() => this.onFilter()}/>
+                            <Icon name="ios-close" onPress={() => this.clearFilterValue()} />
+                        </Item>
                     </Body>
-
-                    <Right>
-                        <Button transparent>
-                            <Icon name='search' onPress={() => this.toggleFilter()} />
+                    <Right style={{flex:1}} >
+                        <Button transparent onPress={() => this.onFilter()}>
+                            <Text>Search</Text>
                         </Button>
                     </Right>
                 </Header>
-
-                <Header searchBar rounded>
-                    <Item>
-                        <Icon name="ios-search" />
-                        <Input placeholder="Search" autoFocus={true} />
-                    </Item>
-                    <Button transparent>
-                        <Text>Search</Text>
-                    </Button>
-                </Header>
-
                 <Content>
                     <FlatList
                         onEndReached={() => this.handleEnd()}
