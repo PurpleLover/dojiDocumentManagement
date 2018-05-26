@@ -15,6 +15,8 @@ import { ListItem } from 'react-native-elements';
 //styles
 import { PanelStyle } from '../../assets/styles/PanelStyle';
 import { SideBarStyle } from '../../assets/styles/SideBarStyle';
+import { doc_Default, work_Default } from '../../assets/styles/SideBarIcons';
+import SideBar from './SideBar';
 
 export default class Panel extends Component {
     constructor(props) {
@@ -79,7 +81,9 @@ export default class Panel extends Component {
                     rotate: interpolateRotation
                 }
             ]
-        }
+        };
+
+        const titleLeftIcon = (this.state.title === 'VĂN BẢN TRÌNH KÝ' || this.state.title === 'VĂN BẢN ĐÃ PHÁT HÀNH') ? <Image source={doc_Default} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}></Image> : <Image source={work_Default} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}></Image>
 
         return (
             <Animated.View style={[PanelStyle.container, { height: this.state.heightAnimation }]}>
@@ -93,6 +97,7 @@ export default class Panel extends Component {
                             rightIcon={
                                 <Animated.Image source={this.icon} style={iconRotationStyle} />
                             }
+                            leftIcon={titleLeftIcon}
                         />
                     </TouchableOpacity>
                 </View>

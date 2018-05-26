@@ -12,56 +12,53 @@ import { scale, verticalScale, moderateScale } from './ScaleIndicator';
 export const SideBarStyle = StyleSheet.create({
     container: {
         flex: 1
-    },
+    }, 
     header: {
         flex: 1,
-    }, headerBackground: {
+    },headerBackground: {
         flex: 1,
-        //borderBottomColor: '#d4d4d4',
-        //borderBottomWidth: 1,
+        borderBottomColor: '#d4d4d4',
+        borderBottomWidth: 1,
         flexDirection: 'row',
-    }, headerAvatarContainer: {
+    },headerAvatarContainer: {
         justifyContent: 'center',
         alignItems: 'center',
         paddingLeft: scale(20),
-    }, headerUserInfoContainer: {
+    },headerUserInfoContainer: {
         justifyContent: 'center',
         paddingLeft: scale(20),
         alignItems: 'flex-start'
-    }, headerAvatar: {
+    },headerAvatar: {
         width: moderateScale(80),
         height: moderateScale(80),
         borderRadius: 50,
         resizeMode: 'stretch',
-    }, headerUserName: {
+    },headerUserName: {
         justifyContent: 'center',
         textAlign: 'center',
         fontWeight: 'bold',
         color: '#000',
         fontSize: moderateScale(16,1.2)
-    }, headerUserJob: {
+    },headerUserJob: {
         fontSize: moderateScale(11,1.7),
         fontWeight: 'normal'
     },
     body: {
         flex: 3,
-        backgroundColor: '#f2f2f2'
-    }, listItemTitle: {
+        backgroundColor: '#fff'
+    },listItemTitle: {
         fontWeight: 'bold',
         color: 'black'
-    }, listItemContainer: {
-        minHeight: verticalScale(60),
-        maxHeight: verticalScale(60),
+    },listItemContainer: {
+        height: verticalScale(60),
         justifyContent: 'center',
-        //borderBottomWidth: verticalScale(3),
-        //borderBottomColor: '#e6e6e6',
-        backgroundColor: '#f2f2f2'
+        borderBottomColor: '#cccccc',
+        backgroundColor: '#fff'
     }, subItemContainer: {
-        // minHeight: verticalScale(60),
+        height: verticalScale(60),
         justifyContent: 'center',
-        borderWidth: 0
-        //borderBottomColor: '#fff'
-    }, listItemSubTitleContainer: {
+        borderBottomColor: '#cccccc'
+    },listItemSubTitleContainer: {
         color: '#000',
         marginLeft: scale(40)
     }, listItemFocus: {
