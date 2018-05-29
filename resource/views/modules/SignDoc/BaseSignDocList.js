@@ -54,7 +54,7 @@ class BaseSignDocList extends Component {
       pageSize: DEFAULT_PAGE_SIZE,
       filterValue: EMPTY_STRING,
       showFilter: false,
-      showSearch: 1,
+      extendSearch: false,
       loadMore: false,
       type: props.type,
     }
