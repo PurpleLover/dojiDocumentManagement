@@ -7,11 +7,16 @@
 import React, { Component } from 'react';
 import BaseTaskList from './BaseTaskList';
 
+//constant
+import {
+    CONGVIEC_CONSTANT,
+} from '../../../common/SystemConstant';
+
 export default class ListPersonalTask extends Component {
 
     render() {
         return (
-            <BaseTaskList type={1} navigator={this.props.navigation} />
+            <BaseTaskList taskType={CONGVIEC_CONSTANT.CA_NHAN} navigator={this.props.navigation} />
         )
     }
 }

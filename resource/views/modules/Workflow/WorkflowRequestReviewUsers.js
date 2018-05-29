@@ -3,11 +3,6 @@
 	@author: duynn
 	@since: 16/05/2018
 */
-/*
-	@description: màn hình yêu cầu văn bản cần review
-	@author: duynn
-	@since: 16/05/2018
-*/
 'use strict'
 import React, { Component } from 'react';
 import {
@@ -45,7 +40,6 @@ import * as workflowAction from '../../../redux/modules/workflow/WorkflowAction'
 
 //styles
 import { TabStyle } from '../../../assets/styles/TabStyle';
-
 
 class WorkflowRequestReviewUsers extends Component {
 	constructor(props) {
@@ -164,7 +158,7 @@ class WorkflowRequestReviewUsers extends Component {
 						</Body>
 
 						<Right>
-							<CheckBox checked={(this.state.reviewUsers.indexOf(item.ID) > -1)} color={'#FF993B'} onPress={() => this.onCheckUser(item.ID)} />
+							<CheckBox checked={(this.state.reviewUsers.indexOf(item.ID) > -1)} color={'#FF0033'} onPress={() => this.onCheckUser(item.ID)} />
 						</Right>
 					</NBListItem>
 				))
@@ -219,7 +213,7 @@ const styles = StyleSheet.create({
 	},
 	listItemContainer: {
 		height: 60,
-		backgroundColor: '#FF993B',
+		backgroundColor: '#FF0033',
 		justifyContent: 'center'
 	},
 	listItemTitle: {

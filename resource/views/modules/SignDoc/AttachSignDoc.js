@@ -4,91 +4,103 @@
  * @since: 04/05/2018
  */
 'use strict'
-import React, { Component } from 'react'
-import {
-    Platform, Alert,
-    View, Text, Image, ScrollView, FlatList,
-    TouchableOpacity, RefreshControl, ActivityIndicator
-} from 'react-native'
+import React, { Component } from 'react';
+import { Alert, ActivityIndicator, FlatList, TouchableOpacity, Platform } from 'react-native';
 
 //lib
-import { List, ListItem, Icon } from 'react-native-elements';
+import { Container, Content, Header, Item, Icon, Input } from 'native-base';
+import { List, ListItem, Icon as RneIcon } from 'react-native-elements';
 import RNFetchBlob from 'react-native-fetch-blob';
 
 //styles
-import { ListSignDocStyle, DetailSignDocStyle } from '../../../assets/styles/SignDocStyle';
-
-import { EMPTY_DATA_ICON_URI, EMTPY_DATA_MESSAGE, WEB_URL } from '../../../common/SystemConstant';
+import { DetailSignDocStyle } from '../../../assets/styles/SignDocStyle';
 
 //utilities
-import { formatLongText, isImage } from '../../../common/Utilities';
+import renderIf from 'render-if';
+import { API_URL, WEB_URL, EMPTY_STRING, LOADER_COLOR } from '../../../common/SystemConstant';
+import { asyncDelay, isImage, emptyDataPage } from '../../../common/Utilities';
+import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
 const android = RNFetchBlob.android;
-
 export default class AttachSignDoc extends Component {
-
     constructor(props) {
         super(props);
+
         this.state = {
-            attachments: props.info
+            VanBanDi: props.info.VanBanDi,
+            ListTaiLieu: props.info.ListTaiLieu,
+            filterValue: EMPTY_STRING,
+            searching: false
         }
     }
 
-    renderItem = ({ item }) => (
-        <ListItem
-            leftIcon={
-                <View style={[ListSignDocStyle.leftSize, {
-                    marginRight: 10
-                }]}>
-                    <Icon name='ios-attach-outline' size={26} type='ionicon' style={ListSignDocStyle.leftIcon} />
-                </View>
-            }
+    async onAttachFilter() {
+        this.setState({
+            searching: true
+        });
 
-            rightIcon={
-                <View style={ListSignDocStyle.rightSize}>
-                    <TouchableOpacity onPress={() => this.downloadFile(item.TENTAILIEU, item.DUONGDAN_FILE, item.DINHDANG_FILE)}>
-                        <Icon name='download' size={26} color={'#337321'} type="entypo" />
-                    </TouchableOpacity>
-                </View>
-            }
-            title={formatLongText(item.TENTAILIEU)}
-            titleStyle={{
-                color: 'black',
-                fontWeight: 'bold'
-            }}
-        />
-    );
+        const url = `${API_URL}/api/VanBanDi/SearchAttachment?id=${this.state.VanBanDi.ID}&attQuery=${this.state.filterValue}`;
 
-    downloadFile(fileName, fileLink, fileExtension) {
+        const result = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json; charset=utf-8'
+            }
+        }).then(response => response.json())
+            .then(responseJson => {
+                return responseJson;
+            })
+
+        await asyncDelay(1000);
+
+        this.setState({
+            searching: false,
+            ListTaiLieu: result
+        });
+    }
+
+
+    onDownloadFile(fileName, fileLink, fileExtension) {
         try {
             fileLink = WEB_URL + fileLink;
             fileLink = fileLink.replace('////', '/');
-            fileLink = fileLink.replace(/ /g,"%20");
-            RNFetchBlob.config({
-                fileCache : true,
-                  // android only options, these options be a no-op on IOS
-                  addAndroidDownloads : {
-                    notification : true, // Show notification when response data transmitted
-                    title : fileName, // Title of download notification
-                    description : 'An image file.', // File description (not notification description)
-                    mime : fileExtension,
-                    mediaScannable : true, // Make the file scannable  by media scanner
-                  }
-            }).fetch('GET', fileLink)
+            fileLink = fileLink.replace(/ /g, "%20");
+
+            const config = {
+                fileCache: true,
+                // android only options, these options be a no-op on IOS
+                addAndroidDownloads: {
+                    notification: true, // Show notification when response data transmitted
+                    title: fileName, // Title of download notification
+                    description: 'An image file.', // File description (not notification description)
+                    mime: fileExtension,
+                    mediaScannable: true, // Make the file scannable  by media scanner
+                }
+            }
+
+            if (Platform.OS == 'ios') {
+                config = {
+                    fileCache: true
+                }
+            }
+
+            RNFetchBlob.config(config)
+                .fetch('GET', fileLink)
                 .then((response) => {
                     //kiểm tra platform nếu là android và file là ảnh
                     if (Platform.OS == 'android' && isImage(fileExtension)) {
                         android.actionViewIntent(response.path(), fileExtension);
                     }
                     response.path();
-                }).catch((errr) => {
+                }).catch((err) => {
                     Alert.alert(
                         'THÔNG BÁO',
                         'KHÔNG THỂ TẢI ĐƯỢC FILE',
                         [
                             {
                                 text: 'OK',
-                                onPress: () => { console.log('close alert') }
+                                onPress: () => { console.log('Lỗi', err) }
                             }
                         ]
                     )
@@ -107,27 +119,53 @@ export default class AttachSignDoc extends Component {
         }
     }
 
+    renderItem = ({ item }) => (
+        <ListItem
+            rightIcon={
+                <TouchableOpacity onPress={() => this.onDownloadFile(item.TENTAILIEU, item.DUONGDAN_FILE, item.DINHDANG_FILE)}>
+                    <RneIcon name='download' color={'#4FA800'} size={verticalScale(25)} type='entypo' />
+                </TouchableOpacity>
+            }
+            title={item.TENTAILIEU}
+            titleStyle={{ color: 'black', fontWeight: 'bold' }} />
+    )
+
     render() {
         return (
-            <View style={DetailSignDocStyle.container}>
-                <ScrollView>
-                    <FlatList
-                        keyExtractor={(item, index) => index.toString()}
-                        data={this.state.attachments}
-                        renderItem={this.renderItem}
-                        ListEmptyComponent={() =>
-                            this.state.loading ? null : (
-                                <View style={ListSignDocStyle.emtpyContainer}>
-                                    <Image source={EMPTY_DATA_ICON_URI} style={ListSignDocStyle.emptyIcon} />
-                                    <Text style={ListSignDocStyle.emptyMessage}>
-                                        {EMTPY_DATA_MESSAGE}
-                                    </Text>
-                                </View>
-                            )
-                        }
-                    />
-                </ScrollView>
-            </View>
+            <Container>
+                <Header searchBar style={{ backgroundColor: '#fff' }}>
+                    <Item>
+                        <Icon name='ios-search' />
+                        <Input placeholder='Tên tài liệu'
+                            value={this.state.filterValue}
+                            onChangeText={(filterValue) => this.setState({ filterValue })}
+                            onSubmitEditing={() => this.onAttachFilter()} />
+                    </Item>
+                </Header>
+
+                <Content contentContainerStyle={{ flex: 1, justifyContent: (this.state.searching) ? 'center' : 'flex-start' }}>
+                    {
+                        renderIf(this.state.searching)(
+                            <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+                        )
+                    }
+
+                    {
+                        renderIf(!this.state.searching)(
+                            <List containerStyle={DetailSignDocStyle.listContainer}>
+                                <FlatList
+                                    data={this.state.ListTaiLieu}
+                                    renderItem={this.renderItem}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    ListEmptyComponent={() =>
+                                        emptyDataPage()
+                                    }
+                                />
+                            </List>
+                        )
+                    }
+                </Content>
+            </Container>
         );
     }
 }

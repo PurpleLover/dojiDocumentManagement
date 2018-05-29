@@ -5,13 +5,14 @@
  */
 'use strict'
 import React, { Component } from 'react';
+import { VANBAN_CONSTANT } from '../../../common/SystemConstant';
 import BaseSignDocList from './BaseSignDocList';
 
 export default class ListIsProcessed extends Component {
 
     render() {
         return (
-            <BaseSignDocList type={2} navigator={this.props.navigation} />
+            <BaseSignDocList docType={VANBAN_CONSTANT.DA_XULY} navigator={this.props.navigation} />
         )
     }
 }

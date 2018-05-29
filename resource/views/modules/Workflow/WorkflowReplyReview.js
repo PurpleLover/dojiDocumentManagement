@@ -19,7 +19,7 @@ import {
 //native-base
 import {
     Form, Button, Icon as NBIcon, Text as NBText, Item, Input, Title, Picker, Toast,
-    Container, Header, Content, Left, Right, Body, CheckBox, Label,Textarea,
+    Container, Header, Content, Left, Right, Body, CheckBox, Label, Textarea,
     Tab, Tabs, TabHeading, ScrollableTab, List as NBList, ListItem as NBListItem, Radio
 } from 'native-base';
 
@@ -44,47 +44,47 @@ import * as workflowAction from '../../../redux/modules/workflow/WorkflowAction'
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
 class WorkflowReplyReview extends Component {
-	constructor(props){
-		super(props);
-		this.state = {
-			userId: this.props.userInfo.ID,
+    constructor(props) {
+        super(props);
+        this.state = {
+            userId: this.props.userInfo.ID,
 
-			docId: this.props.navigation.state.params.docId,
+            docId: this.props.navigation.state.params.docId,
             docType: this.props.navigation.state.params.docType,
-            
+
             itemType: this.props.navigation.state.params.itemType,
             message: EMPTY_STRING,
-			selected: 1,
-            executeLoading: false
-		}
-	}
+            selected: 1,
+            executing: false
+        }
+    }
 
-	onValueChange(value: string) {
+    onValueChange(value) {
         this.setState({
-          selected: value
+            selected: value
         });
     }
 
-    navigateBack(){
+    navigateBack() {
         this.props.navigation.navigate('DetailSignDocScreen', {
             docId: this.state.docId,
-            docType:this.state.docType
+            docType: this.state.docType
         })
     }
 
-    onConfirmReplyReview(){
+    onConfirmReplyReview() {
         Alert.alert(
-            'XÁC NHẬN PHẢN HỒI', 
-            'Bạn có chắc chắn muốn thực hiện việc này?', 
+            'XÁC NHẬN PHẢN HỒI',
+            'Bạn có chắc chắn muốn thực hiện việc này?',
             [
                 {
-                    text: 'Đồng ý', onPress: ()=> {
+                    text: 'Đồng ý', onPress: () => {
                         this.saveReplyReview();
                     }
                 },
 
                 {
-                    text: 'Hủy bỏ', onPress: ()=> {
+                    text: 'Hủy bỏ', onPress: () => {
 
                     }
                 }
@@ -92,126 +92,142 @@ class WorkflowReplyReview extends Component {
         )
     }
 
-    async saveReplyReview(){
-        this.setState({
-            executeLoading: true
-        });
+    async saveReplyReview() {
+        if (util.isNull(this.state.message) || util.isEmpty(this.state.message)) {
+            Toast.show({
+                text: 'Vui lòng nhập nội dung phản hồi',
+                type: 'danger',
+                buttonText: "OK",
+                buttonStyle: { backgroundColor: '#fff' },
+                buttonTextStyle: { color: '#FF0033' },
+            });
+        } else {
+            this.setState({
+                executing: true
+            });
 
-        const result = await fetch(API_URL + '/api/VanBanDi/SaveReplyReview', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json; charset=utf-8',
-            },
-            body: JSON.stringify({
-                userID: this.state.userId,
-                phanHoiVanBan: this.state.message,
-                pheDuyetVanBan: this.state.selected,
-                itemId: this.state.docId,
-                itemType: this.state.itemType
-            })
-        });
+            const result = await fetch(API_URL + '/api/VanBanDi/SaveReplyReview', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json; charset=utf-8',
+                },
+                body: JSON.stringify({
+                    userID: this.state.userId,
+                    phanHoiVanBan: this.state.message,
+                    pheDuyetVanBan: this.state.selected,
+                    itemId: this.state.docId,
+                    itemType: this.state.itemType
+                })
+            });
 
-        const resultJson = await result.json();
-        
-        await asyncDelay(2000);
-        
-        this.setState({
-            executeLoading: false
-        });
-        
-        if(!util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)){
-            const message = this.props.userInfo.Fullname + " đã trả lời yêu cầu review 1 văn bản";
-            const content = {
-                title: 'TRẢ LỜI REVIEW VĂN BẢN',
-                message,
-                isTaskNotification: false,
-                targetScreen: 'DetailSignDocScreen',
-                targetDocId: this.state.docId,
-                targetDocType: this.state.docType
+            const resultJson = await result.json();
+
+            await asyncDelay(2000);
+
+            this.setState({
+                executing: false
+            });
+
+            if (!util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)) {
+                const message = this.props.userInfo.Fullname + " đã trả lời yêu cầu review 1 văn bản";
+                const content = {
+                    title: 'TRẢ LỜI REVIEW VĂN BẢN',
+                    message,
+                    isTaskNotification: false,
+                    targetScreen: 'DetailSignDocScreen',
+                    targetDocId: this.state.docId,
+                    targetDocType: this.state.docType
+                }
+                resultJson.GroupTokens.forEach(token => {
+                    pushFirebaseNotify(content, token, "notification");
+                });
             }
-            resultJson.GroupTokens.forEach(token => {
-                pushFirebaseNotify(content, token, "notification");
+
+            Toast.show({
+                text: resultJson.Status ? 'Phản hồi yêu cầu review thành công' : 'Phản hồi yêu cầu review không thành công',
+                type: resultJson.Status ? 'success' : 'danger',
+                buttonText: "OK",
+                buttonStyle: { backgroundColor: '#fff' },
+                buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
+                duration: 5000,
+                onClose: () => {
+                    this.props.resetProcessUsers();
+                    if (resultJson.Status) {
+                        this.navigateBack();
+                    }
+                }
             });
         }
-
-        Toast.show({
-            text: resultJson.Status ? 'Phản hồi yêu cầu review thành công' : 'Phản hồi yêu cầu review không thành công',
-            type: resultJson.Status ? 'success' : 'danger',
-            buttonText: "OK",
-            buttonStyle: { backgroundColor: '#fff' },
-            buttonTextStyle: { color: resultJson.Status ? '#337321' :'#FF0033'},
-            duration: 5000,
-            onClose: ()=> {
-                this.props.resetProcessUsers();
-                if(resultJson.Status){
-                    this.navigateBack();
-                }
-            }
-        });
     }
 
-	render(){
-		return(
-			<Container>
+    render() {
+        return (
+            <Container>
                 <Header style={{ backgroundColor: HEADER_COLOR }}>
                     <Left>
-						<Button transparent onPress={() => this.navigateBack()}>
-							<Icon name='ios-arrow-dropleft-circle' size={30} color={'#fff'} type="ionicon" />
-						</Button>
-					</Left>
+                        <Button transparent onPress={() => this.navigateBack()}>
+                            <Icon name='ios-arrow-round-back' size={30} color={'#fff'} type="ionicon" />
+                        </Button>
+                    </Left>
 
                     <Body>
                         <Title>
                             REVIEW VĂN BẢN TRÌNH KÝ
                         </Title>
                     </Body>
+
                     <Right>
-						<Button transparent onPress={()=> this.onConfirmReplyReview()}>
-							<Icon name='ios-checkmark-circle' size={30} color={'#fff'} type="ionicon" />
-						</Button>
-					</Right>
+                        <Button transparent>
+                        </Button>
+                    </Right>
                 </Header>
 
                 <Content>
                     <Form>
                         <Item stackedLabel>
-                            <Label>Phản hồi</Label>
-                            <Input onChangeText={(message) => this.setState({message})}/>
+                            <Label>Nội dung phản hồi</Label>
+                            <Input onChangeText={(message) => this.setState({ message })} />
                         </Item>
 
                         <Item stackedLabel>
                             <Label>Đánh giá</Label>
                             <Picker mode='dropdown'
-                            iosHeader='Chọn kết quả đánh giá'
-                            iosIcon={<NBIcon name='ios-arrow-down-outline'/>}
-                            style={{width: '100%'}}
-                            selectedValue={this.state.selected}
-                            onValueChange={this.onValueChange.bind(this)}>
-                                <Picker.Item label='Đồng ý' value='1'/>
-                                <Picker.Item label='Trả lại' value='0'/>       
+                                iosHeader='Chọn kết quả đánh giá'
+                                iosIcon={<NBIcon name='ios-arrow-down-outline' />}
+                                style={{ width: '100%' }}
+                                selectedValue={this.state.selected}
+                                onValueChange={this.onValueChange.bind(this)}>
+                                <Picker.Item label='Đồng ý' value='1' />
+                                <Picker.Item label='Trả lại' value='0' />
                             </Picker>
                         </Item>
+
+                        <Button block style={{ backgroundColor: '#ff0033', marginTop: 20 }} onPress={() => this.onConfirmReplyReview()}>
+                            <NBText>
+                                PHẢN HỒI YÊU CẦU
+                            </NBText>
+                        </Button>
                     </Form>
                 </Content>
 
                 {
-                    executeLoading(this.state.executeLoading)
+                    executeLoading(this.state.executing)
                 }
             </Container>
-		);
-	}
+        );
+    }
 }
 
 const mapStateToProps = (state) => {
-	return {
-		userInfo: state.userState.userInfo
-	}
+    return {
+        userInfo: state.userState.userInfo
+    }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        resetProcessUsers: ()=> dispatch(workflowAction.resetProcessUsers())
+        resetProcessUsers: () => dispatch(workflowAction.resetProcessUsers())
     }
 }
 

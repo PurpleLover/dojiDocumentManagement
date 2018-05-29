@@ -44,7 +44,7 @@ export const ListSignDocStyle = StyleSheet.create({
     emtpyContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     emptyIcon: {
         width: 100,

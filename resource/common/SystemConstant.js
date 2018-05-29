@@ -17,8 +17,12 @@ export const SAD_FACE_ICON_URI = require('../assets/images/error.png');
 
 export const { width, height } = Dimensions.get('window');
 
-export const HEADER_COLOR = '#FF993B'
-export const LOADER_COLOR = '#337321'
+// export const HEADER_COLOR = '#FF993B'
+export const HEADER_COLOR = '#FF0033'
+
+export const LOADER_COLOR = '#0082ba';
+
+export const LOADMORE_COLOR = '#0082ba';
 
 export const PLANJOB_CONSTANT = {
 	CHUALAPKEHOACH: 0,
@@ -28,8 +32,28 @@ export const PLANJOB_CONSTANT = {
     LAPLAIKEHOACH: 4
 }
 
+export const WORKFLOW_PROCESS_TYPE = {
+	MAIN_PROCESS: 1,
+	JOIN_PROCESS: 2, 
+	ALL_PROCESS: 3
+}
+
 export const DOKHAN_CONSTANT = {
 	KHAN: 98,
 	THUONG: 99,
 	THUONG_KHAN: 100
+}
+
+export const VANBAN_CONSTANT = {
+	CHUA_XULY: 1,
+	DA_XULY: 2,
+	CAN_REVIEW: 3,
+	DA_REVIEW: 4
+}
+
+export const CONGVIEC_CONSTANT = {
+	CA_NHAN: 1,
+	DUOC_GIAO: 2,
+	PHOIHOP_XULY: 3,
+	DAGIAO_XULY: 4
 }

@@ -4,6 +4,7 @@
  * @since: 04/05/2018
  */
 import React, { Component } from 'react';
+import { LOADER_COLOR } from '../common/SystemConstant';
 import { Text, View, Modal, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import {indicatorResponsive, scale,moderateScale, verticalScale} from '../assets/styles/ScaleIndicator';
 
@@ -47,7 +48,7 @@ export function executeLoading(isVisible) {
 export function dataLoading(isVisible) {
     return (
         <View style={styles.alContainer}>
-            <ActivityIndicator size={indicatorResponsive} color={'#337321'} />
+            <ActivityIndicator size={indicatorResponsive} color={LOADER_COLOR} />
         </View>
     )
 }
