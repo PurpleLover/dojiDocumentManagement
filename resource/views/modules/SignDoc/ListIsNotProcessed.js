@@ -6,12 +6,12 @@
 'use strict'
 import React, { Component } from 'react';
 import BaseSignDocList from './BaseSignDocList';
+import { VANBAN_CONSTANT } from '../../../common/SystemConstant';
 
 export default class ListIsNotProcessed extends Component {
-
     render() {
         return (
-            <BaseSignDocList type={1} navigator={this.props.navigation} />
+            <BaseSignDocList docType={VANBAN_CONSTANT.CHUA_XULY} navigator={this.props.navigation} />
         )
     }
 }

@@ -21,8 +21,9 @@ export function updateProcessUsers(userId, isMainProcess){
 	}
 }
 
-export function resetProcessUsers(){
+export function resetProcessUsers(workflowProcessType){
 	return {
-		type: type.RESET_PROCESS_USERS
+		type: type.RESET_PROCESS_USERS,
+		workflowProcessType
 	}
 }

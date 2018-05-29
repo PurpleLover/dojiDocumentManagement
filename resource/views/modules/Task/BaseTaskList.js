@@ -1,85 +1,89 @@
+/**
+ * @description: màn hình công việc
+ * @author: duynn
+ * @since: 29/05/2018
+ */
 'use strict'
 import React, { Component } from 'react';
 import {
-    RefreshControl, AsyncStorage, ActivityIndicator, View, Text, Modal,
-    FlatList, TouchableOpacity, Image
+    ActivityIndicator, View, Text as RnText,
+    FlatList, RefreshControl, TouchableOpacity
 } from 'react-native';
-
-//constant
-import {
-    API_URL, DEFAULT_PAGE_INDEX,
-    DEFAULT_PAGE_SIZE, EMPTY_DATA_ICON_URI,
-    EMPTY_STRING, EMTPY_DATA_MESSAGE,
-    HEADER_COLOR, LOADER_COLOR
-} from '../../../common/SystemConstant';
-
-//native-base
-import {
-    Button, Icon, Item, Input, Title, Toast,
-    Container, Header, Content, Left, Right, Body
-} from 'native-base';
-
-//react-native-elements
-import { ListItem } from 'react-native-elements';
 
 //redux
 import { connect } from 'react-redux';
 
 //lib
+import {
+    Container, Header, Left, Input,
+    Item, Icon, Button, Text, Content
+} from 'native-base';
+import { List, ListItem } from 'react-native-elements';
 import renderIf from 'render-if';
+
+//constant
+import {
+    API_URL, HEADER_COLOR, EMPTY_STRING,
+    LOADER_COLOR, CONGVIEC_CONSTANT,
+    DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE
+} from '../../../common/SystemConstant';
+
+//utilities
+import { indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { getColorCodeByProgressValue, convertDateToString } from '../../../common/Utilities';
 
 //styles
 import { ListTaskStyle } from '../../../assets/styles/TaskStyle';
-import { indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
-//utilities
-import { formatLongText, closeSideBar, openSideBar, getUserInfo, convertDateToString, getColorCodeByProgressValue } from '../../../common/Utilities';
-import * as util from 'lodash';
 
 class BaseTaskList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userId: 0,
-            loading: false,
-            refreshing: false,
+            userId: props.userInfo.ID,
+
+            filterValue: EMPTY_STRING,
             data: [],
+
             pageIndex: DEFAULT_PAGE_INDEX,
             pageSize: DEFAULT_PAGE_SIZE,
-            filterValue: EMPTY_STRING,
-            showFilter: false,
-            loadMore: false,
-            type: props.type,
+
+            loadingData: false,
+            refreshingData: false,
+            searchingData: false,
+            loaingMoreData: false,
+            taskType: props.taskType
         }
     }
 
-    componentWillMount = () => {
+    componentWillMount() {
         this.setState({
-            userId: this.props.userInfo.ID
+            loadingData: true
+        }, () => {
+            this.fetchData();
         })
     }
 
-    componentDidMount = () => {
-        this.fetchData();
-    }
+    async fetchData() {
+        const loadingMoreData = this.state.loadingMoreData;
+        const refreshingData = this.state.refreshingData;
+        const loadingData = this.state.loadingData;
 
-    fetchData = async () => {
-        const isLoading = this.state.loadMore;
-        if (!isLoading) {
-            this.setState({ loading: true });
-        }
+        const { taskType } = this.state;
 
         let apiUrlParam = 'PersonalWork';
 
-        if (this.state.type == 2) {
-            apiUrlParam = 'AssignedWork'
-        } else if (this.state.type == 3) {
-            apiUrlParam = 'CombinationWork'
-        } else if (this.state.type == 4) {
-            apiUrlParam = 'ProcessedJob'
+        if (taskType == CONGVIEC_CONSTANT.DUOC_GIAO) {
+            apiUrlParam = 'AssignedWork';
+        } else if (taskType == CONGVIEC_CONSTANT.PHOIHOP_XULY) {
+            apiUrlParam = 'CombinationWork';
+        } else if (taskType == CONGVIEC_CONSTANT.DAGIAO_XULY) {
+            apiUrlParam = 'ProcessedJob';
         }
 
-        const url = `${API_URL}/api/HscvCongViec/PersonalWork/${this.state.userId}/${this.state.pageSize}/${this.state.pageIndex}?query=`;
+        const url = `${API_URL}/api/HscvCongViec/${apiUrlParam}/${this.state.userId}/${this.state.pageSize}/${this.state.pageIndex}?query=${this.state.filterValue}`;
+
+        console.log('123', url);
 
         let result = await fetch(url).then(response => {
             return response.json();
@@ -91,46 +95,42 @@ class BaseTaskList extends Component {
         });
 
         this.setState({
-            loading: false,
-            refreshing: false,
-            loadMore: false,
-            data: isLoading ? result : [...this.state.data, ...result]
+            loadingData: false,
+            refreshingData: false,
+            searchingData: false,
+            loadingMoreData: false,
+            data: (loadingData || refreshingData) ? result : [...this.state.data, ...result]
         });
     }
 
-    toggleFilter = () => {
+    onFilter() {
         this.setState({
-            showFilter: !this.state.showFilter,
-            filterValue: !this.state.showFilter ? EMPTY_STRING : this.state.filterValue
+            loadingData: true,
+            pageIndex: DEFAULT_PAGE_INDEX
+        }, () => {
+            this.fetchData();
         })
     }
 
-    clearFilterValue = () => {
+    onLoadingMore() {
         this.setState({
-            filterValue: EMPTY_STRING
-        });
+            loadingMoreData: true,
+            pageIndex: this.state.pageIndex + 1
+        }, () => {
+            this.fetchData();
+        })
     }
 
-    onFilter = () => {
-        //tìm kiếm
-        if (util.isNull(this.state.filterValue) || util.isEmpty(this.state.filterValue)) {
-            Toast.show({
-                text: 'Vui lòng nhập tên công việc',
-                type: 'danger',
-                buttonText: "OK",
-                buttonStyle: { backgroundColor: '#fff' },
-                buttonTextStyle: { color: '#FF0033' },
-                duration: 2000
-            });
-        } else {
-            this.props.navigator.navigate('ListFilterTaskScreen', {
-                filterValue: this.state.filterValue,
-                filterType: this.state.type
-            })
-        }
+    handleRefresh = () => {
+        this.setState({
+            refreshingData: true,
+            pageIndex: DEFAULT_PAGE_INDEX
+        }, () => {
+            this.fetchData();
+        })
     }
 
-    renderItem = ({ item, index }) => {
+    renderItem = ({ item }) => {
         return (
             <View>
                 <TouchableOpacity onPress={() => this.props.navigator.navigate('DetailTaskScreen', {
@@ -161,130 +161,91 @@ class BaseTaskList extends Component {
                         }
 
                         title={
-                            <Text style={item.IS_READ === true ? ListTaskStyle.textRead : ListTaskStyle.textNormal}>
-                                {item.TENCONGVIEC}
-                            </Text>
+                            <RnText style={item.IS_READ === true ? ListTaskStyle.textRead : ListTaskStyle.textNormal}>
+                                <RnText style={{fontWeight: 'bold'}}>
+                                    Tên công việc:
+                                </RnText>
+                                <RnText>
+                                    {' ' + item.TENCONGVIEC}
+                                </RnText>
+                            </RnText>
                         }
 
                         subtitle={
-                            <Text style={[item.IS_READ === true ? ListTaskStyle.textRead : ListTaskStyle.textNormal, ListTaskStyle.abridgment]}>
-                                {'Hạn xử lý: ' + convertDateToString(item.NGAYHOANTHANH_THEOMONGMUON)}
-                            </Text>
+                            <RnText style={[item.IS_READ === true ? ListTaskStyle.textRead : ListTaskStyle.textNormal, ListTaskStyle.abridgment]}>
+                                <RnText style={{fontWeight: 'bold'}}>
+                                    Hạn xử lý:
+                                </RnText>
+                                <RnText>
+                                    {' ' + convertDateToString(item.NGAYHOANTHANH_THEOMONGMUON)}
+                                </RnText>
+                            </RnText>
                         }
                     />
                 </TouchableOpacity>
-                {
-                    renderIf(index === this.state.data.length - 1)(
-                        <TouchableOpacity style={ListTaskStyle.loadMoreButton} onPress={() => this.handleEnd()}>
-                            <Text style={ListTaskStyle.loadMoreButtonText}>TẢI THÊM CÔNG VIỆC</Text>
-                        </TouchableOpacity>
-                    )
-                }
             </View>
         );
-    }
-
-    handleEnd = () => {
-        this.setState(state => ({
-            pageIndex: state.pageIndex + 1,
-            loadMore: true,
-        }), () => this.fetchData());
-    }
-
-    handleRefresh = () => {
-        this.setState({
-            refreshing: true,
-            pageIndex: DEFAULT_PAGE_INDEX,
-            pageSize: DEFAULT_PAGE_SIZE,
-        }, () => {
-            this.fetchData();
-        });
     }
 
     render() {
         return (
             <Container>
-                <Header style={{ backgroundColor: HEADER_COLOR }}>
-                    <Left style={{ flex: 1 }}>
-                        <Button transparent onPress={() => openSideBar(this.props.navigator)}>
-                            <Icon name='menu' />
-                        </Button>
-                    </Left>
-                    <Body style={{ flex: 3 }} >
-                        <Item>
-                            <Icon name="ios-arrow-round-back" onPress={() => this.toggleFilter()} />
-                            <Input placeholder="Mã hiệu hoặc trích yếu"
-                                value={this.state.filterValue}
-                                onChangeText={(filterValue) => this.setState({ filterValue })}
-                                onSubmitEditing={() => this.onFilter()} />
-                            <Icon name="ios-close" onPress={() => this.clearFilterValue()} />
-                        </Item>
-                    </Body>
-                    <Right style={{ flex: 1 }} >
-                        <Button transparent onPress={() => this.onFilter()}>
-                            <Text>Search</Text>
-                        </Button>
-                    </Right>
+                <Header searchBar rounded style={{ backgroundColor: HEADER_COLOR }}>
+                    <Item>
+                        <Icon name='ios-search' />
+                        <Input placeholder='Tên công việc'
+                            value={this.state.filterValue}
+                            onChangeText={(filterValue) => this.setState({filterValue})}
+                            onSubmitEditing={() => this.onFilter()} />
+                    </Item>
                 </Header>
-                <Content contentContainerStyle={{ justifyContent: 'center', flex: 1 }}>
-                    {
-                        renderIf(!this.state.loading)(
-                            <FlatList
-                                onEndReachedThreshold={0.1}
-                                data={this.state.data}
-                                keyExtractor={(item, index) => index.toString()}
-                                renderItem={this.renderItem}
-                                ListFooterComponent={() => this.state.loadMore ? <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> : null}
-                                ListEmptyComponent={() =>
-                                    this.state.loading ? null : (
-                                        <View style={ListTaskStyle.emtpyContainer}>
-                                            <Image source={EMPTY_DATA_ICON_URI} style={ListTaskStyle.emptyIcon} />
-                                            <Text style={ListTaskStyle.emptyMessage}>
-                                                {EMTPY_DATA_MESSAGE}
-                                            </Text>
-                                        </View>
-                                    )
-                                }
 
-                                refreshControl={
-                                    <RefreshControl
-                                        onRefresh={this.handleRefresh}
-                                        refreshing={this.state.refreshing}
-                                        colors={[LOADER_COLOR]}
-                                        title={'Kéo để làm mới'}
-                                    />
-                                }
-                            />
+                <Content contentContainerStyle={{flex: 1}}>
+                    {
+                        renderIf(!this.state.loadingData)(
+                            <List>
+                                <FlatList
+                                    data={this.state.data}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    renderItem={this.renderItem}
+                                    refreshControl={
+                                        <RefreshControl
+                                            refreshing={this.state.refreshingData}
+                                            onRefresh={this.handleRefresh}
+                                            title='Kéo để làm mới'
+                                            colors={[LOADER_COLOR]}
+                                            tintColor={[LOADER_COLOR]}
+                                            titleColor='red'
+                                        />
+                                    }
+                                    ListFooterComponent={
+                                        this.state.loadingMoreData ?
+                                            <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
+                                            (
+                                                this.state.data.length >= DEFAULT_PAGE_SIZE ?
+                                                    <Button full style={{ backgroundColor: '#0082ba' }} onPress={() => this.onLoadingMore()}>
+                                                        <Text>
+                                                            TẢI THÊM
+                                                        </Text>
+                                                    </Button>
+                                                    : null
+                                            )
+                                    }
+                                />
+                            </List>
                         )
                     }
+
                     {
-                        renderIf(this.state.loading)(
-                            <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+                        renderIf(this.state.loadingData)(
+                            <View style={{ flex: 1, justifyContent: 'center' }}>
+                                <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+                            </View>
                         )
                     }
                 </Content>
-
-
-                {/* modal tìm kiếm văn bản */}
-                <Modal animationType="fade"
-                    transparent={true}
-                    visible={this.state.showFilter}
-                    onRequestClose={() => { console.log('close filter modal') }}>
-                    <Container>
-                        <Header searchBar rounded style={{ backgroundColor: HEADER_COLOR }}>
-                            <Item>
-                                <Icon name="ios-arrow-round-back" onPress={() => this.toggleFilter()} />
-                                <Input placeholder="Tên công việc"
-                                    value={this.state.filterValue}
-                                    onChangeText={(filterValue) => this.setState({ filterValue })}
-                                    onSubmitEditing={() => this.onFilter()} />
-                                <Icon name="ios-close" onPress={() => this.clearFilterValue()} />
-                            </Item>
-                        </Header>
-                    </Container>
-                </Modal>
             </Container>
-        );
+        )
     }
 }
 

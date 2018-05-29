@@ -5,180 +5,207 @@
 */
 'use strict'
 import React, { Component } from 'react';
-import { 
-	Alert, Animated, View, Text, FlatList, 
-	TouchableOpacity, TouchableHighlight, StyleSheet, Image
-} from 'react-native';
-
-//native-base
-import {
-    Button, Icon as NBIcon, Text as NBText, Item, Input, Title, 
-    Container, Header, Content, Left, Right, Body, CheckBox,
-    Tab, Tabs, TabHeading, ScrollableTab, ListItem as NBListItem,
-    Form, Textarea, Toast
-} from 'native-base';
-
-import { List, ListItem, Icon } from 'react-native-elements';
-
-//constant
-import {
-    API_URL, DEFAULT_PAGE_INDEX,
-    DEFAULT_PAGE_SIZE, EMPTY_DATA_ICON_URI,
-    EMPTY_STRING, EMTPY_DATA_MESSAGE,
-    HEADER_COLOR, LOADER_COLOR
-} from '../../../common/SystemConstant';
-
-//effect
-import { dataLoading, executeLoading } from '../../../common/Effect';
-
-//util
-import * as util from 'lodash';
-import renderIf from 'render-if';
+import { ActivityIndicator, View, FlatList } from 'react-native';
 
 //redux
 import { connect } from 'react-redux';
+import * as workflowAction from '../../../redux/modules/workflow/WorkflowAction'
+
+//utilities
+import { asyncDelay, emptyDataPage } from '../../../common/Utilities';
+import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
+import {
+	API_URL, EMPTY_STRING, HEADER_COLOR, LOADER_COLOR,
+	LOADMORE_COLOR, DEFAULT_PAGE_INDEX, WORKFLOW_PROCESS_TYPE
+} from '../../../common/SystemConstant';
+import { dataLoading, executeLoading } from '../../../common/Effect';
+import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+
+//lib
+import renderIf from 'render-if';
+import * as util from 'lodash';
+import {
+	Container, Content, Header, Left, Text, Icon, Title, Textarea,
+	Right, Body, Item, Button, Tabs, Tab, TabHeading, Form, Input, Toast
+}
+	from 'native-base';
+import { Icon as RneIcon } from 'react-native-elements';
 
 //styles
 import { TabStyle } from '../../../assets/styles/TabStyle';
 
+
+//views
 import WorkflowRequestReviewUsers from './WorkflowRequestReviewUsers';
 
-import * as workflowAction from '../../../redux/modules/workflow/WorkflowAction'
-
-import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
-
-import { asyncDelay } from '../../../common/Utilities';
-
 class WorkflowRequestReview extends Component {
-	constructor(props){
+	constructor(props) {
 		super(props);
+
 		this.state = {
-			userId: this.props.userInfo.ID,
+			userId: props.userInfo.ID,
 
 			docId: this.props.navigation.state.params.docId,
 			docType: this.props.navigation.state.params.docType,
-
 			processId: this.props.navigation.state.params.processId,
 			stepId: this.props.navigation.state.params.stepId,
 			isStepBack: this.props.navigation.state.params.isStepBack,
 			stepName: util.toUpper(this.props.navigation.state.params.stepName),
-
-			//danh sách người nhận xử lý chính cùng phòng ban
-			selectedTabIndex: 0,
-			groupMainProcessorFinal: [],
-			groupMainProcessor: [],
-			loading: false,
-			filterValue: EMPTY_STRING,
 			message: EMPTY_STRING,
-			executingLoading: false
+
+			pageIndex: DEFAULT_PAGE_INDEX,
+			groupMainProcessors: [],
+			filterValue: EMPTY_STRING,
+			currentTabIndex: 0,
+			loading: false,
+			searching: false,
+			loadingMore: false,
+			executing: false
 		}
 	}
 
-	componentDidMount(){
+	componentWillMount() {
 		this.fetchData();
 	}
 
-	async fetchData(){
+	async fetchData() {
 		this.setState({
 			loading: true
 		});
 
 		const url = `${API_URL}/api/VanBanDi/GetFlow/${this.state.userId}/${this.state.processId}/${this.state.stepId}/${this.state.isStepBack ? 1 : 0}/0`;
-		// console.log('123', url);
+
 		const result = await fetch(url);
 		const resultJson = await result.json();
-		
+
 		this.setState({
 			loading: false,
-			groupMainProcessorFinal: resultJson.dsNgNhanChinh,
-			groupMainProcessor: resultJson.dsNgNhanChinh
-		});	
-	}
-	
-	renderItem  = ({item}) => {
-		return (
-			<WorkflowRequestReviewUsers title={item.PhongBan.NAME} users={item.LstNguoiDung} />
-		);
+			groupMainProcessors: resultJson.dsNgNhanChinh || []
+		})
 	}
 
-	navigateBack(){
+	navigateBackToDetail() {
 		this.props.navigation.navigate('DetailSignDocScreen', {
 			docId: this.state.docId,
 			docType: this.state.docType
 		})
 	}
 
-	onFilter(filterValue){
+	renderItem = ({ item }) => {
+		return (
+			<WorkflowRequestReviewUsers title={item.PhongBan.NAME} users={item.LstNguoiDung} />
+		);
 	}
 
-	async saveRequestReview(){
+	searchData() {
+		this.props.resetProcessUsers(WORKFLOW_PROCESS_TYPE.ALL_PROCESS);
 		this.setState({
-			executingLoading: true
-		});
-		const result = await fetch(API_URL + '/api/VanBanDi/SaveReview', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json; charset=utf-8',
-            },
-            body: JSON.stringify({
-                userId: this.state.userId,
-                joinUser: this.props.reviewUsers.toString(),
-                stepID: this.state.stepId,
-                processID: this.state.processId,
-				message: this.state.message
-            })
-        });
+			searching: true,
+			pageIndex: DEFAULT_PAGE_INDEX
+		}, () => this.filterData())
+	}
 
-        const resultJson = await result.json();
-		
-		await asyncDelay(2000);
+	loadMore = () => {
+		this.setState({
+			loadingMore: true,
+			pageIndex: this.state.pageIndex + 1,
+		}, () => this.filterData())
+	}
 
-        this.setState({
-        	executingLoading: false
-        });
+	filterData = async () => {
+		const url = `${API_URL}/api/VanBanDi/SearchUserReview/${this.state.userId}/${this.state.pageIndex}?query=${this.state.filterValue}`;
 
-        //gửi thông báo đến cho người nhận review
+		const result = await fetch(url);
+		const resultJson = await result.json();
 
-		if(!util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)){
-			console.log('resultJson.GroupTokens', resultJson.GroupTokens)
-			const message = this.props.userInfo.Fullname + " đã gửi bạn review một văn bản mới";
-			const content = {
-				title: 'REVIEW VĂN BẢN TRÌNH KÝ',
-                message,
-                isTaskNotification: false,
-                targetScreen: 'DetailSignDocScreen',
-                targetDocId: this.state.docId,
-                targetDocType: this.state.docType
-            }
-			resultJson.GroupTokens.forEach(token => {
-				pushFirebaseNotify(content, token, "notification");
+		this.setState({
+			loadingMore: false,
+			loading: false,
+			searching: false,
+			groupMainProcessors: this.state.searching ? (resultJson.dsNgNhanChinh || []) : [...this.state.groupMainProcessors, ...(resultJson.dsNgNhanChinh || [])]
+		})
+	}
+
+	saveRequestReview = async () => {
+
+		if (this.props.reviewUsers.length <= 0) {
+			Toast.show({
+				text: 'Vui lòng chọn người cần gửi',
+				type: 'danger',
+				buttonText: "OK",
+				buttonStyle: { backgroundColor: '#fff' },
+				buttonTextStyle: { color: '#FF0033' },
+			});
+			return false
+		} else {
+			this.setState({
+				executing: true
+			});
+			const result = await fetch(API_URL + '/api/VanBanDi/SaveReview', {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json; charset=utf-8',
+				},
+				body: JSON.stringify({
+					userId: this.state.userId,
+					joinUser: this.props.reviewUsers.toString(),
+					stepID: this.state.stepId,
+					processID: this.state.processId,
+					message: this.state.message
+				})
+			});
+
+			const resultJson = await result.json();
+
+			await asyncDelay(2000);
+
+			this.setState({
+				executing: false
+			});
+
+			//gửi thông báo đến cho người nhận review
+
+			if (!util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)) {
+				const message = this.props.userInfo.Fullname + " đã gửi bạn review một văn bản mới";
+				const content = {
+					title: 'REVIEW VĂN BẢN TRÌNH KÝ',
+					message,
+					isTaskNotification: false,
+					targetScreen: 'DetailSignDocScreen',
+					targetDocId: this.state.docId,
+					targetDocType: this.state.docType
+				}
+				resultJson.GroupTokens.forEach(token => {
+					pushFirebaseNotify(content, token, "notification");
+				});
+			}
+
+			Toast.show({
+				text: resultJson.Status ? 'Lưu yêu cầu review thành công' : 'Lưu yêu cầu review không thành công',
+				type: resultJson.Status ? 'success' : 'danger',
+				buttonText: "OK",
+				buttonStyle: { backgroundColor: '#fff' },
+				buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
+				duration: 5000,
+				onClose: () => {
+					this.props.resetProcessUsers(WORKFLOW_PROCESS_TYPE.ALL_PROCESS);
+					if (resultJson.Status) {
+						this.navigateBackToDetail();
+					}
+				}
 			});
 		}
-		
-        Toast.show({
-            text: resultJson.Status ? 'Lưu yêu cầu review thành công' : 'Lưu yêu cầu review không thành công',
-            type: resultJson.Status ? 'success' : 'danger',
-            buttonText: "OK",
-            buttonStyle: { backgroundColor: '#fff' },
-            buttonTextStyle: { color: resultJson.Status ? '#337321' :'#FF0033'},
-            duration: 5000,
-            onClose: ()=> {
-            	this.props.resetProcessUsers();
-            	if(resultJson.Status){
-            		this.navigateBack();
-            	}
-            }
-         });
+
 	}
 
-	render(){
-		return(
+	render() {
+		return (
 			<Container>
-				<Header style={{ backgroundColor: HEADER_COLOR }} hasTabs>
+				<Header hasTabs style={{ backgroundColor: HEADER_COLOR }}>
 					<Left>
-						<Button transparent onPress={() => this.navigateBack()}>
-							<Icon name='ios-arrow-dropleft-circle' size={30} color={'#fff'} type="ionicon" />
+						<Button transparent onPress={() => this.navigateBackToDetail()}>
+							<RneIcon name='ios-arrow-round-back'  size={verticalScale(40)} color={'#fff'} type='ionicon'/>
 						</Button>
 					</Left>
 
@@ -190,63 +217,90 @@ class WorkflowRequestReview extends Component {
 
 					<Right>
 						<Button transparent onPress={() => this.saveRequestReview()}>
-							<Icon name='ios-checkmark-circle' size={30} color={'#fff'} type="ionicon" />
+							<RneIcon name='md-send' size={verticalScale(30)} color={'#fff'} type='ionicon' />
 						</Button>
 					</Right>
 				</Header>
-				
+
 				{
 					renderIf(this.state.loading)(
 						dataLoading(true)
 					)
-				} 
+				}
 
 				{
 					renderIf(!this.state.loading)(
-						<Tabs initialPage={this.state.selectedTabIndex}
-							  onChangeTab={({selectedTabIndex}) => this.setState({
-							  	selectedTabIndex
-							  })}
-							  tabBarUnderlineStyle={{
-		                        borderBottomWidth:4,
-		                        borderBottomColor: '#FF6600'
-                    		}}>
+						<Tabs initialPage={this.state.currentTabIndex}
+							onChangeTab={({ currentTabIndex }) => this.setState({
+								currentTabIndex
+							})}
+							tabBarUnderlineStyle={TabStyle.underLineStyle}>
 
 							<Tab heading={
 								<TabHeading style={this.state.selectedTabIndex == 0 ? TabStyle.activeTab : TabStyle.inActiveTab}>
-									<NBIcon name='ios-person-outline' style={this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText}/>
-									<NBText style={this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText}>
+									<Icon name='ios-person-outline' style={TabStyle.activeText} />
+									<Text style={this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText}>
 										NGƯỜI NHẬN
-									</NBText>
+									</Text>
 								</TabHeading>
 							}>
+								<Item>
+									<Icon name='ios-search' />
+									<Input placeholder='Họ tên'
+										value={this.state.filterValue}
+										onSubmitEditing={() => this.searchData()}
+										onChangeText={(filterValue) => this.setState({ filterValue })} />
+								</Item>
 								<Content>
-									{/*<Form style={{paddingVertical: 5}}>
-										<Item>
-											<Input placeholder='Họ tên hoặc chức vụ'
-											onSubmitEditing={()=> this.onFilter()}
-											onChangeText={(filterValue) => this.onFilter(filterValue)}/>
-											<NBIcon active name='ios-search'/>
-										</Item>
-									</Form>*/}
-									<FlatList 
-										keyExtractor={(item, index) => index.toString()}
-										data={this.state.groupMainProcessorFinal}
-										renderItem={this.renderItem}
-									/>
+									{
+										renderIf(this.state.searching)(
+											<View style={{ flex: 1, justifyContent: 'center' }}>
+												<ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+											</View>
+										)
+									}
+
+									{
+										renderIf(!this.state.searching)(
+											<FlatList
+												keyExtractor={(item, index) => index.toString()}
+												data={this.state.groupMainProcessors}
+												renderItem={this.renderItem}
+												ListEmptyComponent = {
+													this.state.loading ? null : emptyDataPage()
+												}
+												ListFooterComponent={
+													this.state.loadingMore ?
+														<ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
+														(
+															this.state.groupMainProcessors.length >= 5 ?
+																<Button full style={{ backgroundColor: LOADMORE_COLOR }} onPress={() => this.loadMore()}>
+																	<Text>
+																		TẢI THÊM
+																</Text>
+																</Button>
+																: null
+														)
+												}
+											/>
+										)
+									}
 								</Content>
 							</Tab>
 
 							<Tab heading={
 								<TabHeading style={this.state.selectedTabIndex == 1 ? TabStyle.activeTab : TabStyle.inActiveTab}>
-									<NBIcon name='ios-chatbubbles-outline' style={this.state.selectedTabIndex == 1 ? TabStyle.activeText : TabStyle.inActiveText}/>
-									<NBText style={this.state.selectedTabIndex == 1 ? TabStyle.activeText : TabStyle.inActiveText}>
+									<Icon name='ios-chatbubbles-outline' style={TabStyle.activeText} />
+									<Text style={this.state.selectedTabIndex == 1 ? TabStyle.activeText : TabStyle.inActiveText}>
 										TIN NHẮN
-									</NBText>
+									</Text>
 								</TabHeading>
 							}>
 								<Form>
-									<Textarea rowSpan={5} bordered placeholder="Nội dung tin nhắn" value={this.state.message} onChangeText={(message)=> this.setState({message})}/>
+									<Textarea rowSpan={5} bordered
+										placeholder="Nội dung tin nhắn"
+										value={this.state.message}
+										onChangeText={(message) => this.setState({ message })} />
 								</Form>
 							</Tab>
 						</Tabs>
@@ -254,12 +308,13 @@ class WorkflowRequestReview extends Component {
 				}
 
 				{
-					executeLoading(this.state.executingLoading)
+					executeLoading(this.state.executing)
 				}
 			</Container>
 		);
 	}
 }
+
 
 const mapStateToProps = (state) => {
 	return {
@@ -270,9 +325,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		resetProcessUsers: ()=> (dispatch(workflowAction.resetProcessUsers()))
+		resetProcessUsers: (workflowProcessType) => (dispatch(workflowAction.resetProcessUsers(workflowProcessType)))
 	}
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(WorkflowRequestReview);
-

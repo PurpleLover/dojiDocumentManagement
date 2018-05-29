@@ -148,7 +148,7 @@ const appRoutes = {
 }
 const appConfig = {
     headerMode: 'none',
-    initialRouteName: 'ListPersonalTaskScreen',
+    initialRouteName: 'ListIsNotProcessedScreen',
     drawerWidth: width * 0.8,
     contentComponent: props => <SideBar {...props} />
 }

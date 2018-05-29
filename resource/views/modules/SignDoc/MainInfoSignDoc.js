@@ -12,7 +12,6 @@ import _ from 'lodash';
 import HTMLView from 'react-native-htmlview';
 //styles
 import { DetailSignDocStyle } from '../../../assets/styles/SignDocStyle';
-
 //common
 import { convertDateToString } from '../../../common/Utilities';
 
@@ -184,20 +183,6 @@ export default class MainInfoSignDoc extends Component {
                                     value={this.state.info.NOIDUNG}
                                 />
                             }/>
-
-                        <ListItem style={DetailSignDocStyle.listItemContainer}
-                            hideChevron={true}
-                            title={
-                                <Text style={DetailSignDocStyle.listItemTitleContainer}>
-                                    ĐƠN VỊ PHÒNG BAN NHẬN VĂN BẢN
-                                </Text>
-                            }>
-                            subTitle={
-                                <Text style={DetailSignDocStyle.listItemSubTitleContainer}>
-
-                                </Text>
-                            }
-                        </ListItem>
                     </List>
                 </ScrollView>
             </View>

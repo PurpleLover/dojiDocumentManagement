@@ -4,6 +4,7 @@
  * @since: 06/05/2018
  */
 import * as type from './WorkflowActionType';
+import { WORKFLOW_PROCESS_TYPE } from '../../../common/SystemConstant';
 
 const initialState = {
     reviewUsers: [],
@@ -45,12 +46,26 @@ const reducer = (state = initialState, action) => {
                 mainProcessUser: finalMainProcessResult,
                 joinProcessUsers: finalJoinProcessResult
             }
-        case type.RESET_PROCESS_USERS: 
-            return {
-                reviewUsers: [],
-                mainProcessUser: 0,
-                joinProcessUsers: [],
+        case type.RESET_PROCESS_USERS:
+            if(action.workflowProcessType == WORKFLOW_PROCESS_TYPE.MAIN_PROCESS){
+                return {
+                    ...state,
+                    mainProcessUser: 0,
+                }
+            } else if(action.workflowProcessType == WORKFLOW_PROCESS_TYPE.JOIN_PROCESS){
+                return {
+                    ...state,
+                    joinProcessUsers: [],
+                }
+            } else {
+                return {
+                    ...state,
+                    reviewUsers: [],
+                    mainProcessUser: 0,
+                    joinProcessUsers: [],
+                }
             }
+            
         default:
             return state;
     }

@@ -38,7 +38,7 @@ class Loading extends Component {
     }
 
     async componentDidMount() {
-        let intervalId = setInterval(this.progressing.bind(this), 1);
+        let intervalId = setInterval(this.progressing.bind(this), 100);
         this.setState({
             intervalId
         });
@@ -70,7 +70,7 @@ class Loading extends Component {
                 this.props.setUserInfo(userInfoStorage);
                 setTimeout(()=> {
                     this.props.navigation.navigate('App');
-                }, 1000)
+                }, 100)
             }else{
                 this.props.navigation.navigate('Auth');
             }

@@ -13,11 +13,14 @@ export const TabStyle = StyleSheet.create({
     activeTab: {
         backgroundColor: '#fff'
     }, activeText: {
-        color: '#FF6600',
+        color: '#FF0033',
         fontWeight: 'bold'
     }, inActiveTab: {
         backgroundColor: '#fff'
     }, inActiveText: {
-        color: '#FF993B'
+        color: '#FF0033'
+    }, underLineStyle: {
+        borderBottomWidth: 4,
+        borderBottomColor: '#FF0033'
     }
 });

@@ -9,9 +9,11 @@ import { combineReducers } from 'redux';
 import userReducer from '../modules/user/UserReducer';
 import workflowReducer from '../modules/workflow/WorkflowReducer';
 import taskReducer from '../modules/task/TaskReducer'
+import signDocReducer from '../modules/signdoc/SignDocReducer';
 
 export const globalReducer = combineReducers({
     userState: userReducer,
     workflowState: workflowReducer,
-    taskState: taskReducer
+    taskState: taskReducer,
+    signDocState: signDocReducer
 });
