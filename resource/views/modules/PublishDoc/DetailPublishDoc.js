@@ -112,19 +112,16 @@ class DetailPublishDoc extends Component {
 
         return (
             <Container hasTabs>
-                <Header style={{ backgroundColor: HEADER_COLOR }}>
-                    <Left>
+                <Header style={{ backgroundColor: HEADER_COLOR, justifyContent:'space-between' }}>
+                    <Left style={{flex:1}}>
                         <Button transparent onPress={() => this.navigateBack()}>
                                 <Icon name='ios-arrow-dropleft-circle' size={30} color={'#fff'} type="ionicon" />
                         </Button>
                     </Left>
 
-                    <Body>
-                        <Title>
+                    <Body style={{flex:4}}>
                             THÔNG TIN VĂN BẢN
-                        </Title>
                     </Body>
-                    <Right></Right>
                 </Header>
                 {
                     content

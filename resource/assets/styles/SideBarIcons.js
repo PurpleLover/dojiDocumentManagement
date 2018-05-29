@@ -31,3 +31,7 @@ export const works_Quested_Neutral = require('../images/SideBar/Works/Quested-Ne
 // Work Completed
 export const works_Completed_Active = require('../images/SideBar/Works/Completed-Active.png');
 export const works_Completed_Neutral = require('../images/SideBar/Works/Completed-Neutral.png');
+
+//Signout
+export const signout_Active = require('../images/SideBar/SignOut/Signout-Active.png');
+export const signout_Neutral = require('../images/SideBar/SignOut/Signout-Neutral.png');
