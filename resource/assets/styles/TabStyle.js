@@ -3,12 +3,13 @@
  * @author: duynn
  * @since: 09/05/2018
  */
-import React, { Component } from 'react'
-import { StyleSheet } from 'react-native'
+import React, { Component } from 'react';
+import { StyleSheet } from 'react-native';
+import {scale, verticalScale, moderateScale} from './ScaleIndicator';
 
 export const TabStyle = StyleSheet.create({
     tabText: {
-        fontSize: 10
+        fontSize: moderateScale(10,0.9)
     },
     activeTab: {
         backgroundColor: '#fff'
@@ -20,7 +21,7 @@ export const TabStyle = StyleSheet.create({
     }, inActiveText: {
         color: '#FF0033'
     }, underLineStyle: {
-        borderBottomWidth: 4,
+        borderBottomWidth: verticalScale(4),
         borderBottomColor: '#FF0033'
     }
 });

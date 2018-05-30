@@ -5,6 +5,7 @@
  */
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
+import {scale, verticalScale, moderateScale} from './ScaleIndicator';
 
 export const MenuStyle = StyleSheet.create({
     wrapper: {
@@ -15,7 +16,7 @@ export const MenuStyle = StyleSheet.create({
 export const MenuOptionStyle = StyleSheet.create({
     wrapper: {
         backgroundColor: '#fff',
-        paddingVertical: 10,
+        paddingVertical: verticalScale(10),
         borderRadius: 5
     },
     wrapperBorder: {
@@ -24,6 +25,6 @@ export const MenuOptionStyle = StyleSheet.create({
     },
     text: {
         color:'#000',
-        fontSize: 15
+        fontSize: moderateScale(15, 1.45)
     }
 });
