@@ -146,7 +146,8 @@ class BaseTaskList extends Component {
                                 fontWeight: 'bold'
                             },
                             containerStyle: {
-                                backgroundColor: getColorCodeByProgressValue(item.PHANTRAMHOANTHANH)
+                                backgroundColor: getColorCodeByProgressValue(item.PHANTRAMHOANTHANH),
+                                borderRadius: 3
                             }
                         }}
 
