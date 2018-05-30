@@ -83,8 +83,6 @@ class BaseTaskList extends Component {
 
         const url = `${API_URL}/api/HscvCongViec/${apiUrlParam}/${this.state.userId}/${this.state.pageSize}/${this.state.pageIndex}?query=${this.state.filterValue}`;
 
-        console.log('123', url);
-
         let result = await fetch(url).then(response => {
             return response.json();
         }).then(responseJson => {

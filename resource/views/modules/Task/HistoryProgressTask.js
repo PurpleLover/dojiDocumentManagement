@@ -71,6 +71,8 @@ class HistoryProgressTask extends Component {
 		}
 
         const url = `${API_URL}/api/HscvCongViec/JobDetail/${this.state.taskId}/${this.state.userId}`;
+
+        console.log('url', url);
         
         const data = await fetch(url)
         .then(response => response.json())

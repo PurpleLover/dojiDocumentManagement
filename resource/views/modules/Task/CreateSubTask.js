@@ -6,188 +6,211 @@
 
 'use strict'
 import React, { Component } from 'react';
-import {
-    ActivityIndicator, View, Text, Modal, DatePickerAndroid,
-    FlatList, TouchableOpacity, Image,
-    StyleSheet
-} from 'react-native';
-
-//constant
-import {
-    API_URL, HEADER_COLOR, EMPTY_STRING
-} from '../../../common/SystemConstant';
-
-//native-base
-import {
-    Button, Icon as NBIcon, Text as NBText, Item, Input, Title, Form, Textarea,
-    Container, Header, Content, Left, Right, Body, CheckBox, Toast, Picker,Label,
-    Tab, Tabs, TabHeading, ScrollableTab, List as NBList, ListItem as NBListItem, Radio
-} from 'native-base';
-
-//react-native-elements
-import { ListItem, Icon } from 'react-native-elements';
-//styles
-import { DetailSignDocStyle } from '../../../assets/styles/SignDocStyle';
-import { MenuStyle, MenuOptionStyle } from '../../../assets/styles/MenuPopUpStyle';
-import { TabStyle } from '../../../assets/styles/TabStyle';
-
-import { dataLoading, executeLoading } from '../../../common/Effect';
-import { asyncDelay, unAuthorizePage, openSideBar } from '../../../common/Utilities';
-
+import { DatePickerAndroid } from 'react-native';
 //lib
-import { connect } from 'react-redux';
-import renderIf from 'render-if';
-import * as util from 'lodash';
-import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
+import { 
+	Container, Header, Left, Body, Content,
+	Right, Item,Title, Text, Icon, Input,
+	Button, Form, Picker, Toast, Label
+} from 'native-base'
+import { Icon as RneIcon } from 'react-native-elements';
 
-import AssignTaskUsers from './AssignTaskUsers';
-import * as taskAction from '../../../redux/modules/task/TaskAction';
+//utilities
+import { API_URL, HEADER_COLOR, EMPTY_STRING } from '../../../common/SystemConstant';
+import { verticalScale } from '../../../assets/styles/ScaleIndicator';
+import { executeLoading } from '../../../common/Effect';
+import { asyncDelay } from '../../../common/Utilities';
+import * as util from 'lodash';
+
+//redux
+import { connect } from 'react-redux';
 
 class CreateSubTask extends Component {
 	constructor(props){
 		super(props);
+		
 		this.state = {
-			taskId: this.props.navigation.state.params.taskId,
-			taskType: this.props.navigation.state.params.taskType,
-			taskContent: EMPTY_STRING,
+			userId: props.userInfo.ID,
+
+			taskId: props.navigation.state.params.taskId,
+			taskType: props.navigation.state.params.taskType,
+			
 			deadline: EMPTY_STRING,
-			priorityValue: '101',
-			urgencyValue: '98',
-			executing: false,
+			content: EMPTY_STRING,
+			priorityValue: '101', //độ ưu tiên
+			urgencyValue: '98', //đô khẩn
+
+			executing: false
 		}
 	}
 
-	navigateBack(){
+	onPriorityValueChange(value){
+		this.setState({
+			priorityValue: value
+		});
+	}
+
+	onUrgencyValueChange(value){
+		this.setState({
+			urgencyValue: value
+		})
+	}
+	
+	navigateBackToDetail(){
 		this.props.navigation.navigate('DetailTaskScreen', {
 			taskId: this.state.taskId,
 			taskType: this.state.taskType
 		});
 	}
 
-	async createSubTask(){
-		this.setState({
-			executing: true
-		});
-		
-		const result = await fetch(`${API_URL}/api/HscvCongViec/CreateSubTask`, {
-			method: 'POST',
-			headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json; charset=utf-8',
-            },
-            body: JSON.stringify({
-            	beginTaskId: this.state.taskId,
-            	taskContent: this.state.taskContent,
-            	priority: this.state.priorityValue,
-            	urgency: this.state.urgencyValue,
-            	deadline: this.state.deadline
-            })
-		});
-
-		const resultJson = await result.json();
-		
-		await asyncDelay(2000);
-
-		this.setState({
-			executing: false
-		});
-
-		Toast.show({
-            text: resultJson.Status ? 'Tạo công việc con thành công' : 'Tạo công việ con không thành công',
-            type: resultJson.Status ? 'success' : 'danger',
-            buttonText: "OK",
-            buttonStyle: { backgroundColor: '#fff' },
-            buttonTextStyle: { color: resultJson.Status ? '#337321' :'#FF0033'},
-            duration: 5000,
-            onClose: ()=> {
-            	if(resultJson.Status){
-            		this.navigateBack();
-            	}
-            }
-         });
-	}
-
-	async onOpenCalendar(){
+	onOpenCalendar = async () => {
 		try{
 			const { action, year, month, day } = await DatePickerAndroid.open({
 				date: new Date()
 			});
 
 			if(action !== DatePickerAndroid.dissmissedAction){
-				if (day < 10) {
-                    day = '0' + day;
-                }
-                if (month < 10) {
-                    month = '0' + (month + 1);
-                }
-                const deadline = day + '/' + month + '/' + year;
-                
-                this.setState({
-					deadline
-                });
+				if(day && month && year){
+					if (day < 10) {
+                    	day = '0' + day;
+	                }
+	                if (month < 10) {
+	                    month = '0' + (month + 1);
+	                }
+
+	                const deadline = day + '/' + month + '/' + year;
+	                
+	                this.setState({
+						deadline
+	                });
+				}
 			}
 		}catch({code, message}){
 			console.warn('Open datepicker error', err);
 		}
 	}
 
-	onProrityValueChange(priorityValue){
-		this.setState({
-			priorityValue
-		})
-	}
+	onCreateSubTask = async () => {
+		if(util.isNull(this.state.content) || util.isEmpty(this.state.content)){
+			Toast.show({
+                text: 'Vui lòng nhập nội dung',
+                type: 'danger',
+                buttonText: "OK",
+                buttonStyle: { backgroundColor: '#fff' },
+                buttonTextStyle: { color: '#FF0033'},
+            });
+		}else if(util.isNull(this.state.deadline) || util.isEmpty(this.state.deadline)){
+			Toast.show({
+                text: 'Vui lòng nhập thời hạn xử lý',
+                type: 'danger',
+                buttonText: "OK",
+                buttonStyle: { backgroundColor: '#fff' },
+                buttonTextStyle: { color: '#FF0033'},
+            });
+		}else {
+			this.setState({
+				executing: true
+			});
+		
+			const url = `${API_URL}/api/HscvCongViec/CreateSubTask`;
 
-	onUrgencyValueChange(urgencyValue){
-		this.setState({
-			urgencyValue
-		})
+			const headers = new Headers({
+				'Accept': 'application/json',
+				'Content-Type': 'application/json; charset=utf-8'
+			});
+
+			const body = JSON.stringify({
+				beginTaskId: this.state.taskId,
+	            taskContent: this.state.content,
+	            priority: this.state.priorityValue,
+	            urgency: this.state.urgencyValue,
+	            deadline: this.state.deadline
+			});
+
+			const result = await fetch(url, {
+				method: 'POST',
+				headers,
+				body
+			});
+
+			const resultJson = await result.json();
+
+			await asyncDelay(2000);
+
+			this.setState({
+				executing: false
+			});
+		
+			Toast.show({
+	            text: resultJson.Status ? 'Tạo công việc con thành công' : 'Tạo công việc con không thành công',
+	            type: resultJson.Status ? 'success' : 'danger',
+	            buttonText: "OK",
+	            buttonStyle: { backgroundColor: '#fff' },
+	            buttonTextStyle: { color: resultJson.Status ? '#337321' :'#FF0033'},
+	            duration: 3000,
+	            onClose: ()=> {
+	            	if(resultJson.Status){
+	            		this.navigateBackToDetail();
+	            	}
+	            }
+	         });
+		}
+
 	}
 
 	render(){
 		return(
 			<Container>
-				<Header style={{ backgroundColor: HEADER_COLOR }} hasTabs>
-                        <Left>
-                            <Button transparent onPress={() => this.navigateBack()}>
-                                <Icon name='ios-arrow-dropleft-circle' size={30} color={'#fff'} type="ionicon" />
-                            </Button>
-                        </Left>
+				<Header style={{backgroundColor: HEADER_COLOR }}>
+					<Left>
+						<Button transparent onPress={() => this.navigateBackToDetail()}>
+                        	<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+                        </Button>
+					</Left>
 
-                        <Body>
-                            <Title>
-                            	TẠO CÔNG VIỆC CON
-                            </Title>
-                        </Body>
-                        <Right/>
-                </Header>
+					<Body>
+						<Title>
+							TẠO CÔNG VIỆC CON
+						</Title>
+					</Body>
 
-                <Content>
-                	<Form>
-						<Textarea rowSpan={5} bordered placeholder="Nội dung công việc" 
-							value={this.state.taskContent} 
-							onChangeText={(taskContent) => this.setState({taskContent})}/>
-						
+					<Right/>
+				</Header>
+
+				<Content>
+					<Form>
 						<Item stackedLabel>
-                            <Label>Độ ưu tiên</Label>
-                            <Picker
-				              iosHeader="Chọn độ ưu tiên"
-				              mode="dropdown"
-				              iosIcon={<NBIcon name='ios-arrow-down-outline'/>}
-                              style={{width: '100%'}}
-				              selectedValue={this.state.priorityValue}
-				              onValueChange={this.onProrityValueChange.bind(this)}>
-					              <Picker.Item value="101" label="Cao" />
-					              <Picker.Item value="102" label="Thấp" />
-					              <Picker.Item value="103" label="Trung bình" />
-            				</Picker>
-                        </Item>
-						
+							<Label>
+								Nội dung công việc
+							</Label>
+
+							<Input value={this.state.content} onChangeText={(content) => this.setState({content})} />
+						</Item>
+
+						<Item stackedLabel>
+							<Label>
+								Độ ưu tiên
+							</Label>
+
+							<Picker 
+								iosHeader='Chọn độ ưu tiên'
+								mode='dropdown'
+								iosIcon={<Icon name='ios-arrow-donw-outline' />}
+								style={{width: '100%'}}
+								seletedValue={this.state.priorityValue}
+								onValueChange={this.onPriorityValueChange.bind(this)}>
+								<Picker.Item value="101" label="Cao" />
+					            <Picker.Item value="102" label="Thấp" />
+					            <Picker.Item value="103" label="Trung bình" />
+							</Picker>
+						</Item>
+
 						<Item stackedLabel>
                             <Label>Độ khẩn</Label>
                             <Picker
 				              iosHeader="Chọn độ khẩn"
 				              mode="dropdown"
-				              iosIcon={<NBIcon name='ios-arrow-down-outline'/>}
+				              iosIcon={<Icon name='ios-arrow-down-outline'/>}
                               style={{width: '100%'}}
 				              selectedValue={this.state.urgencyValue}
 				              onValueChange={this.onUrgencyValueChange.bind(this)}>
@@ -197,18 +220,24 @@ class CreateSubTask extends Component {
             				</Picker>
                         </Item>
 
-
                         <Item>
-                        	<Input placeholder={'Hạn hoàn thành'} value={this.state.deadline}/>
-                        	<NBIcon active name='ios-calendar-outline' onPress={()=> this.onOpenCalendar()}/>
+                        	<Input placeholder={'Hạn hoàn thành'} value={this.state.deadline} editable={false}/>
+                        	<Icon active name='ios-calendar-outline' onPress={()=> this.onOpenCalendar()}/>
                         </Item>
 
-                        <Button iconLeft full rounded style={{backgroundColor: '#337321', marginTop: 20}} onPress={()=> this.createSubTask()}>
-                        	<NBIcon name='ios-checkmark-circle-outline' />
-                        	<NBText>TẠO CÔNG VIỆC CON</NBText>
-                    	</Button>
-                	</Form>
-                </Content>
+                        <Button block danger 
+                                style={{backgroundColor : HEADER_COLOR , marginTop: verticalScale(20)}}
+                                onPress={() => this.onCreateSubTask()}>
+                            <Text>
+                            	TẠO CÔNG VIỆC CON 
+                            </Text>
+                        </Button>
+					</Form>
+				</Content>
+
+				{
+					executeLoading(this.state.executing)
+				}
 			</Container>
 		);
 	}

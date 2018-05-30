@@ -19,7 +19,7 @@ export const MenuOptionStyle = StyleSheet.create({
         borderRadius: 5
     },
     wrapperBorder: {
-        borderBottomColor: '#FCC954',
+        borderBottomColor: '#fff',
         borderBottomWidth: 1,
     },
     text: {

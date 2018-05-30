@@ -1,98 +1,123 @@
 /*
-	@description: đánh giá công việc
-	@author: duynn
-	@since: 15/05/2018
+    @description: đánh giá công việc
+    @author: duynn
+    @since: 15/05/2018
 */
-'use strict'
+
 import React, { Component } from 'react';
-import {
-    ActivityIndicator, View, Text, Modal,
-    FlatList, TouchableOpacity, Image,
-    StyleSheet, DatePickerAndroid
-} from 'react-native';
-
-//constant
-import {
-    API_URL, HEADER_COLOR, EMPTY_STRING
-} from '../../../common/SystemConstant';
-
-//native-base
-import {
-    Form, Button, Icon as NBIcon, Text as NBText, Item, Input, Title, Toast,
-    Container, Header, Content, Left, Right, Body, CheckBox, Label,Textarea, Picker,
-    Tab, Tabs, TabHeading, ScrollableTab, List as NBList, ListItem as NBListItem, Radio
-} from 'native-base';
-
-//react-native-elements
-import { ListItem, Icon } from 'react-native-elements';
-//styles
-import { DetailSignDocStyle } from '../../../assets/styles/SignDocStyle';
-import { MenuStyle, MenuOptionStyle } from '../../../assets/styles/MenuPopUpStyle';
-import { TabStyle } from '../../../assets/styles/TabStyle';
-
-import { dataLoading, executeLoading } from '../../../common/Effect';
-import { asyncDelay, unAuthorizePage, openSideBar, convertDateToString } from '../../../common/Utilities';
-
+import { StyleSheet } from 'react-native';
 //lib
+import {
+    Container, Header, Left, Button, Icon, 
+    Body, Title, Right, Text, Content,
+    Form, Item, Label, Picker, Toast
+} from 'native-base';
+import {
+    Icon as RneIcon 
+} from 'react-native-elements';
+import { Col, Row, Grid } from 'react-native-easy-grid';
+
+//redux
 import { connect } from 'react-redux';
-import renderIf from 'render-if';
+
+//utilities
+import { API_URL, EMPTY_STRING, HEADER_COLOR } from '../../../common/SystemConstant';
+import { asyncDelay } from '../../../common/Utilities'
+import { scale, verticalScale } from '../../../assets/styles/ScaleIndicator';
+import { executeLoading } from '../../../common/Effect';
 import * as util from 'lodash';
-import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 
 //firebase
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
-class EvaluationTask extends Component{
-	constructor(props){
-		super(props);
+class EvaluationTask extends Component {
+    constructor(props){
+        super(props);
+
         this.state = {
+            userId: props.userInfo.ID,
             taskId: this.props.navigation.state.params.taskId,
             taskType: this.props.navigation.state.params.taskType,
-            userId: this.props.userInfo.ID,
 
-            TDG_TUCHUCAO: '0',
-            TDG_TRACHNHIEMLON: '0',
-            TDG_TUONGTACTOT: '0',
-            TDG_TOCDONHANH: '0',
-            TDG_TIENBONHIEU: '0',
-            TDG_THANHTICHVUOT: '0',
-            executing: false
+            executing: false,
+            arrValue: [0, 1, 2, 3, 4, 5],
+            TUCHU_CAO: 0,
+            TRACHNHIEM_LON: 0,
+            TUONGTAC_TOT: 0,
+            TOCDO_NHANH: 0,
+            TIENBO_NHIEU: 0,
+            THANHTICH_VUOT: 0
         }
-	}
-
-    navigateBack(){
-        this.props.navigation.navigate('DetailTaskScreen', {
-            taskId: this.state.taskId,
-            taskType: this.state.taskType
-        });
     }
+    
+    onValueChange = (value, type) => {
+        switch(type) {
+            case 'TUCHU_CAO':
+                this.setState({
+                    TUCHU_CAO: value
+                })
+                break;
+            case 'TRACHNHIEM_LON':
+                this.setState({
+                    TRACHNHIEM_LON: value
+                })
+                break;
+            case 'TUONGTAC_TOT':
+                this.setState({
+                    TUONGTAC_TOT: value
+                })
+                break;
+            case 'TOCDO_NHANH':
+                this.setState({
+                    TOCDO_NHANH: value
+                })
+                break;
+            case 'TIENBO_NHIEU':
+                this.setState({
+                    TIENBO_NHIEU: value
+                })
+                break;
+            default: 
+                this.setState({
+                    THANHTICH_VUOT: value
+                })
+                break;
+        }
+    }
+    
 
-    async evaluateTask(){
-        const url = `${API_URL}/api/HscvCongViec/SaveEvaluationTask`;
-
+    onEvaluateTask = async () => {
         this.setState({
             executing: true
         })
 
+        const url = `${API_URL}/api/HscvCongViec/SaveEvaluationTask`;
+
+        const headers = new Headers({
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8'
+        });
+
+        const body = JSON.stringify({
+            userId: this.state.userId,
+            taskId: this.state.taskId,
+            TDG_TUCHUCAO: this.state.TUCHU_CAO == EMPTY_STRING ? 0 : this.state.TUCHU_CAO,
+            TDG_TRACHNHIEMLON: this.state.TRACHNHIEM_LON == EMPTY_STRING ? 0 : this.state.TRACHNHIEM_LON,
+            TDG_TUONGTACTOT: this.state.TUONGTAC_TOT == EMPTY_STRING ? 0 : this.state.TUONGTAC_TOT,
+            TDG_TOCDONHANH: this.state.TOCDO_NHANH == EMPTY_STRING ? 0 : this.state.TOCDO_NHANH,
+            TDG_TIENBONHIEU: this.state.TIENBO_NHIEU == EMPTY_STRING ? 0 : this.state.TIENBO_NHIEU,
+            TDG_THANHTICHVUOT: this.state.THANHTICH_VUOT == EMPTY_STRING ? 0 : this.state.THANHTICH_VUOT
+        });
+
         const result = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json; charset=utf-8',
-            }, body: JSON.stringify({
-                userId: this.state.userId,
-                taskId: this.state.taskId,
-                TDG_TUCHUCAO: this.state.TDG_TUCHUCAO == EMPTY_STRING ? 0 : this.state.TDG_TUCHUCAO,
-                TDG_TRACHNHIEMLON: this.state.TDG_TRACHNHIEMLON == EMPTY_STRING ? 0 : this.state.TDG_TRACHNHIEMLON,
-                TDG_TUONGTACTOT: this.state.TDG_TUONGTACTOT == EMPTY_STRING ? 0 : this.state.TDG_TUONGTACTOT,
-                TDG_TOCDONHANH: this.state.TDG_TOCDONHANH == EMPTY_STRING ? 0 : this.state.TDG_TOCDONHANH,
-                TDG_TIENBONHIEU: this.state.TDG_TIENBONHIEU == EMPTY_STRING ? 0 : this.state.TDG_TIENBONHIEU,
-                TDG_THANHTICHVUOT: this.state.TDG_THANHTICHVUOT == EMPTY_STRING ? 0 : this.state.TDG_THANHTICHVUOT
-            })
+            method: 'post',
+            headers,
+            body
         });
 
         const resultJson = await result.json();
 
+        
         await asyncDelay(2000);
 
         this.setState({
@@ -121,208 +146,299 @@ class EvaluationTask extends Component{
             buttonText: "OK",
             buttonStyle: { backgroundColor: '#fff' },
             buttonTextStyle: { color: resultJson.Status ? '#337321' :'#FF0033'},
-            duration: 5000,
+            duration: 3000,
             onClose: ()=> {
                 if(resultJson.Status){
-                    this.navigateBack();
+                    this.navigateToDetail();
                 }
             }
         });
     }
 
-    onValueChange(value, type){
-        switch(type){
-            case 'TDG_TUCHUCAO':
-                this.setState({
-                    TDG_TUCHUCAO: value
-                })
-            break;
-
-            case 'TDG_TRACHNHIEMLON':
-                this.setState({
-                    TDG_TRACHNHIEMLON: value
-                })
-            break;
-
-            case 'TDG_TUONGTACTOT':
-                this.setState({
-                    TDG_TUONGTACTOT: value
-                })
-            break;
-
-            case 'TDG_TOCDONHANH':
-                this.setState({
-                    TDG_TOCDONHANH: value
-                })
-            break;
-
-            case 'TDG_TIENBONHIEU':
-                this.setState({
-                    TDG_TIENBONHIEU: value
-                })
-            break;
-
-            default:
-                 this.setState({
-                    TDG_THANHTICHVUOT: value
-                })
-            break;
-        }
+    navigateToDetail(){
+        this.props.navigation.navigate('DetailTaskScreen', {
+            taskId: this.state.taskId,
+            taskType: this.state.taskType
+        });
     }
 
-	render(){
-		return(
-			<Container>
-				<Header style={{ backgroundColor: HEADER_COLOR }} hasTabs>
-                        <Left>
-                            <Button transparent onPress={() => this.navigateBack()}>
-                                <Icon name='ios-arrow-dropleft-circle' size={30} color={'#fff'} type="ionicon" />
-                            </Button>
-                        </Left>
+    render(){
+        return(
+            <Container>
+                <Header style={{backgroundColor: HEADER_COLOR}}>
+                    <Left>
+                        <Button transparent onPress={() => this.navigateToDetail()}>
+                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+                        </Button>
+                    </Left>
 
-                        <Body>
-                            <Title>
-                                ĐÁNH GIÁ CÔNG VIỆC
-                            </Title>
-                        </Body>
-                        <Right/>
+                    <Body>
+                        <Title>
+                            ĐÁNH GIÁ CÔNG VIỆC
+                        </Title>
+                    </Body>
+
+                    <Right/>
                 </Header>
 
                 <Content>
-                    <Form>
-                        <Item inlineLabel style={styles.itemContainer}>
-                            <Label style={styles.itemHeader}>Hạng mục đánh giá</Label>
-                            <Label style={[{flex: 2}, styles.itemHeader]}>Điểm tự đánh giá</Label>
-                            <Label style={styles.itemHeader}>Trọng số</Label>
-                        </Item>
+                    <Grid>
+                        <Row>
+                            <Col style={[styles.columnHeader, styles.wideColumn]}>
+                                <Text style={styles.columnHeaderText}>
+                                    Hạng mục
+                                </Text>
+                            </Col>
 
-                        <Item inlineLabel style={styles.itemContainer}>
-                            <Label style={styles.itemLabel}>Tự chủ cao</Label>
-                            <Picker style={{flex: 2}} onValueChange={(value) => this.onValueChange(value, 'TDG_TUCHUCAO')}
-                                iosHeader='Điểm tự chủ cao' mode='dropdown' selectedValue={this.state.TDG_TUCHUCAO}>
-                                <Picker.Item label="0" value="0" />
-                                <Picker.Item label="1" value="1" />
-                                <Picker.Item label="2" value="2" />
-                                <Picker.Item label="3" value="3" />
-                                <Picker.Item label="4" value="4" />
-                                <Picker.Item label="5" value="5" />
-                            </Picker>
-                            <Label style={styles.itemLabel}>2</Label>
-                        </Item>
+                            <Col style={[styles.columnHeader, styles.wideColumn]}>
+                                <Text style={styles.columnHeaderText}>
+                                    Điểm số
+                                </Text>
+                            </Col>
 
-                        <Item inlineLabel style={styles.itemContainer}>
-                            <Label style={styles.itemLabel}>Trách nhiệm lớn</Label>
-                            <Picker style={{flex: 2}} onValueChange={(value) => this.onValueChange(value, 'TDG_TRACHNHIEMLON')}
-                                iosHeader='Điểm trách nhiệm lớn' mode='dropdown' selectedValue={this.state.TDG_TRACHNHIEMLON}>
-                                <Picker.Item label="0" value="0" />
-                                <Picker.Item label="1" value="1" />
-                                <Picker.Item label="2" value="2" />
-                                <Picker.Item label="3" value="3" />
-                                <Picker.Item label="4" value="4" />
-                                <Picker.Item label="5" value="5" />
-                            </Picker>
-                            <Label style={styles.itemLabel}>2</Label>
-                        </Item>
+                            <Col style={styles.columnHeader}>
+                                <Text style={styles.columnHeaderText}>
+                                    Trọng số
+                                </Text>
+                            </Col>
+                        </Row>
 
-                        <Item inlineLabel style={styles.itemContainer}>
-                            <Label style={styles.itemLabel}>Tương tác tốt</Label>
-                            <Picker style={{flex: 2}} onValueChange={(value) => this.onValueChange(value, 'TDG_TUONGTACTOT')}
-                                iosHeader='Điểm tương tác tốt' mode='dropdown' selectedValue={this.state.TDG_TUONGTACTOT}>
-                                <Picker.Item label="0" value="0" />
-                                <Picker.Item label="1" value="1" />
-                                <Picker.Item label="2" value="2" />
-                                <Picker.Item label="3" value="3" />
-                                <Picker.Item label="4" value="4" />
-                                <Picker.Item label="5" value="5" />
+                        <Row>
+                            <Col style={[styles.column, styles.wideColumn]}>
+                                <Text>
+                                    Tự chủ cao
+                                </Text>
+                            </Col>
+
+                            <Col style={[styles.column, styles.wideColumn]}>
+                                <Picker 
+                                    iosHeader='Chọn điểm tự chủ cao'
+                                    iosIcon={<Icon name='ios-arrow-down-outline'/>}
+                                    style={{width: '100%'}}
+                                    selectedValue={this.state.TUCHU_CAO}
+                                    onValueChange={(value) => this.onValueChange(value, 'TUCHU_CAO')}
+                                    mode='dropdown'>
+                                {
+                                    this.state.arrValue.map((item, index) => (
+                                        <Picker.Item key={'0' + index.toString()}label={index.toString()} value={index.toString()}  />
+                                    ))
+                                }
                             </Picker>
-                            <Label style={styles.itemLabel}>1</Label>
-                        </Item>
-                        <Item inlineLabel style={styles.itemContainer}>
-                            <Label style={styles.itemLabel}>Tốc độ nhanh</Label>
-                            <Picker style={{flex: 2}} onValueChange={(value) => this.onValueChange(value, 'TDG_TOCDONHANH')}
-                                iosHeader='Điểm tốc độ nhanh' mode='dropdown' selectedValue={this.state.TDG_TOCDONHANH}>
-                                <Picker.Item label="0" value="0" />
-                                <Picker.Item label="1" value="1" />
-                                <Picker.Item label="2" value="2" />
-                                <Picker.Item label="3" value="3" />
-                                <Picker.Item label="4" value="4" />
-                                <Picker.Item label="5" value="5" />
+                            </Col>
+
+                            <Col style={styles.column}>
+                                <Text>
+                                    2
+                                </Text>
+                            </Col>
+                        </Row>
+
+                        <Row>
+                            <Col style={[styles.column,styles.wideColumn]}>
+                                <Text>
+                                    Trách nhiệm lớn
+                                </Text>
+                            </Col>
+
+                            <Col style={[styles.column, styles.wideColumn]}>
+                                <Picker 
+                                    iosHeader='Chọn điểm tự chủ cao'
+                                    iosIcon={<Icon name='ios-arrow-down-outline'/>}
+                                    style={{width: '100%'}}
+                                    selectedValue={this.state.TRACHNHIEM_LON}
+                                    onValueChange={(value) => this.onValueChange(value, 'TRACHNHIEM_LON')}
+                                    mode='dropdown'>
+                                {
+                                    this.state.arrValue.map((item, index) => (
+                                        <Picker.Item key={'1' + index.toString()}label={index.toString()} value={index.toString()}  />
+                                    ))
+                                }
                             </Picker>
-                            <Label style={styles.itemLabel}>1</Label>
-                        </Item>
+                            </Col>
+
+                            <Col style={styles.column}>
+                                <Text>
+                                    2
+                                </Text>
+                            </Col>
+                        </Row>
+
+                        <Row>
+                            <Col style={[styles.column, styles.wideColumn]}>
+                                <Text>
+                                    Tương tác tốt
+                                </Text>
+                            </Col>
+
+                            <Col style={[styles.column, styles.wideColumn]}>
+                                <Picker 
+                                    iosHeader='Chọn điểm tự chủ cao'
+                                    iosIcon={<Icon name='ios-arrow-down-outline'/>}
+                                    style={{width: '100%'}}
+                                    selectedValue={this.state.TUONGTAC_TOT}
+                                    onValueChange={(value) => this.onValueChange(value, 'TUONGTAC_TOT')}
+                                    mode='dropdown'>
+                                {
+                                    this.state.arrValue.map((item, index) => (
+                                        <Picker.Item key={'2' + index.toString()}label={index.toString()} value={index.toString()}  />
+                                    ))
+                                }
+                            </Picker>
+                            </Col>
+
+                            <Col style={styles.column}>
+                                <Text>
+                                    1
+                                </Text>
+                            </Col>
+                        </Row>
                         
-                        <Item inlineLabel style={styles.itemContainer}>
-                            <Label style={styles.itemLabel}>Tiến bộ nhiều</Label>
-                             <Picker style={{flex: 2}} onValueChange={(value) => this.onValueChange(value, 'TDG_TIENBONHIEU')}
-                                iosHeader='Điểm tiến bộ nhiều' mode='dropdown' selectedValue={this.state.TDG_TIENBONHIEU}>
-                                <Picker.Item label="0" value="0" />
-                                <Picker.Item label="1" value="1" />
-                                <Picker.Item label="2" value="2" />
-                                <Picker.Item label="3" value="3" />
-                                <Picker.Item label="4" value="4" />
-                                <Picker.Item label="5" value="5" />
-                            </Picker>
-                            <Label style={styles.itemLabel}>1</Label>
-                        </Item>
+                        <Row>
+                            <Col style={[styles.column, styles.wideColumn]}>
+                                <Text>
+                                    Tốc độ nhanh
+                                </Text>
+                            </Col>
 
-                        <Item inlineLabel style={styles.itemContainer}>
-                            <Label style={styles.itemLabel}>Thành tích vượt</Label>
-                            <Picker style={{flex: 2}} onValueChange={(value) => this.onValueChange(value, 'TDG_THANHTICHVUOT')}
-                                iosHeader='Điểm thành tích vượt' mode='dropdown' selectedValue={this.state.TDG_THANHTICHVUOT}>
-                                <Picker.Item label="0" value="0" />
-                                <Picker.Item label="1" value="1" />
-                                <Picker.Item label="2" value="2" />
-                                <Picker.Item label="3" value="3" />
-                                <Picker.Item label="4" value="4" />
-                                <Picker.Item label="5" value="5" />
+                            <Col style={[styles.column, styles.wideColumn]}>
+                                <Picker 
+                                    iosHeader='Chọn điểm tự chủ cao'
+                                    iosIcon={<Icon name='ios-arrow-down-outline'/>}
+                                    style={{width: '100%'}}
+                                    selectedValue={this.state.TOCDO_NHANH}
+                                    onValueChange={(value) => this.onValueChange(value, 'TOCDO_NHANH')}
+                                    mode='dropdown'>
+                                {
+                                    this.state.arrValue.map((item, index) => (
+                                        <Picker.Item key={'3' + index.toString()}label={index.toString()} value={index.toString()}  />
+                                    ))
+                                }
                             </Picker>
-                            <Label style={styles.itemLabel}>1</Label>
-                        </Item>                        
-                    </Form>
+                            </Col>
 
-                    <Button iconLeft full rounded style={{backgroundColor: '#337321', marginTop: 20}} onPress={()=> this.evaluateTask()}>
-                        <NBIcon name='ios-checkmark-circle-outline' />
-                        <NBText>ĐÁNH GIÁ</NBText>
-                    </Button>
+                            <Col style={styles.column}>
+                                <Text>
+                                    1
+                                </Text>
+                            </Col>
+                        </Row>
+
+                        <Row>
+                            <Col style={[styles.column, styles.wideColumn]}>
+                                <Text>
+                                    Tiến bộ nhiều
+                                </Text>
+                            </Col>
+
+                            <Col style={[styles.column, styles.wideColumn]}>
+                                <Picker 
+                                    iosHeader='Chọn điểm tự chủ cao'
+                                    iosIcon={<Icon name='ios-arrow-down-outline'/>}
+                                    style={{width: '100%'}}
+                                    selectedValue={this.state.TIENBO_NHIEU}
+                                    onValueChange={(value) => this.onValueChange(value, 'TIENBO_NHIEU')}
+                                    mode='dropdown'>
+                                {
+                                    this.state.arrValue.map((item, index) => (
+                                        <Picker.Item key={'4' + index.toString()}label={index.toString()} value={index.toString()}  />
+                                    ))
+                                }
+                            </Picker>
+                            </Col>
+
+                            <Col style={styles.column}>
+                                <Text>
+                                    1
+                                </Text>
+                            </Col>
+                        </Row>
+
+                        <Row>
+                            <Col style={[styles.column, styles.wideColumn]}>
+                                <Text>
+                                    Thành tích vượt
+                                </Text>
+                            </Col>
+
+                            <Col style={[styles.column, styles.wideColumn]}>
+                                <Picker 
+                                    iosHeader='Chọn điểm tự chủ cao'
+                                    iosIcon={<Icon name='ios-arrow-down-outline'/>}
+                                    style={{width: '100%'}}
+                                    selectedValue={this.state.THANHTICH_VUOT}
+                                    onValueChange={(value) => this.onValueChange(value, 'THANHTICH_VUOT')}
+                                    mode='dropdown'>
+                                {
+                                    this.state.arrValue.map((item, index) => (
+                                        <Picker.Item key={'5' + index.toString()}label={index.toString()} value={index.toString()}  />
+                                    ))
+                                }
+                            </Picker>
+                            </Col>
+
+                            <Col style={styles.column}>
+                                <Text>
+                                    1
+                                </Text>
+                            </Col>
+                        </Row>
+                    </Grid>
+
+
+                    <Button block danger 
+                                style={{backgroundColor : HEADER_COLOR , marginTop: verticalScale(20)}}
+                                onPress={() => this.onEvaluateTask()}>
+                            <Text>
+                                GỬI ĐÁNH GIÁ CÔNG VIỆC
+                            </Text>
+                        </Button>
+
                 </Content>
 
                 {
                     executeLoading(this.state.executing)
                 }
-			</Container>
-		);
-	}
-}
-
-const styles = {
-    itemHeader: {
-        flex:1,
-        paddingVertical: 5,
-        fontSize: 13,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        backgroundColor: '#F4F4F4'
-    },
-    itemContainer: {
-        justifyContent: 'space-between'
-    },
-    itemLabel: {
-        flex:1, 
-        textAlign: 'center'
-    },
-    itemInput: {
-        flex:2,
-        borderRadius:3,
-        borderWidth:1,
-        borderColor: '#d9d5dc',
-        marginVertical: 5
+            </Container>
+        );
     }
 }
 
+const styles = StyleSheet.create({
+    columnHeader: {
+        backgroundColor: '#f1f1f2',
+        height: verticalScale(60),
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        borderRightColor: '#fff',
+        borderRightWidth: 1,
+        paddingLeft: scale(10),
+    },
+    column: {
+        backgroundColor: '#fff',
+        height: verticalScale(60),
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        paddingLeft: scale(10),
+        borderRightColor: '#f1f1f2',
+        borderRightWidth: 1,
+        borderBottomColor: '#f1f1f2',
+        borderBottomWidth: 1
+    },
+    columnHeaderText: {
+        fontWeight: 'bold',
+        color: '#000',
+        textAlign: 'right'
+    },
+    wideColumn: {
+        flex: 2
+    }
+})
+
 const mapStateToProps = (state) => {
-	return {
-		userInfo: state.userState.userInfo
-	}
+    return {
+        userInfo: state.userState.userInfo
+    }
 }
 
 export default connect(mapStateToProps)(EvaluationTask);
+
