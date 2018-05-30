@@ -35,3 +35,4 @@ export const works_Completed_Neutral = require('../images/SideBar/Works/Complete
 //Signout
 export const signout_Active = require('../images/SideBar/SignOut/Signout-Active.png');
 export const signout_Neutral = require('../images/SideBar/SignOut/Signout-Neutral.png');
+export const signout_Turnoff = require('../images/SideBar/SignOut/Turnoff.png');
