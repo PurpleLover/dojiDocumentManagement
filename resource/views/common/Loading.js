@@ -26,6 +26,9 @@ import * as userAction from '../../redux/modules/user/UserAction';
 import FCM from 'react-native-fcm';
 import { registerAppListener } from '../../firebase/FireBaseListener';
 
+//style
+import {verticalScale} from '../../assets/styles/ScaleIndicator';
+
 class Loading extends Component {
     state = {
         progress: 0,
@@ -85,7 +88,7 @@ class Loading extends Component {
                 alignItems: 'center'
             }}>
                 <Image source={uriLogo} style={{
-                    marginBottom: 20
+                    marginBottom: verticalScale(20)
                 }}/>
 
                 <ProgressBar progress={this.state.progress} duration={100} />

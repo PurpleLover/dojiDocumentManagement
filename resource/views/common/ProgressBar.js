@@ -7,6 +7,8 @@
 import React, { Component } from 'react';
 import { Animated, View, Text, StyleSheet } from 'react-native';
 
+import {scale,verticalScale, moderateScale} from '../../assets/styles/ScaleIndicator';
+
 export default class ProgressBar extends Component {
 
     state = {
@@ -63,7 +65,7 @@ export default class ProgressBar extends Component {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        paddingHorizontal: 20
+        paddingHorizontal: scale(20)
     }, progressFrame: {
         flex: 1,
         overflow: 'hidden'
@@ -74,7 +76,7 @@ const styles = StyleSheet.create({
  * @description: định nghĩa các thuộc tính mặc định
  */
 ProgressBar.defaultProps = {
-    height: 20,
+    height: verticalScale(20),
     borderRadius: 50,
     borderColor: 'rgb(191, 191, 191)',
     borderWidth: 1,

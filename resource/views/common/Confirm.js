@@ -12,6 +12,10 @@ import { API_URL } from '../../common/SystemConstant'
 //native
 import { Header } from 'react-native-elements';
 import { Footer } from 'native-base';
+
+//style
+import {scale, verticalScale, moderateScale} from '../../assets/styles/ScaleIndicator';
+
 export default class Confirm extends Component {
     constructor(props) {
         super(props);
@@ -116,8 +120,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(52, 52, 52, 0.8)'
     }, body: {
-        width: 300,
-        height: 200,
+        width: scale(300),
+        height: verticalScale(200),
         borderRadius: 3,
         backgroundColor: '#fff',
         borderWidth: 1,
@@ -126,26 +130,26 @@ const styles = StyleSheet.create({
         color: '#2455A6',
         fontWeight: 'bold'
     }, headerOuter: {
-        height: 50,
+        height: verticalScale(50),
         borderBottomColor: '#2455A6',
         borderBottomWidth: 3,
         backgroundColor: '#fff'
     }, content: {
-        height: 100,
+        height: verticalScale(100),
         justifyContent: 'center',
         alignItems: 'center',
     }, contentText: {
         color: '#000',
-        fontSize: 18,
+        fontSize: moderateScale(18,1.3),
         textAlign: 'center'
     },footer: {
-        height: 50,
+        height: verticalScale(50),
         borderTopColor: '#ececec',
-        borderTopWidth: 2,
+        borderTopWidth: verticalScale(2),
         flexDirection: 'row'
     },leftFooter: {
         flex: 1,
-        borderRightWidth: 2,
+        borderRightWidth: scale(2),
         borderRightColor: '#ececec'
     },rightFooter: {
         flex: 1,
