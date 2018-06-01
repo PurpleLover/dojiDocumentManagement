@@ -75,15 +75,24 @@ export default class SideBar extends Component {
                         <View style={SideBarStyle.headerAvatarContainer}>
                             <Image source={userAvatar} style={SideBarStyle.headerAvatar} />
                         </View>
+                        {/*
+                            * Purpose: WRAP text when too long
+                            * Mark: NOT the best solution but works
+                        */}
+                        <View style={[SideBarStyle.headerUserInfoContainer, { flex: 1 }]}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={[SideBarStyle.headerUserName, { flex: 1, flexWrap: 'wrap' }]}>
+                                    {this.state.userInfo.Fullname}
+                                    {/* Cao Thị Thu Lan Lóng Lánh Kim Cuong Bao Ngoc Trai */}
+                                </Text>
+                            </View>
 
-                        <View style={SideBarStyle.headerUserInfoContainer}>
-                            <Text style={[SideBarStyle.headerUserName, { flexWrap: 'wrap' }]}>
-                                {this.state.userInfo.Fullname}
-                            </Text>
-
-                            <Text style={[SideBarStyle.headerUserJob, { flexWrap: 'wrap' }]}>
-                                {this.state.userInfo.Position}
-                            </Text>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={[SideBarStyle.headerUserJob, { flex: 1, flexWrap: 'wrap' }]}>
+                                    {this.state.userInfo.Position}
+                                    {/* Đang đêm đông đốt đèn đồng đi đâu đấy đi đái đây đụng đầu vào đá đành đứng đấy đái */}
+                                </Text>
+                            </View>
                         </View>
                     </ImageBackground>
                 </View>
@@ -154,7 +163,7 @@ export default class SideBar extends Component {
 
                         <TouchableOpacity onPress={() => this.onLogOut()}>
                             <ListItem
-                                leftIcon={<Image source={SBIcons.signout_Turnoff} style={[SideBarStyle.listItemLeftIcon, {marginLeft:0}]}></Image>}
+                                leftIcon={<Image source={SBIcons.signout_Turnoff} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}></Image>}
                                 hideChevron={true}
                                 containerStyle={SideBarStyle.listItemContainer}
                                 title={'ĐĂNG XUẤT'}

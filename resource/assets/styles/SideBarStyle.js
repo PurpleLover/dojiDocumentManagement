@@ -31,11 +31,11 @@ export const SideBarStyle = StyleSheet.create({
     }, headerAvatar: {
         width: moderateScale(80),
         height: moderateScale(80),
-        borderRadius: moderateScale(80 / 2), //to create cirlce, width == height && borderRadius == width/2
+        borderRadius: moderateScale(80 / 2), // to create cirlce, width == height && borderRadius == width/2
         resizeMode: 'stretch',
     }, headerUserName: {
         justifyContent: 'center',
-        textAlign: 'center',
+        textAlign: 'left', // Change from 'center' to 'left'
         fontWeight: 'bold',
         color: '#000',
         fontSize: moderateScale(16, 1.2)
