@@ -154,7 +154,7 @@ export default class SideBar extends Component {
 
                         <TouchableOpacity onPress={() => this.onLogOut()}>
                             <ListItem
-                                leftIcon={<Image source={SBIcons.signout_Neutral} style={[SideBarStyle.listItemLeftIcon, {marginLeft:0}]}></Image>}
+                                leftIcon={<Image source={SBIcons.signout_Turnoff} style={[SideBarStyle.listItemLeftIcon, {marginLeft:0}]}></Image>}
                                 hideChevron={true}
                                 containerStyle={SideBarStyle.listItemContainer}
                                 title={'ĐĂNG XUẤT'}

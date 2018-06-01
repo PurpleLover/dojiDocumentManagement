@@ -35,7 +35,7 @@ export function executeLoading(isVisible) {
             visible={isVisible}>
             <View style={[styles.alContainer, { backgroundColor: 'rgba(52, 52, 52, 0.8)' }]}>
                 <View style={[styles.alExecuteBorderBlock, alBorderBlockStyle]}>
-                    <ActivityIndicator size={indicatorResponsive} color={'#F7A30A'} />
+                    <ActivityIndicator size={indicatorResponsive} color={'#fff'} />
                     <Text style={styles.alExecuteText}>
                         ...Đang xử lý
                     </Text>
