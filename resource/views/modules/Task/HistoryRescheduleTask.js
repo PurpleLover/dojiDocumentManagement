@@ -7,7 +7,8 @@
 import React, { Component } from 'react';
 import { View as RnView, Text as RnText } from 'react-native';
 import {
-	Alert, FlatList, RefreshControl, StyleSheet
+	ActivityIndicator, Alert, FlatList,
+	RefreshControl, StyleSheet
 } from 'react-native';
 //lib
 import {
@@ -26,10 +27,10 @@ import PopupDialog, { DialogTitle, DialogButton } from 'react-native-popup-dialo
 import { connect } from 'react-redux';
 
 //utilities
-import { API_URL, HEADER_COLOR, LOADER_COLOR } from '../../../common/SystemConstant';
+import { API_URL, HEADER_COLOR, LOADER_COLOR, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '../../../common/SystemConstant';
 import { asyncDelay, emptyDataPage, formatLongText, convertDateToString } from '../../../common/Utilities';
 import { dataLoading, executeLoading } from '../../../common/Effect';
-import { scale, verticalScale } from '../../../assets/styles/ScaleIndicator';
+import { scale, verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
 class HistoryRescheduleTask extends Component {
@@ -41,32 +42,56 @@ class HistoryRescheduleTask extends Component {
 
 			taskId: props.navigation.state.params.taskId,
 			taskType: props.navigation.state.params.taskType,
-
+			canApprove: props.canApprove,
 			data: [],
 			loading: false,
+			loadingMore: false,
+			refreshing: false,
 			executing: false,
 			rescheduleId: 0,
-			rescheduleInfo: {}
+			rescheduleInfo: {},
+
+			pageIndex: DEFAULT_PAGE_INDEX,
+			pageSize: DEFAULT_PAGE_SIZE
 		}
 	}
 
 	componentWillMount() {
-		this.fetchData();
+		this.setState({
+			loading: true
+		}, () => {
+			this.fetchData();
+		});
 	}
 
 	fetchData = async () => {
-		this.setState({
-			loading: true
-		});
-
-		const url = `${API_URL}/api/HscvCongViec/JobDetail/${this.state.taskId}/${this.state.userId}`;
+		const url = `${API_URL}/api/HscvCongViec/GetListRescheduleTask/${this.state.taskId}/${this.state.pageIndex}/${this.state.pageSize}?query=`;
 		const result = await fetch(url);
 		const resultJson = await result.json();
 
 		this.setState({
+			data: this.state.loadingMore ? [...this.state.data, ...resultJson] : resultJson,
 			loading: false,
-			data: resultJson.LstXinLuiHan || []
+			loadingMore: false,
+			refreshing: false,
 		});
+	}
+
+	loadMore() {
+		this.setState({
+			loadingMore: true,
+			pageIndex: this.state.pageIndex + 1
+		}, () => this.fetchData())
+	}
+
+	handleRefresh = () => {
+		this.setState({
+			refreshing: true,
+			pageIndex: DEFAULT_PAGE_INDEX,
+			pageSize: DEFAULT_PAGE_SIZE
+		}, () => {
+			this.fetchData()
+		})
 	}
 
 	onShowRescheduleInfo = (item) => {
@@ -147,7 +172,11 @@ class HistoryRescheduleTask extends Component {
 			duration: 3000,
 			onClose: () => {
 				if (resultJson.Status) {
-					this.fetchData();
+					this.setState({
+						loading: true
+					}, () => {
+						this.fetchData();
+					})
 				}
 			}
 		});
@@ -158,7 +187,7 @@ class HistoryRescheduleTask extends Component {
 			<SwipeRow
 				leftOpenValue={75}
 				rightOpenValue={-75}
-				disableLeftSwipe={!util.isNull(item.IS_APPROVED)}
+				disableLeftSwipe={!util.isNull(item.IS_APPROVED) && this.state.canApprove != true}
 				left={
 					<Button style={{ backgroundColor: '#d1d2d3' }} onPress={() => this.onShowRescheduleInfo(item)}>
 						<RneIcon name='info' type='foundation' size={verticalScale(30)} color={'#fff'} />
@@ -243,7 +272,30 @@ class HistoryRescheduleTask extends Component {
 								data={this.state.data}
 								keyExtractor={(item, index) => index.toString()}
 								renderItem={this.renderItem}
+								refreshControl={
+									<RefreshControl
+										refreshing={this.state.refreshing}
+										onRefresh={this.handleRefresh}
+										title='Kéo để làm mới'
+										colors={[LOADER_COLOR]}
+										tintColor={[LOADER_COLOR]}
+										titleColor='red'
+									/>
+								}
 								ListEmptyComponent={() => emptyDataPage()}
+
+								ListFooterComponent={() => this.state.loadingMore ?
+									<ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
+									(
+										this.state.data.length >= DEFAULT_PAGE_SIZE ?
+											<Button full style={{ backgroundColor: '#0082ba' }} onPress={() => this.loadMore()}>
+												<Text>
+													TẢI THÊM
+										  </Text>
+											</Button>
+											: null
+									)
+								}
 							/>
 						)
 					}

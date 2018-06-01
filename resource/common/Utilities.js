@@ -28,14 +28,18 @@ export function convertDateToString(date) {
     let deadline = new Date();
     if (date !== null && date !== '') {
         deadline = new Date(date);
+        let dateStr = deadline.getDate().toString();
+        if (deadline.getDate() < 10) {
+            dateStr = '0' + deadline.getDate();
+        }
         let month = (deadline.getMonth() + 1);
         let monthStr = '';
-        if(month < 10){
-            monthStr = '0'+ month;
-        }else{
+        if (month < 10) {
+            monthStr = '0' + month;
+        } else {
             monthStr = month.toString();
         }
-        let deadlineStr = (deadline.getDate() + '/' + (monthStr) + '/' + deadline.getFullYear());
+        let deadlineStr = (dateStr + '/' + (monthStr) + '/' + deadline.getFullYear());
 
         return deadlineStr;
     }
@@ -43,7 +47,7 @@ export function convertDateToString(date) {
 }
 
 //chuyển sang định dạng hh/mm/ss
-export function convertTimeToString(date){
+export function convertTimeToString(date) {
     let deadline = new Date();
     if (date !== null && date !== '') {
         deadline = new Date(date);
@@ -58,7 +62,20 @@ export function convertDateTimeToString(date) {
     let deadline = new Date();
     if (date !== null && date !== '') {
         deadline = new Date(date);
-        let deadlineStr = (deadline.getDate() + '/' + (deadline.getMonth() + 1) + '/' + deadline.getFullYear());
+        let dateStr = deadline.getDate().toString();
+        if (deadline.getDate() < 10) {
+            dateStr = '0' + deadline.getDate().toString();
+        }
+
+        let month = (deadline.getMonth() + 1);
+        let monthStr = '';
+        if (month < 10) {
+            monthStr = '0' + month;
+        } else {
+            monthStr = month.toString();
+        }
+
+        let deadlineStr = (dateStr + '/' + (monthStr) + '/' + deadline.getFullYear());
         deadlineStr += ' ' + deadline.getHours() + ':' + deadline.getMinutes() + ':' + deadline.getSeconds();
         return deadlineStr;
     }

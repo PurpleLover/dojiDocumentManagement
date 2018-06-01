@@ -5,271 +5,318 @@
 */
 'use strict'
 import React, { Component } from 'react';
+
 import {
-    Alert,ActivityIndicator, View, Text, Modal,RefreshControl,
-    FlatList, TouchableOpacity, Image,
-    StyleSheet
+    ActivityIndicator, FlatList, StyleSheet, View as RnView, Text as RnText,
+    RefreshControl
 } from 'react-native';
-
-//constant
-import {
-    API_URL,
-    EMPTY_DATA_ICON_URI, EMTPY_DATA_MESSAGE,
-    HEADER_COLOR, LOADER_COLOR
-} from '../../../common/SystemConstant';
-
-//native-base
-import {
-    Form, Label, Button, Icon as NBIcon, Text as NBText, Item, Input, Title,
-    Container, Header, Content, Left, Right, Body,
-    Tab, Tabs, TabHeading, ScrollableTab, SwipeRow,
-    View as NBView
-} from 'native-base';
-
-//react-native-elements
-import { ListItem, Icon } from 'react-native-elements';
-//styles
-import { ListTaskStyle } from '../../../assets/styles/TaskStyle';
-import { DetailSignDocStyle } from '../../../assets/styles/SignDocStyle';
-import { MenuStyle, MenuOptionStyle } from '../../../assets/styles/MenuPopUpStyle';
-import { TabStyle } from '../../../assets/styles/TabStyle';
-import { indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
-
-import { dataLoading,executeLoading } from '../../../common/Effect';
-import { asyncDelay, unAuthorizePage, openSideBar, convertDateToString } from '../../../common/Utilities';
-//lib
+//redux
 import { connect } from 'react-redux';
-import renderIf from 'render-if';
-import * as util from 'lodash';
-import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 
+//lib
+import {
+    Container, Header, Left, Content,
+    Body, Title, Button, Text, SwipeRow,
+    Right, Form, Item, Label,
+} from 'native-base';
+import {
+    Icon as RneIcon
+} from 'react-native-elements';
+import renderIf from 'render-if';
+import PopupDialog, { DialogTitle, DialogButton } from 'react-native-popup-dialog';
+
+//utilities
+import {
+    API_URL, LOADER_COLOR, HEADER_COLOR, EMPTY_STRING,
+    DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE
+} from '../../../common/SystemConstant';
+import { dataLoading } from '../../../common/Effect';
+import { emptyDataPage, formatLongText, convertDateToString, convertDateTimeToString } from '../../../common/Utilities';
+import { scale, verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
 class HistoryEvaluateTask extends Component {
-	constructor(props){
-		super(props)
-		this.state = {
-			userId: this.props.userInfo.ID,
-			taskId: this.props.navigation.state.params.taskId ,
-            taskType: this.props.navigation.state.params.taskType ,
-			data: [],
-			loading: false,
-			refreshing: false,
-			executing: false
-		}
-	}
+    constructor(props) {
+        super(props)
+        this.state = {
+            userId: this.props.userInfo.ID,
+            taskId: this.props.navigation.state.params.taskId,
+            taskType: this.props.navigation.state.params.taskType,
 
-	componentWillMount(){
-		this.fetchData();
-	}
-
-	async fetchData(){
-		if(!this.state.refreshing){
-			this.setState({
-            	loading: true
-        	});
-		}
-
-        const url = `${API_URL}/api/HscvCongViec/JobDetail/${this.state.taskId}/${this.state.userId}`;
-        
-        const data = await fetch(url)
-        .then(response => response.json())
-        .then(responseJson => {
-            if(!util.isNull(responseJson)){
-            	return responseJson.LstTrinhDuyet || [];
-            }else{
-            	return [];
-            }
-        }).catch(err => {
-            console.log('Xảy ra lỗi', err);
-        });
-
-        this.setState({
-        	refreshing: false,
+            filterValue: EMPTY_STRING,
+            pageIndex: DEFAULT_PAGE_INDEX,
+            pageSize: DEFAULT_PAGE_SIZE,
+            data: [],
+            dataItem: {},
             loading: false,
-            data
-        });
-	}
-
-	renderItem = ({item}) => {
-        const index = (this.state.data.indexOf(item) + 1);
-		return (
-			<SwipeRow
-                style={{borderColor: '#ececec', borderBottomWidth: 1}}
-            	rightOpenValue={-60}
-            	disableLeftSwipe={true}
-            	disableRightSwipe={true}
-	            body={
-	              <NBView style={styles.rowContainer}>
-	              	<Item fixedLabel style={styles.rowItem}>
-              			<NBIcon name='ios-clock-outline' size={40}/>
-
-                        <Label style={styles.rowLabel}>
-                            {'Ngày trình duyệt kết quả công việc lần ' + index}
-                        </Label>
-
-              			<Label style={styles.rowLabel}>
-							{convertDateToString(item.CREATED_AT)}
-              			</Label>
-            		</Item>
-
-                    <Item fixedLabel style={styles.rowItem}>
-                        <NBIcon name='ios-clock-outline' size={40}/>
-
-                        <Label style={styles.rowLabel}>
-                            {'Ngày có phản hồi của cấp trên lần ' + index}
-                        </Label>
-
-                        <Label style={styles.rowLabel}>
-                            {convertDateToString(item.NGAYPHANHOI)}
-                        </Label>
-                    </Item>
-
-                    <Item fixedLabel style={styles.rowItem}>
-                        <NBIcon name='ios-calendar-outline' size={40}/>
-
-                        <Label style={styles.rowLabel}>
-                            Số ngày chờ phản hồi
-                        </Label>
-
-                        <Label style={styles.rowLabel}>
-                            {item.SONGAYCHOPHANHOI}
-                        </Label>
-                    </Item>
-
-                    <Item fixedLabel style={styles.rowItem}>
-                        <NBIcon name='ios-clock-outline' size={40}/>
-
-                        <Label style={styles.rowLabel}>
-                            Kết quả:
-                        </Label>
-
-                        <Label style={styles.rowLabel}>
-                            {item.KETQUATRINHDUYET}
-                        </Label>
-                    </Item>
-	              </NBView>
-	            }
-          />
-		)
-	}
-
-	handleEnd = () => {
+            loadingMore: false,
+            refreshing: false
+        }
     }
 
-    handleRefresh = () => {
+
+    componentWillMount = () => {
         this.setState({
-            refreshing: true,
+            loading: true
+        }, () => this.fetchData())
+    }
+
+
+    loadMore = () => {
+        this.setState({
+            loadingMore: true,
+            pageIndex: this.state.pageIndex + 1
         }, () => {
             this.fetchData();
         });
     }
 
-    navigateBack(){
+    fetchData = async () => {
+        const url = `${API_URL}/api/HscvCongViec/GetListSubmit/${this.state.taskId}/${this.state.pageIndex}/${this.state.pageSize}?query=${this.state.filterValue}`
+        const result = await fetch(url);
+        const resultJson = await result.json();
+
+        console.log('đường dẫn', url);
+
+        this.setState({
+            data: this.state.loadingMore ? [...this.state.data, ...resultJson] : resultJson,
+            loading: false,
+            loadingMore: false,
+            refreshing: false,
+        });
+    }
+
+    onShowEvaluateInfo = (item) => {
+        this.setState({
+            dataItem: item
+        }, () => {
+            this.popupDialog.show();
+        })
+    }
+
+
+    renderItem = ({ item }) => {
+        return (
+            <SwipeRow
+                leftOpenValue={75}
+                rightOpenValue={-75}
+                disableLeftSwipe={true}
+                left={
+                    <Button style={{ backgroundColor: '#d1d2d3' }} onPress={() => this.onShowEvaluateInfo(item)}>
+                        <RneIcon name='info' type='foundation' size={verticalScale(30)} color={'#fff'} />
+                    </Button>
+                }
+                body={
+                    <RnView style={styles.rowContainer}>
+                        <RnText style={styles.rowLabel}>
+                            <RnText>
+                                {'Thời gian: '}
+                            </RnText>
+
+                            <RnText style={styles.rowInfo}>
+                                {
+                                    convertDateTimeToString(item.NGAYPHANHOI)
+                                }
+                            </RnText>
+                        </RnText>
+
+                        <RnText style={styles.rowLabel}>
+                            <RnText>
+                                {' - Trạng thái: '}
+                            </RnText>
+
+                            <RnText style={(item.PHEDUYETKETQUA == true) ? styles.approveText : styles.denyText}>
+                                {item.PHEDUYETKETQUA == true ? ' (Đã phê duyệt)' : ' (Đã trả lại)'}
+                            </RnText>
+                        </RnText>
+
+                    </RnView>
+                }
+            />
+        );
+    }
+
+    navigateBackToDetail() {
         this.props.navigation.navigate('DetailTaskScreen', {
             taskId: this.state.taskId,
             taskType: this.state.taskType
         });
     }
 
-	render(){
-		return(
-			<Container>
-				<Header style={{ backgroundColor: HEADER_COLOR }}>
+    handleRefresh = () => {
+        this.setState({
+            refreshing: true,
+            pageIndex: DEFAULT_PAGE_INDEX,
+            pageSize: DEFAULT_PAGE_SIZE
+        }, () => {
+            this.fetchData()
+        })
+    }
+
+    render() {
+        return (
+            <Container>
+                <Header style={{ backgroundColor: HEADER_COLOR }}>
                     <Left>
-                        <Button transparent onPress={() => this.navigateBack()}>
-                            <Icon name='ios-arrow-dropleft-circle' size={30} color={'#fff'} type="ionicon" />
+                        <Button transparent onPress={() => this.navigateBackToDetail()}>
+                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
                         </Button>
                     </Left>
-
                     <Body>
                         <Title>
-                            LỊCH SỬ PHẢN HỒI KẾT QUẢ THỰC HIỆN CÔNG VIỆC
-                        </Title>
+                            LỊCH SỬ PHÊ DUYỆT TIẾN ĐỘ
+						</Title>
                     </Body>
-
                     <Right />
                 </Header>
 
-                <Content>
-					<FlatList
-                        onEndReached={() => this.handleEnd()}
-                        onEndReachedThreshold={0.1}
-                        data={this.state.data}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={this.renderItem}
-                        ListFooterComponent={() => this.state.loading ? <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> : null}
-                        ListEmptyComponent={() =>
-                            this.state.loading ? null : (
-                                <View style={ListTaskStyle.emtpyContainer}>
-                                    <Image source={EMPTY_DATA_ICON_URI} style={ListTaskStyle.emptyIcon} />
-                                    <Text style={ListTaskStyle.emptyMessage}>
-                                        {EMTPY_DATA_MESSAGE}
-                                    </Text>
-                                </View>
-                            )
-                        }
+                <Content contentContainerStyle={{ flex: 1 }}>
+                    {
+                        renderIf(this.state.loading)(
+                            dataLoading(true)
+                        )
+                    }
 
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={this.state.refreshing}
-                                onRefresh={this.handleRefresh}
-                                title='Kéo để làm mới'
-                                colors={[LOADER_COLOR]}
+                    {
+                        renderIf(!this.state.loading)(
+                            <FlatList
+                                data={this.state.data}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={this.renderItem}
+                                ListEmptyComponent={() => emptyDataPage()}
+                                ListFooterComponent={() =>
+                                    this.state.loadingMore ?
+                                        <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+                                        :
+                                        (
+                                            this.state.data.length >= DEFAULT_PAGE_SIZE ?
+                                                <Button full style={{ backgroundColor: '#0082ba' }} onPress={() => this.loadMore()}>
+                                                    <Text>
+                                                        TẢI THÊM
+										  			</Text>
+                                                </Button>
+                                                : null
+                                        )
+                                }
+
+                                refreshControl={
+                                    <RefreshControl
+                                        refreshing={this.state.refreshing}
+                                        onRefresh={this.handleRefresh}
+                                        title='Kéo để làm mới'
+                                        colors={[LOADER_COLOR]}
+                                        tintColor={[LOADER_COLOR]}
+                                        titleColor='red'
+                                    />
+                                }
                             />
-                        }
-                    />
+                        )
+                    }
+
+
+                    <PopupDialog
+                        dialogTitle={<DialogTitle title='THÔNG TIN CẬP NHẬT TIẾN ĐỘ' />}
+                        ref={(popupDialog) => { this.popupDialog = popupDialog }}
+                        width={0.8}
+                        height={verticalScale(400)}
+                        actions={[
+                            <DialogButton
+                                align={'center'}
+                                buttonStyle={{
+                                    height: verticalScale(50),
+                                    justifyContent: 'center',
+                                }}
+                                text="ĐÓNG"
+                                onPress={() => {
+                                    this.popupDialog.dismiss();
+                                }}
+                                key="button-0"
+                            />,
+                        ]}>
+                        <Form>
+                            <Item stackedLabel>
+                                <Label style={styles.dialogLabel}>
+                                    Ngày trình duyệt kết quả công việc
+							</Label>
+
+                                <Label style={styles.dialogText}>
+                                    {convertDateTimeToString(this.state.dataItem.CREATED_AT)}
+                                </Label>
+                            </Item>
+
+                            <Item stackedLabel>
+                                <Label style={styles.dialogLabel}>
+                                    Ngày có phản hồi của cấp trên
+							</Label>
+
+                                <Label style={styles.dialogText}>
+                                    {convertDateTimeToString(this.state.dataItem.NGAYPHANHOI)}
+                                </Label>
+                            </Item>
+
+                            <Item stackedLabel>
+                                <Label style={styles.dialogLabel}>
+                                    Số ngày chờ phản hồi:
+							</Label>
+
+                                <Label style={styles.dialogText}>
+                                    {this.state.dataItem.SONGAYCHOPHANHOI}
+                                </Label>
+                            </Item>
+
+                            <Item stackedLabel>
+                                <Label style={styles.dialogLabel}>
+                                    Nội dung phản hồi
+							</Label>
+
+                                <Label style={styles.dialogText}>
+                                    {(this.state.dataItem.KETQUATRINHDUYET)}
+                                </Label>
+                            </Item>
+                        </Form>
+                    </PopupDialog>
                 </Content>
-                {
-                    executeLoading(this.state.executing)
-                }
-			</Container>
-		)
-	}
+            </Container>
+        );
+    }
 }
+
+
 
 
 const styles = StyleSheet.create({
-	rowContainer: {
-		minHeight: 40,
-		width: '100%',
+    rowContainer: {
+        width: '100%',
+        paddingLeft: scale(10),
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center'
-	},
-	rowItem: {
-		borderColor: '#fff'
-	},
-	rowLabel:{
-		fontSize:14,
-		color: '#000',
-	},
-	rowButton: {
-		height: '50%',
-		borderRadius: 0,
-		alignItems: 'center',
-		width: 60
-	}, rowButtonApprove: {
-		backgroundColor: '#337321'
-	}, rowButtonDeny: {
-		backgroundColor: '#FF6600'
-	}, notConfirmText: {
-		color: '#FF6600'
-	}, approveText: {
-		color: '#337321'
-	}, denyText: {
-		color: '#FF0033'
-	},statusText: {
-		fontWeight: 'bold'
-	}
-})
+    },
+    rowLabel: {
+        color: '#000',
+    },
+    rowInfo: {
+        color: '#000',
+        // fontSize: verticalScale(25),
+        fontWeight: 'bold',
+        textDecorationLine: 'underline'
+    },
+    dialogLabel: {
+        fontWeight: 'bold',
+        color: '#000',
+        fontSize: verticalScale(14)
+    },
+    approveText: {
+        color: '#337321',
+        fontWeight: 'bold'
+    }, denyText: {
+        color: '#FF0033',
+        fontWeight: 'bold'
+    }
+});
 
 const mapStateToProps = (state) => {
-	return {
-		userInfo: state.userState.userInfo
-	}
+    return {
+        userInfo: state.userState.userInfo
+    }
 }
 
 export default connect(mapStateToProps)(HistoryEvaluateTask);
-
-
-
-

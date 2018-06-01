@@ -70,7 +70,9 @@ class DetailTask extends Component {
             loading: false,
             taskInfo: resultJson,
             subTaskData: resultJson.LstTask || []
-        })
+        });
+
+        console.log('kết quả', this.state.taskInfo);
     }
 
     //xác nhận bắt đầu công việc
@@ -422,10 +424,25 @@ class DetailTask extends Component {
                 onSelect={() => this.props.navigation.navigate('HistoryRescheduleTaskScreen', {
                     taskId: this.state.taskId,
                     taskType: this.state.taskType,
+                    canApprove: this.state.taskInfo.IsNguoiGiaoViec
                 })}
                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                 <Text style={MenuOptionStyle.text}>
                     LỊCH SỬ LÙI HẠN
+                </Text>
+            </MenuOption>
+        );
+
+        menuActions.push(
+            <MenuOption
+                key='m4'
+                onSelect={() => this.props.navigation.navigate('HistoryEvaluateTaskScreen', {
+                    taskId: this.state.taskId,
+                    taskType: this.state.taskType,
+                })}
+                style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
+                <Text style={MenuOptionStyle.text}>
+                    LỊCH SỬ PHẢN HỒI
                 </Text>
             </MenuOption>
         );

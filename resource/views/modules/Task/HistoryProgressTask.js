@@ -3,237 +3,298 @@
 	@author: duynn
 	@since: 15/05/2018
 */
-
 'use strict'
 import React, { Component } from 'react';
 import {
-    Alert,ActivityIndicator, View, Text, Modal,RefreshControl,
-    FlatList, TouchableOpacity, Image,
-    StyleSheet
+	ActivityIndicator, FlatList, StyleSheet, View as RnView, Text as RnText,
+	RefreshControl
 } from 'react-native';
-
-//constant
-import {
-    API_URL,
-    EMPTY_DATA_ICON_URI, EMTPY_DATA_MESSAGE,
-    HEADER_COLOR, LOADER_COLOR
-} from '../../../common/SystemConstant';
-
-//native-base
-import {
-    Form, Label, Button, Icon as NBIcon, Text as NBText, Item, Input, Title,
-    Container, Header, Content, Left, Right, Body,
-    Tab, Tabs, TabHeading, ScrollableTab, SwipeRow,
-    View as NBView
-} from 'native-base';
-
-//react-native-elements
-import { ListItem, Icon } from 'react-native-elements';
-//styles
-import { ListTaskStyle } from '../../../assets/styles/TaskStyle';
-import { DetailSignDocStyle } from '../../../assets/styles/SignDocStyle';
-import { MenuStyle, MenuOptionStyle } from '../../../assets/styles/MenuPopUpStyle';
-import { TabStyle } from '../../../assets/styles/TabStyle';
-import { indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
-
-import { dataLoading,executeLoading } from '../../../common/Effect';
-import { asyncDelay, unAuthorizePage, openSideBar, convertDateToString } from '../../../common/Utilities';
-//lib
+//redux
 import { connect } from 'react-redux';
-import renderIf from 'render-if';
-import * as util from 'lodash';
-import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 
+//lib
+import {
+	Container, Header, Left, Content,
+	Body, Title, Button, Text, SwipeRow,
+	Right, Form, Item, Label, 
+} from 'native-base';
+import {
+	Icon as RneIcon
+} from 'react-native-elements';
+import renderIf from 'render-if';
+import PopupDialog, { DialogTitle, DialogButton } from 'react-native-popup-dialog';
+
+//utilities
+import {
+	API_URL, LOADER_COLOR, HEADER_COLOR, EMPTY_STRING,
+	DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE
+} from '../../../common/SystemConstant';
+import { dataLoading } from '../../../common/Effect';
+import { emptyDataPage, formatLongText, convertDateToString, convertDateTimeToString } from '../../../common/Utilities';
+import { scale, verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
 class HistoryProgressTask extends Component {
-	constructor(props){
-		super(props)
+	constructor(props) {
+		super(props);
 		this.state = {
-			userId: this.props.userInfo.ID,
-			taskId: this.props.navigation.state.params.taskId ,
-            taskType: this.props.navigation.state.params.taskType ,
+			userId: props.userInfo.ID,
+			taskId: props.navigation.state.params.taskId,
+			taskType: props.navigation.state.params.taskType,
+
 			data: [],
+			dataItem: {},
+			fitlerValue: EMPTY_STRING,
+			pageIndex: DEFAULT_PAGE_INDEX,
+			pageSize: DEFAULT_PAGE_SIZE,
 			loading: false,
+			loadingMore: false,
 			refreshing: false,
-			executing: false
 		}
 	}
 
-	componentWillMount(){
-		this.fetchData();
+	componentWillMount = () => {
+		this.setState({
+			loading: true
+		}, () => this.fetchData())
 	}
 
-	async fetchData(){
-		if(!this.state.refreshing){
-			this.setState({
-            	loading: true
-        	});
-		}
 
-        const url = `${API_URL}/api/HscvCongViec/JobDetail/${this.state.taskId}/${this.state.userId}`;
-
-        console.log('url', url);
-        
-        const data = await fetch(url)
-        .then(response => response.json())
-        .then(responseJson => {
-            if(!util.isNull(responseJson)){
-            	return responseJson.LstCapNhat || [];
-            }else{
-            	return [];
-            }
-        }).catch(err => {
-            console.log('Xảy ra lỗi', err);
-        });
-
-        this.setState({
-        	refreshing: false,
-            loading: false,
-            data
-        });
+	loadMore = () => {
+		this.setState({
+			loadingMore: true,
+			pageIndex: this.state.pageIndex + 1
+		}, () => {
+			this.fetchData();
+		});
 	}
 
-	renderItem = ({item}) => {
+	fetchData = async () => {
+		const url = `${API_URL}/api/HscvCongViec/GetListProgressTask/${this.state.taskId}/${this.state.pageIndex}/${this.state.pageSize}?query=${this.state.fitlerValue}`
+		const result = await fetch(url);
+		const resultJson = await result.json();
+
+		console.log('đường dẫn', url);
+
+		this.setState({
+			data: this.state.loadingMore ? [...this.state.data, ...resultJson] : resultJson,
+			loading: false,
+			loadingMore: false,
+			refreshing: false,
+		});
+	}
+
+	onShowProgressInfo = (item) => {
+		this.setState({
+			dataItem: item
+		}, () => {
+			this.popupDialog.show();
+		})
+	}
+
+	renderItem = ({ item }) => {
 		return (
 			<SwipeRow
-                style={{borderColor: '#ececec', borderBottomWidth: 1}}
-            	rightOpenValue={-60}
-            	disableLeftSwipe={true}
-            	disableRightSwipe={true}
-	            body={
-	              <NBView style={styles.rowContainer}>
-	              	<Item fixedLabel style={styles.rowItem}>
-              			<NBIcon name='ios-person-outline' size={40}/>
-              			<Label style={styles.rowLabel}>
-							{item.NGUOITAO}
-              			</Label>
-            		</Item>
-
-            		<Item fixedLabel style={styles.rowItem}>
-              			<NBIcon name='ios-time-outline'size={40}/>
-              			<Label style={styles.rowLabel}>
-							{convertDateToString(item.NGAYCAPNHATTIENDO)}
-              			</Label>
-            		</Item>
-
-            		<Item fixedLabel style={styles.rowItem}>
-              			<NBIcon name='ios-trending-up'size={40}/>
-              			<Label style={styles.rowLabel}>
+				leftOpenValue={75}
+				rightOpenValue={-75}
+				disableLeftSwipe={true}
+				left={
+					<Button style={{ backgroundColor: '#d1d2d3' }} onPress={() => this.onShowProgressInfo(item)}>
+						<RneIcon name='info' type='foundation' size={verticalScale(30)} color={'#fff'} />
+					</Button>
+				}
+				body={
+					<RnView style={styles.rowContainer}>
+						<RnText style={styles.rowInfo}>
 							{item.TIENDOCONGVIEC + '%'}
-              			</Label>
-            		</Item>
-	              </NBView>
-	            }
-          />
-		)
+						</RnText>
+
+						<RnText style={styles.rowLabel}>
+							<RnText>
+								{' - Thời gian: '}
+							</RnText>
+
+							<RnText>
+								{
+									convertDateTimeToString(item.NGAYCAPNHATTIENDO)
+								}
+							</RnText>
+						</RnText>
+
+
+					</RnView>
+				}
+			/>
+		);
 	}
 
-	handleEnd = () => {
-    }
+	navigateBackToDetail() {
+		this.props.navigation.navigate('DetailTaskScreen', {
+			taskId: this.state.taskId,
+			taskType: this.state.taskType
+		});
+	}
 
-    handleRefresh = () => {
-        this.setState({
-            refreshing: true,
-        }, () => {
-            this.fetchData();
-        });
-    }
+	handleRefresh = () => {
+		this.setState({
+			refreshing: true,
+			pageIndex: DEFAULT_PAGE_INDEX,
+			pageSize: DEFAULT_PAGE_SIZE
+		}, () => {
+			this.fetchData()
+		})
+	}
 
-    navigateBack(){
-        this.props.navigation.navigate('DetailTaskScreen', {
-            taskId: this.state.taskId,
-            taskType: this.state.taskType
-        });
-    }
-
-	render(){
-		return(
+	render() {
+		return (
 			<Container>
 				<Header style={{ backgroundColor: HEADER_COLOR }}>
-                    <Left>
-                        <Button transparent onPress={() => this.navigateBack()}>
-                            <Icon name='ios-arrow-dropleft-circle' size={30} color={'#fff'} type="ionicon" />
-                        </Button>
-                    </Left>
+					<Left>
+						<Button transparent onPress={() => this.navigateBackToDetail()}>
+							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+						</Button>
+					</Left>
+					<Body>
+						<Title>
+							LỊCH SỬ CẬP NHẬT TIẾN ĐỘ
+						</Title>
+					</Body>
+					<Right />
+				</Header>
 
-                    <Body>
-                        <Title>
-                            LỊCH SỬ CẬP NHẬT TIẾN ĐỘ
-                        </Title>
-                    </Body>
+				<Content contentContainerStyle={{ flex: 1 }}>
+					{
+						renderIf(this.state.loading)(
+							dataLoading(true)
+						)
+					}
 
-                    <Right />
-                </Header>
+					{
+						renderIf(!this.state.loading)(
+							<FlatList
+								data={this.state.data}
+								keyExtractor={(item, index) => index.toString()}
+								renderItem={this.renderItem}
+								ListEmptyComponent={() => emptyDataPage()}
+								ListFooterComponent={() =>
+									this.state.loadingMore ?
+										<ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+										:
+										(
+											this.state.data.length >= DEFAULT_PAGE_SIZE ?
+												<Button full style={{ backgroundColor: '#0082ba' }} onPress={() => this.loadMore()}>
+													<Text>
+														TẢI THÊM
+										  			</Text>
+												</Button>
+												: null
+										)
+								}
 
-                <Content>
-					<FlatList
-                        onEndReached={() => this.handleEnd()}
-                        onEndReachedThreshold={0.1}
-                        data={this.state.data}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={this.renderItem}
-                        ListFooterComponent={() => this.state.loading ? <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> : null}
-                        ListEmptyComponent={() =>
-                            this.state.loading ? null : (
-                                <View style={ListTaskStyle.emtpyContainer}>
-                                    <Image source={EMPTY_DATA_ICON_URI} style={ListTaskStyle.emptyIcon} />
-                                    <Text style={ListTaskStyle.emptyMessage}>
-                                        {EMTPY_DATA_MESSAGE}
-                                    </Text>
-                                </View>
-                            )
-                        }
+								refreshControl={
+									<RefreshControl
+										refreshing={this.state.refreshing}
+										onRefresh={this.handleRefresh}
+										title='Kéo để làm mới'
+										colors={[LOADER_COLOR]}
+										tintColor={[LOADER_COLOR]}
+										titleColor='red'
+									/>
+								}
+							/>
+						)
+					}
+				</Content>
 
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={this.state.refreshing}
-                                onRefresh={this.handleRefresh}
-                                title='Kéo để làm mới'
-                                colors={[LOADER_COLOR]}
-                            />
-                        }
-                    />
-                </Content>
-                {
-                    executeLoading(this.state.executing)
-                }
+
+				<PopupDialog
+					dialogTitle={<DialogTitle title='THÔNG TIN CẬP NHẬT TIẾN ĐỘ' />}
+					ref={(popupDialog) => { this.popupDialog = popupDialog }}
+					width={0.8}
+					height={verticalScale(400)}
+					actions={[
+						<DialogButton
+							align={'center'}
+							buttonStyle={{
+								height: verticalScale(50),
+								justifyContent: 'center',
+							}}
+							text="ĐÓNG"
+							onPress={() => {
+								this.popupDialog.dismiss();
+							}}
+							key="button-0"
+						/>,
+					]}>
+					<Form>
+						<Item stackedLabel>
+							<Label style={styles.dialogLabel}>
+								Tiến độ
+							</Label>
+
+							<Label style={styles.dialogText}>
+								{this.state.dataItem.TIENDOCONGVIEC + '%'}
+							</Label>
+						</Item>
+
+						<Item stackedLabel>
+							<Label style={styles.dialogLabel}>
+								Người cập nhật
+							</Label>
+
+							<Label style={styles.dialogText}>
+								{this.state.dataItem.NGUOITAO}
+							</Label>
+						</Item>
+
+						<Item stackedLabel>
+							<Label style={styles.dialogLabel}>
+								Thời gian
+							</Label>
+
+							<Label style={styles.dialogText}>
+								{(convertDateTimeToString(this.state.dataItem.NGAYCAPNHATTIENDO))}
+							</Label>
+						</Item>
+
+						<Item stackedLabel>
+							<Label style={styles.dialogLabel}>
+								Nội dung
+							</Label>
+
+							<Label style={styles.dialogText}>
+								{(this.state.dataItem.NOIDUNG)}
+							</Label>
+						</Item>
+					</Form>
+				</PopupDialog>
 			</Container>
-		)
+		);
 	}
-}
 
+}
 
 const styles = StyleSheet.create({
 	rowContainer: {
-		minHeight: 40,
-		width: '100%'
-	},
-	rowItem: {
-		borderColor: '#fff'
-	},
-	rowLabel:{
-		fontSize:12,
-		color: '#000'
-	},
-	rowButton: {
-		height: '50%',
-		borderRadius: 0,
+		width: '100%',
+		paddingLeft: scale(10),
+		flexDirection: 'row',
 		alignItems: 'center',
-		width: 60
-	}, rowButtonApprove: {
-		backgroundColor: '#337321'
-	}, rowButtonDeny: {
-		backgroundColor: '#FF6600'
-	}, notConfirmText: {
-		color: '#FF6600'
-	}, approveText: {
-		color: '#337321'
-	}, denyText: {
-		color: '#FF0033'
-	},statusText: {
-		fontWeight: 'bold'
+	},
+	rowLabel: {
+		color: '#000',
+	},
+	rowInfo: {
+		color: '#000',
+		fontSize: verticalScale(25),
+		fontWeight: 'bold',
+		textDecorationLine: 'none'
+	},
+	dialogLabel: {
+		fontWeight: 'bold',
+		color: '#000',
+		fontSize: verticalScale(14)
 	}
-})
+});
 
 const mapStateToProps = (state) => {
 	return {
@@ -242,7 +303,3 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps)(HistoryProgressTask);
-
-
-
-
