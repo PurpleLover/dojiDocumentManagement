@@ -12,44 +12,44 @@ import { scale, verticalScale, moderateScale } from './ScaleIndicator';
 export const SideBarStyle = StyleSheet.create({
     container: {
         flex: 1
-    }, 
+    },
     header: {
         flex: 1,
-    },headerBackground: {
+    }, headerBackground: {
         flex: 1,
         borderBottomColor: '#d4d4d4',
         borderBottomWidth: 1,
         flexDirection: 'row',
-    },headerAvatarContainer: {
+    }, headerAvatarContainer: {
         justifyContent: 'center',
         alignItems: 'center',
         paddingLeft: scale(20),
-    },headerUserInfoContainer: {
+    }, headerUserInfoContainer: {
         justifyContent: 'center',
         paddingLeft: scale(20),
         alignItems: 'flex-start'
-    },headerAvatar: {
+    }, headerAvatar: {
         width: moderateScale(80),
         height: moderateScale(80),
-        borderRadius: 50,
+        borderRadius: moderateScale(80 / 2), //to create cirlce, width == height && borderRadius == width/2
         resizeMode: 'stretch',
-    },headerUserName: {
+    }, headerUserName: {
         justifyContent: 'center',
         textAlign: 'center',
         fontWeight: 'bold',
         color: '#000',
-        fontSize: moderateScale(16,1.2)
-    },headerUserJob: {
-        fontSize: moderateScale(11,1.7),
+        fontSize: moderateScale(16, 1.2)
+    }, headerUserJob: {
+        fontSize: moderateScale(11, 1.7),
         fontWeight: 'normal'
     },
     body: {
         flex: 3,
         backgroundColor: '#fff'
-    },listItemTitle: {
+    }, listItemTitle: {
         fontWeight: 'bold',
         color: 'black'
-    },listItemContainer: {
+    }, listItemContainer: {
         height: verticalScale(60),
         justifyContent: 'center',
         borderBottomColor: '#cccccc',
@@ -58,7 +58,7 @@ export const SideBarStyle = StyleSheet.create({
         height: verticalScale(60),
         justifyContent: 'center',
         borderBottomColor: '#cccccc'
-    },listItemSubTitleContainer: {
+    }, listItemSubTitleContainer: {
         color: '#000',
         marginLeft: scale(40)
     }, listItemFocus: {
@@ -70,6 +70,6 @@ export const SideBarStyle = StyleSheet.create({
         width: scale(30),
         height: verticalScale(30),
         resizeMode: 'contain',
-        marginLeft:10
+        marginLeft: scale(10)
     }
 });
