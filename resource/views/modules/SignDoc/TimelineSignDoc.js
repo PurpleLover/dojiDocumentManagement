@@ -17,7 +17,7 @@ import renderIf from 'render-if';
 //utilities
 import { convertDateTimeToString, emptyDataPage, convertTimeToString, convertDateToString } from '../../../common/Utilities';
 import { LOADER_COLOR } from '../../../common/SystemConstant';
-import { verticalScale } from '../../../assets/styles/ScaleIndicator';
+import { verticalScale, moderateScale, scale } from '../../../assets/styles/ScaleIndicator';
 
 export default class TimelineSignDoc extends Component {
     constructor(props) {
@@ -99,13 +99,13 @@ export default class TimelineSignDoc extends Component {
                         detailContainerStyle={{
                             borderWidth: 2,
                             borderRadius: 5,
-                            padding: 5,
-                            marginHorizontal: 5,
+                            padding: moderateScale(5),
+                            marginHorizontal: scale(5),
                             borderColor: '#909090'
                         }}
                         lineWidth={1}
                         dashLine={true}
-                        styleContainer={{ marginTop: 10 }}
+                        styleContainer={{ marginTop: verticalScale(10) }}
                         data={this.state.data}
                         isRenderSeperator
                         columnFormat={'two-column'}

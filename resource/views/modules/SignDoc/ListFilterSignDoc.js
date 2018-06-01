@@ -24,6 +24,9 @@ import { API_URL, HEADER_COLOR, LOADER_COLOR, DOKHAN_CONSTANT,
   VANBAN_CONSTANT, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '../../../common/SystemConstant';
 import { indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
+//style
+import {moderateScale} from '../../../assets/styles/ScaleIndicator';
+
 class ListFilterSignDoc extends Component {
     
     constructor(props){
@@ -106,13 +109,14 @@ class ListFilterSignDoc extends Component {
               </Body>
 
               <Right>
-                <Badge style={{
-                  backgroundColor: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? '#FF0033' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? '#FF6600' : '#337321')
+                <Button style={{
+                  backgroundColor: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? '#FF0033' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? '#FF6600' : '#337321'),
+                  borderRadius: 3
                 }}>
-                  <Text style={{fontSize: 10, fontWeight: 'bold'}}>
+                  <Text style={{fontSize: moderateScale(10), fontWeight: 'bold'}}>
                     {(item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? 'T.KHẨN' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? 'KHẨN' : 'THƯỜNG')}
                   </Text>
-                </Badge>
+                </Button>
               </Right>
           </ListItem>
         );

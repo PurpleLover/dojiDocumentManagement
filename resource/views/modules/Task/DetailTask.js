@@ -5,7 +5,7 @@
  */
 'use strict'
 import React, { Component } from 'react';
-import { Alert, Text } from 'react-native';
+import { ActivityIndicator, Alert, View as RnView, Text as RnText, FlatList } from 'react-native';
 //redux
 import { connect } from 'react-redux';
 
@@ -13,22 +13,31 @@ import { connect } from 'react-redux';
 import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import {
     Container, Header, Left, Button, Body,
-    Title, Right, Toast
+    Title, Right, Toast, Tabs, Tab, TabHeading, ScrollableTab,
+    Icon as NbIcon, Text, SwipeRow, Item, Input,
+    Content
 } from 'native-base';
 import { Icon } from 'react-native-elements';
 import renderIf from 'render-if';
+import * as util from 'lodash'
 
 //utilities
 import {
     API_URL, LOADER_COLOR, HEADER_COLOR,
-    CONGVIEC_CONSTANT
+    CONGVIEC_CONSTANT, PLANJOB_CONSTANT, EMPTY_DATA_ICON_URI, EMPTY_STRING, DEFAULT_PAGE_INDEX
 } from '../../../common/SystemConstant';
-import { asyncDelay } from '../../../common/Utilities';
+import { asyncDelay, convertDateToString, formatLongText } from '../../../common/Utilities';
 import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 import { executeLoading, dataLoading } from '../../../common/Effect';
 
 //styles
 import { MenuStyle, MenuOptionStyle } from '../../../assets/styles/MenuPopUpStyle';
+import { TabStyle } from '../../../assets/styles/TabStyle';
+
+//comps
+import TaskDescription from './TaskDescription';
+import TaskAttachment from './TaskAttachment';
+import GroupSubTask from './GroupSubTask';
 
 class DetailTask extends Component {
     constructor(props) {
@@ -39,7 +48,7 @@ class DetailTask extends Component {
             taskType: this.props.navigation.state.params.taskType,
             taskInfo: {},
             loading: false,
-            executing: false,
+            executing: false
         }
     }
 
@@ -53,16 +62,17 @@ class DetailTask extends Component {
         });
 
         const url = `${API_URL}/api/HscvCongViec/JobDetail/${this.state.taskId}/${this.state.userId}`;
+
         const result = await fetch(url);
         const resultJson = await result.json();
 
         this.setState({
             loading: false,
-            taskInfo: resultJson
+            taskInfo: resultJson,
+            subTaskData: resultJson.LstTask || []
         })
     }
-    
-    
+
     //xác nhận bắt đầu công việc
     onConfirmToStartTask = () => {
         Alert.alert(
@@ -70,11 +80,11 @@ class DetailTask extends Component {
             'Bạn có chắc chắn muốn bắt đầu thực hiện công việc này?',
             [
                 {
-                    text: 'Đồng ý', onPress: () => {this.onStartTask()}
+                    text: 'Đồng ý', onPress: () => { this.onStartTask() }
                 },
 
                 {
-                    text: 'Hủy bỏ', onPress: () => {}
+                    text: 'Hủy bỏ', onPress: () => { }
                 }
             ]
         )
@@ -98,10 +108,10 @@ class DetailTask extends Component {
             userId: this.state.userId,
             taskId: this.state.taskId
         });
-    
+
         const result = await fetch(url, {
             method: 'POST',
-            headers, 
+            headers,
             body
         });
 
@@ -112,16 +122,16 @@ class DetailTask extends Component {
         this.setState({
             executing: false
         });
-        
+
         Toast.show({
             text: resultJson.Status ? 'Bắt đầu công việc thành công' : 'Bắt đầu công việc không thành công',
             type: resultJson.Status ? 'success' : 'danger',
             buttonText: "OK",
             buttonStyle: { backgroundColor: '#fff' },
-            buttonTextStyle: { color: resultJson.Status ? '#337321' :'#FF0033'},
+            buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
             duration: 3000,
-            onClose: ()=> {
-                if(resultJson.Status){
+            onClose: () => {
+                if (resultJson.Status) {
                     this.fetchData();
                 }
             }
@@ -145,7 +155,7 @@ class DetailTask extends Component {
     }
 
     render() {
-        const bodyContent = this.state.loading ? dataLoading(true) : null;
+        const bodyContent = this.state.loading ? dataLoading(true) : <TaskContent userInfo={this.props.userInfo} info={this.state.taskInfo} />;
         const menuActions = [];
         if (!this.state.loading) {
             const task = this.state.taskInfo;
@@ -232,14 +242,14 @@ class DetailTask extends Component {
 
                 if (task.HasRoleAssignTask) {
                     if (task.CongViec.NGUOIXULYCHINH_ID != task.CongViec.NGUOIGIAOVIEC_ID) {
-                        menuActions.push(
-                            <MenuOption key={2}
-                                style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
-                                <Text style={MenuOptionStyle.text}>
-                                    THEO DÕI
-                                </Text>
-                            </MenuOption>
-                        )
+                        // menuActions.push(
+                        //     <MenuOption key={2}
+                        //         style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
+                        //         <Text style={MenuOptionStyle.text}>
+                        //             THEO DÕI
+                        //         </Text>
+                        //     </MenuOption>
+                        // )
                     }
                 }
 
@@ -307,13 +317,13 @@ class DetailTask extends Component {
                     }
                 }
                 else if (task.IsNguoiGiaoViec) {
-                    menuActions.push(
-                        <MenuOption key={7} style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
-                            <Text style={MenuOptionStyle.text}>
-                                THEO DÕI
-                            </Text>
-                        </MenuOption>
-                    )
+                    // menuActions.push(
+                    //     <MenuOption key={7} style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
+                    //         <Text style={MenuOptionStyle.text}>
+                    //             THEO DÕI
+                    //         </Text>
+                    //     </MenuOption>
+                    // )
                     if (task.CongViec.IS_HASPLAN == true && task.TrangThaiKeHoach == PLANJOB_CONSTANT.DATRINHKEHOACH) {
                         {/*menuActions.push(
                             <MenuOption key={8} style={[MenuOptionStyle.wrapper,MenuOptionStyle.wrapperBorder]}>
@@ -377,18 +387,48 @@ class DetailTask extends Component {
         }
 
         //menu thông tin về công việc
+
         menuActions.push(
-            <MenuOption 
-                onSelect={()=> this.props.navigation.navigate('HistoryProgressTaskScreen', {
-                            taskId: this.state.taskId,
-                            taskType: this.state.taskType,
+            <MenuOption
+                key='m1'
+                onSelect={() => this.props.navigation.navigate('GroupSubTaskScreen', {
+                    taskId: this.state.taskId,
+                    taskType: this.state.taskType,
                 })}
-                style={[MenuOptionStyle.wrapper,MenuOptionStyle.wrapperBorder]}>
-                    <Text style={MenuOptionStyle.text}>
-                        THEO DÕI TIẾN ĐỘ
+                style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
+                <Text style={MenuOptionStyle.text}>
+                    D/S CÔNG VIỆC CON
+                </Text>
+            </MenuOption>
+        );
+
+        menuActions.push(
+            <MenuOption
+                key='m2'
+                onSelect={() => this.props.navigation.navigate('HistoryProgressTaskScreen', {
+                    taskId: this.state.taskId,
+                    taskType: this.state.taskType,
+                })}
+                style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
+                <Text style={MenuOptionStyle.text}>
+                    THEO DÕI TIẾN ĐỘ
                     </Text>
             </MenuOption>
-        )
+        );
+
+        menuActions.push(
+            <MenuOption
+                key='m3'
+                onSelect={() => this.props.navigation.navigate('HistoryRescheduleTaskScreen', {
+                    taskId: this.state.taskId,
+                    taskType: this.state.taskType,
+                })}
+                style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
+                <Text style={MenuOptionStyle.text}>
+                    LỊCH SỬ LÙI HẠN
+                </Text>
+            </MenuOption>
+        );
         return (
             <MenuProvider>
                 <Container>
@@ -429,6 +469,7 @@ class DetailTask extends Component {
                     }
 
                     {/* hiệu ứng xử lý */}
+
                     {
                         executeLoading(this.state.executing)
                     }
@@ -438,6 +479,51 @@ class DetailTask extends Component {
     }
 }
 
+
+class TaskContent extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            userInfo: props.userInfo,
+            info: props.info,
+            selectedTabIndex: 0
+        }
+    }
+
+    render() {
+        return (
+            <RnView style={{ flex: 1 }}>
+                <Tabs
+                    initialPage={this.state.selectedTabIndex}
+                    tabBarUnderlineStyle={TabStyle.underLineStyle}
+                    onChangeTab={(selectedTabIndex) => this.setState({ selectedTabIndex })}>
+                    <Tab heading={
+                        <TabHeading style={(this.state.selectedTabIndex == 0) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                            <NbIcon name='ios-information-circle' style={TabStyle.activeText} />
+                            <Text style={(this.state.selectedTabIndex == 0) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                MÔ TẢ
+                            </Text>
+                        </TabHeading>
+                    }>
+                        <TaskDescription info={this.props.info} />
+                    </Tab>
+
+                    <Tab heading={
+                        <TabHeading style={(this.state.selectedTabIndex == 2) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                            <NbIcon name='ios-attach' style={TabStyle.activeText} />
+                            <Text style={(this.state.selectedTabIndex == 2) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                ĐÍNH KÈM
+                            </Text>
+                        </TabHeading>
+                    }>
+                        <TaskAttachment info={this.props.info} />
+                    </Tab>
+                </Tabs>
+            </RnView>
+        );
+    }
+}
 
 const mapStateToProps = (state) => {
     return {

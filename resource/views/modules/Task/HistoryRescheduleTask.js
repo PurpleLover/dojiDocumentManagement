@@ -3,346 +3,377 @@
 	@author: duynn
 	@since: 15/05/2018
 */
-
-'use strict'
+'use strict';
 import React, { Component } from 'react';
+import { View as RnView, Text as RnText } from 'react-native';
 import {
-    Alert,ActivityIndicator, View, Text, Modal,RefreshControl,
-    FlatList, TouchableOpacity, Image,
-    StyleSheet
+	Alert, FlatList, RefreshControl, StyleSheet
 } from 'react-native';
-
-//constant
-import {
-    API_URL,
-    EMPTY_DATA_ICON_URI, EMTPY_DATA_MESSAGE,
-    HEADER_COLOR, LOADER_COLOR
-} from '../../../common/SystemConstant';
-
-//native-base
-import {
-    Form, Label, Button, Icon as NBIcon, Text as NBText, Item, Input, Title,
-    Container, Header, Content, Left, Right, Body,
-    Tab, Tabs, TabHeading, ScrollableTab, SwipeRow,
-    View as NBView, Toast
-} from 'native-base';
-
-//react-native-elements
-import { ListItem, Icon } from 'react-native-elements';
-//styles
-import { ListTaskStyle } from '../../../assets/styles/TaskStyle';
-import { DetailSignDocStyle } from '../../../assets/styles/SignDocStyle';
-import { MenuStyle, MenuOptionStyle } from '../../../assets/styles/MenuPopUpStyle';
-import { TabStyle } from '../../../assets/styles/TabStyle';
-import { indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
-
-import { dataLoading,executeLoading } from '../../../common/Effect';
-import { asyncDelay, unAuthorizePage, openSideBar, convertDateToString } from '../../../common/Utilities';
 //lib
-import { connect } from 'react-redux';
+import {
+	SwipeRow, Button, View, Text, Icon, Item,
+	Label, Container, Header, Left, Body, Right,
+	Title, Content, Form, Toast
+} from 'native-base';
 import renderIf from 'render-if';
 import * as util from 'lodash';
-import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
+import {
+	Icon as RneIcon
+} from 'react-native-elements';
+import PopupDialog, { DialogTitle, DialogButton } from 'react-native-popup-dialog';
 
-//firebase
+//redux
+import { connect } from 'react-redux';
+
+//utilities
+import { API_URL, HEADER_COLOR, LOADER_COLOR } from '../../../common/SystemConstant';
+import { asyncDelay, emptyDataPage, formatLongText, convertDateToString } from '../../../common/Utilities';
+import { dataLoading, executeLoading } from '../../../common/Effect';
+import { scale, verticalScale } from '../../../assets/styles/ScaleIndicator';
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
 class HistoryRescheduleTask extends Component {
-	constructor(props){
+	constructor(props) {
 		super(props);
+
 		this.state = {
-			userId: this.props.userInfo.ID,
-			taskId: this.props.navigation.state.params.taskId,
-			taskType: this.props.navigation.state.params.taskType,
+			userId: props.userInfo.ID,
+
+			taskId: props.navigation.state.params.taskId,
+			taskType: props.navigation.state.params.taskType,
+
 			data: [],
 			loading: false,
-			refreshing: false,
-			executing: false
+			executing: false,
+			rescheduleId: 0,
+			rescheduleInfo: {}
 		}
 	}
-	
-	componentWillMount(){
+
+	componentWillMount() {
 		this.fetchData();
 	}
 
-	async fetchData(){
-		if(!this.state.refreshing){
-			this.setState({
-            	loading: true
-        	});
-		}
+	fetchData = async () => {
+		this.setState({
+			loading: true
+		});
 
-        const url = `${API_URL}/api/HscvCongViec/JobDetail/${this.state.taskId}/${this.state.userId}`;
-        
-        const data = await fetch(url)
-        .then(response => response.json())
-        .then(responseJson => {
-            if(!util.isNull(responseJson)){
-            	return responseJson.LstXinLuiHan || [];
-            }else{
-            	return [];
-            }
-        }).catch(err => {
-            console.log('Xảy ra lỗi', err);
-        });
+		const url = `${API_URL}/api/HscvCongViec/JobDetail/${this.state.taskId}/${this.state.userId}`;
+		const result = await fetch(url);
+		const resultJson = await result.json();
 
-        this.setState({
-        	refreshing: false,
-            loading: false,
-            data
-        });
+		this.setState({
+			loading: false,
+			data: resultJson.LstXinLuiHan || []
+		});
 	}
-	
 
-	onConfirmSaveExtendTask(isApprove, itemId){
-		const message = isApprove ? 'Bạn có chắc chắn đồng ý phê duyệt gia hạn công việc' : 'Bạn có chắc chắn từ chối phê duyệt gia hạn công việc'
-		Alert.alert(
-			'XÁC NHẬN PHÊ DUYỆT',
-			message,
-			[
-                { text: 'ĐỒNG Ý', onPress: () =>  this.saveExtendTask(isApprove, itemId) },
-                { text: 'HỦY BỎ', onPress: () =>  console.log('just close HistoryRescheduleTask modal1') },
-            ]
-		)
+	onShowRescheduleInfo = (item) => {
+		this.setState({
+			rescheduleInfo: item
+		}, () => {
+			this.popupDialog.show();
+		})
 	}
-	
-	//phê duyệt yêu cầu lùi hạn công việc
-	async saveExtendTask(isApprove, itemId){
+
+	onConfirmApproveReschedule = (item) => {
+		this.setState({
+			rescheduleInfo: item
+		}, () => {
+			Alert.alert(
+				'PHẢN HỒI YÊU CẦU LÙI HẠN',
+				'Phản hồi yêu cầu lùi hạn của ' + item.FullName,
+				[
+					{
+						'text': 'ĐỒNG Ý', onPress: () => { this.onApproveReschedule(true, item.ID) }
+					}, {
+						'text': 'KHÔNG ĐỒNG Ý', onPress: () => { this.onApproveReschedule(false, item.ID) }
+					}, {
+						'text': 'THOÁT', onPress: () => console.log('pressed cancel')
+					}
+				]
+			)
+		})
+	}
+
+	onApproveReschedule = async (isApprove, id) => {
 		this.setState({
 			executing: true
-		})
+		});
+
 		const status = isApprove ? 1 : 0;
-		const url = `${API_URL}/api/HscvCongViec/ApproveExtendTask?id=${itemId}&userId=${this.state.userId}&status=${status}`;
+
+		const url = `${API_URL}/api/HscvCongViec/ApproveExtendTask?id=${id}&userId=${this.state.userId}&status=${status}`;
+		const headers = new Headers({
+			'Accept': 'application/json',
+			'Content-Type': 'application/json; charset=utf-8',
+		})
 		const result = await fetch(url, {
-			method:'POST',
-			headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json; charset=utf-8',
-            }
+			method: 'POST',
+			headers
 		});
 
 		const resultJson = await result.json();
 
-		console.log('kết quả', resultJson);
+		await asyncDelay(2000);
 
-		await asyncDelay(1000);
-		
 		this.setState({
 			executing: false
 		});
 
-		if(resultJson.Status == true && !util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)){
-            const message = this.props.userInfo.Fullname + ' đã ' + (isApprove ? 'phê duyệt' : 'từ chối')+ ' yêu cầu lùi hạn';
-            const content = {
-                title: (isApprove ? 'ĐỒNG Ý' : 'TỪ CHỐI') + ' YÊU CẦU GIA HẠN CÔNG VIỆC',
-                message,
-                isTaskNotification: true,
-                targetScreen: 'DetailTaskScreen',
-                targetTaskId: this.state.taskId,
-                targetTaskType: this.state.taskType
-            }
+		if (resultJson.Status == true && !util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)) {
+			const message = this.props.userInfo.Fullname + ' đã ' + (isApprove ? 'phê duyệt' : 'từ chối') + ' yêu cầu lùi hạn';
+			const content = {
+				title: (isApprove ? 'ĐỒNG Ý' : 'TỪ CHỐI') + ' YÊU CẦU GIA HẠN CÔNG VIỆC',
+				message,
+				isTaskNotification: true,
+				targetScreen: 'DetailTaskScreen',
+				targetTaskId: this.state.taskId,
+				targetTaskType: this.state.taskType
+			}
 
-            resultJson.GroupTokens.forEach(token => {
-                pushFirebaseNotify(content, token, 'notification');
-            })
-        }
+			resultJson.GroupTokens.forEach(token => {
+				pushFirebaseNotify(content, token, 'notification');
+			})
+		}
 
 		Toast.show({
-            text: resultJson.Status ? 'Phê duyệt yêu cầu lùi hạn thành công' : 'Phê duyệt yêu cầu lùi hạn không thành công',
-            type: resultJson.Status ? 'success' : 'danger',
-            buttonText: "OK",
-            buttonStyle: { backgroundColor: '#fff' },
-            buttonTextStyle: { color: resultJson.Status ? '#337321' :'#FF0033'},
-            duration: 5000,
-            onClose: ()=> {
-                if(resultJson.Status){
-                    this.fetchData();
-                }
-            }
-        });
+			text: resultJson.Status ? 'Phản hồi yêu cầu lùi hạn thành công' : 'Phản hồi yêu cầu lùi hạn không thành công',
+			type: resultJson.Status ? 'success' : 'danger',
+			buttonText: "OK",
+			buttonStyle: { backgroundColor: '#fff' },
+			buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
+			duration: 3000,
+			onClose: () => {
+				if (resultJson.Status) {
+					this.fetchData();
+				}
+			}
+		});
 	}
 
-	navigateBack(){
-        this.props.navigation.navigate('DetailTaskScreen', {
-            taskId: this.state.taskId,
-            taskType: this.state.taskType
-        });
-    }
-	
-	renderItem = ({item}) => {
+	renderItem = ({ item }) => {
 		return (
 			<SwipeRow
-				style={{borderColor: '#ececec', borderBottomWidth: 1}}
-            	rightOpenValue={-60}
-            	disableLeftSwipe={!util.isNull(item.IS_APPROVED)}
-            	disableRightSwipe={!util.isNull(item.IS_APPROVED)}
-	            body={
-	              <NBView style={styles.rowContainer}>
-	              	<Item fixedLabel style={styles.rowItem}>
-              			<NBIcon name='ios-person-outline' size={40}/>
-              			<Label style={styles.rowLabel}>
-							{item.FullName}
-              			</Label>
-            		</Item>
+				leftOpenValue={75}
+				rightOpenValue={-75}
+				disableLeftSwipe={!util.isNull(item.IS_APPROVED)}
+				left={
+					<Button style={{ backgroundColor: '#d1d2d3' }} onPress={() => this.onShowRescheduleInfo(item)}>
+						<RneIcon name='info' type='foundation' size={verticalScale(30)} color={'#fff'} />
+					</Button>
+				}
+				body={
+					<RnView style={styles.rowContainer}>
+						<RnText style={styles.rowDateContainer}>
+							<RnText>
+								{'Lùi đến: '}
+							</RnText>
 
-            		<Item fixedLabel style={styles.rowItem}>
-              			<NBIcon name='ios-time-outline'size={40}/>
-              			<Label style={styles.rowLabel}>
-							Xin lùi hạn đến ngày {convertDateToString(item.HANKETHUC)}
-              			</Label>
-            		</Item>
+							<RnText style={styles.rowDate}>
+								{convertDateToString(item.HANKETHUC)}
+							</RnText>
+						</RnText>
 
-            		<Item fixedLabel style={styles.rowItem}>
-              			<NBIcon name='ios-text-outline'size={40}/>
-              			<Label style={styles.rowLabel}>
-							{item.NOIDUNG}
-              			</Label>
-            		</Item>
+						<RnText style={styles.rowStatusLabel}>
+							{'Trạng thái: '}
+						</RnText>
+						{
+							util.isNull(item.IS_APPROVED) ?
+								<RnText style={[styles.notConfirmText, styles.rowStatus]}>
+									Chưa phê duyệt
+								</RnText> :
+								(
+									item.IS_APPROVED ?
+										<RnText style={[styles.approveText, styles.rowStatus]}>
+											Đã phê duyệt
+										</RnText>
+										: <RnText style={[styles.denyText, styles.rowStatus]}>
+											Không phê duyệt
+										</RnText>
+								)
+						}
+					</RnView>
+				}
 
-            		<Item fixedLabel style={styles.rowItem}>
-              			<NBIcon name='ios-time-outline'size={40}/>
-              			<Label style={styles.rowLabel}>
-							{convertDateToString(item.NGAYTAO)}
-              			</Label>
-            		</Item>
-            		<Item fixedLabel style={styles.rowItem}>
-              			<NBIcon name='ios-alert-outline'size={40}/>
-              			<Label style={styles.rowLabel}>
-							{util.isNull(item.IS_APPROVED) ? 
-								<Text style={[styles.notConfirmText, styles.statusText]}>Chưa phê duyệt</Text> : 
-								(item.IS_APPROVED ? <Text style={[styles.approveText, styles.statusText]}>Đã phê duyệt</Text> : <Text style={[styles.denyText, styles.statusText]}>Không phê duyệt</Text>)}
-              			</Label>
-            		</Item>
-	              </NBView>
-	            }
-	            right={
-	              <NBView>
-	                {
-	                	renderIf(util.isNull(item.IS_APPROVED))(
-							<NBView>
-								<Button onPress={() => this.onConfirmSaveExtendTask(true, item.ID)} 
-	                			style={[styles.rowButton, styles.rowButtonApprove]}>
-	                				<NBIcon active name="ios-checkmark-circle-outline" />
-	              				</Button>
-
-				              	<Button onPress={() => this.onConfirmSaveExtendTask(false, item.ID)} 
-				              		style={[styles.rowButton, styles.rowButtonDeny]}>
-				                	<NBIcon active name="ios-close-circle-outline" />
-				              	</Button>
-							</NBView>
-	                	)
-	                }
-	              </NBView>
-	            }
-          />
+				right={
+					<Button style={{ backgroundColor: LOADER_COLOR }} onPress={() => this.onConfirmApproveReschedule(item)}>
+						<RneIcon name='pencil' type='foundation' size={verticalScale(30)} color={'#fff'} />
+					</Button>
+				}
+			/>
 		)
 	}
 
-	handleEnd = () => {
-    }
+	navigateBackToDetail() {
+		this.props.navigation.navigate('DetailTaskScreen', {
+			taskId: this.state.taskId,
+			taskType: this.state.taskType
+		});
+	}
 
-    handleRefresh = () => {
-        this.setState({
-            refreshing: true,
-        }, () => {
-            this.fetchData();
-        });
-    }
-
-	render(){
-		return(
+	render() {
+		return (
 			<Container>
 				<Header style={{ backgroundColor: HEADER_COLOR }}>
-                    <Left>
-                        <Button transparent onPress={() => this.navigateBack()}>
-                            <Icon name='ios-arrow-dropleft-circle' size={30} color={'#fff'} type="ionicon" />
-                        </Button>
-                    </Left>
+					<Left>
+						<Button transparent onPress={() => this.navigateBackToDetail()}>
+							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+						</Button>
+					</Left>
 
-                    <Body>
-                        <Title>
-                            LỊCH SỬ LÙI HẠN
-                        </Title>
-                    </Body>
+					<Body>
+						<Title>
+							LỊCH SỬ LÙI HẠN
+						</Title>
+					</Body>
+				</Header>
 
-                    <Right />
-                </Header>
+				<Content contentContainerStyle={{ flex: 1 }}>
+					{
+						renderIf(this.state.loading)(
+							dataLoading(true)
+						)
+					}
 
-                <Content>
-					<FlatList
-                        onEndReached={() => this.handleEnd()}
-                        onEndReachedThreshold={0.1}
-                        data={this.state.data}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={this.renderItem}
-                        ListFooterComponent={() => this.state.loading ? <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> : null}
-                        ListEmptyComponent={() =>
-                            this.state.loading ? null : (
-                                <View style={ListTaskStyle.emtpyContainer}>
-                                    <Image source={EMPTY_DATA_ICON_URI} style={ListTaskStyle.emptyIcon} />
-                                    <Text style={ListTaskStyle.emptyMessage}>
-                                        {EMTPY_DATA_MESSAGE}
-                                    </Text>
-                                </View>
-                            )
-                        }
+					{
+						renderIf(!this.state.loading)(
+							<FlatList
+								data={this.state.data}
+								keyExtractor={(item, index) => index.toString()}
+								renderItem={this.renderItem}
+								ListEmptyComponent={() => emptyDataPage()}
+							/>
+						)
+					}
+				</Content>
 
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={this.state.refreshing}
-                                onRefresh={this.handleRefresh}
-                                title='Kéo để làm mới'
-                                colors={[LOADER_COLOR]}
-                            />
-                        }
-                    />
-                </Content>
-                {
-                    executeLoading(this.state.executing)
-                }
+				{
+					executeLoading(this.state.executing)
+				}
+
+				{/* hiển thị thông tin lùi hạn công việc */}
+
+				<PopupDialog
+					dialogTitle={<DialogTitle title='THÔNG TIN LÙI HẠN' />}
+					ref={(popupDialog) => { this.popupDialog = popupDialog }}
+					width={0.8}
+					height={verticalScale(400)}
+					actions={[
+						<DialogButton
+							align={'center'}
+							buttonStyle={{
+								height: verticalScale(50),
+								justifyContent: 'center',
+							}}
+							text="ĐÓNG"
+							onPress={() => {
+								this.popupDialog.dismiss();
+							}}
+							key="button-0"
+						/>,
+					]}>
+					<Form>
+						<Item stackedLabel>
+							<Label style={styles.dialogLabel}>
+								Người xin lùi hạn
+							</Label>
+
+							<Label style={styles.dialogText}>
+								{this.state.rescheduleInfo.FullName}
+							</Label>
+						</Item>
+
+						<Item stackedLabel>
+							<Label style={styles.dialogLabel}>
+								Xin lùi tới ngày
+							</Label>
+
+							<Label style={styles.dialogText}>
+								{convertDateToString(this.state.rescheduleInfo.HANKETHUC)}
+							</Label>
+						</Item>
+
+						<Item stackedLabel>
+							<Label style={styles.dialogLabel}>
+								Lý do xin lùi hạn
+							</Label>
+
+							<Label style={styles.dialogText}>
+								{(this.state.rescheduleInfo.NOIDUNG)}
+							</Label>
+						</Item>
+
+						<Item stackedLabel>
+							<Label style={styles.dialogLabel}>
+								Trạng thái phê duyệt
+							</Label>
+
+							{
+								util.isNull(this.state.rescheduleInfo.IS_APPROVED) ?
+									<Label style={[styles.notConfirmText]}>
+										Chưa phê duyệt
+								</Label> :
+									(
+										this.state.rescheduleInfo.IS_APPROVED ?
+											<Label style={[styles.approveText]}>
+												Đã phê duyệt
+											</Label>
+											: <Label style={[styles.denyText]}>
+												Không phê duyệt
+											</Label>
+									)
+							}
+						</Item>
+					</Form>
+				</PopupDialog>
 			</Container>
-		)
+		);
 	}
 }
 
 const styles = StyleSheet.create({
 	rowContainer: {
-		minHeight: 50,
-		width: '100%'
+		width: '100%',
+		paddingLeft: scale(10),
+		flexDirection: 'row'
 	},
-	rowItem: {
-		borderColor: '#fff'
+	rowDateContainer: {
+		color: '#000',
 	},
-	rowLabel:{
-		fontSize:12,
-		color: '#000'
+	rowDate: {
+		color: '#000',
+		fontWeight: 'bold',
+		paddingLeft: scale(10),
+		textDecorationLine: 'underline'
 	},
-	rowButton: {
-		height: '50%',
-		borderRadius: 0,
-		alignItems: 'center',
-		width: 60
-	}, rowButtonApprove: {
-		backgroundColor: '#337321'
-	}, rowButtonDeny: {
-		backgroundColor: '#FF6600'
+	rowStatusLabel: {
+		color: '#000',
+		marginLeft: scale(10)
+	},
+	rowStatus: {
+		fontWeight: 'bold',
+		textDecorationLine: 'underline'
 	}, notConfirmText: {
 		color: '#FF6600'
 	}, approveText: {
 		color: '#337321'
 	}, denyText: {
 		color: '#FF0033'
-	},statusText: {
-		fontWeight: 'bold'
+	}, dialogLabel: {
+		fontWeight: 'bold',
+		color: '#000',
+		fontSize: verticalScale(14)
 	}
-})
+});
+
+
 
 const mapStateToProps = (state) => {
-    return {
-        userInfo: state.userState.userInfo
-    }
+	return {
+		userInfo: state.userState.userInfo
+	}
 }
 
 export default connect(mapStateToProps)(HistoryRescheduleTask)
-
-

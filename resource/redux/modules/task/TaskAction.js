@@ -14,8 +14,9 @@ export function updateTaskProcessors(userId, isMainProcess){
 	}
 }
 
-export function resetTaskProcessors(){
+export function resetTaskProcessors(processType){
 	return {
-		type: type.RESET_TASK_PROCESSORS
+		type: type.RESET_TASK_PROCESSORS,
+		processType
 	}
 }

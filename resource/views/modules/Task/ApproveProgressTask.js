@@ -151,7 +151,7 @@ class ApproveProgressTask extends Component {
             <Container>
                 <Header style={{backgroundColor: HEADER_COLOR}}>
                     <Left>
-                        <Button transparent onPress={()=> this.navigateToDetail()}>
+                        <Button transparent onPress={()=> this.navigateBackToDetail()}>
                             <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
                         </Button>
                     </Left>

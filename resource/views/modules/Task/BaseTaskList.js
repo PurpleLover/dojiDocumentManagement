@@ -30,7 +30,7 @@ import {
 
 //utilities
 import { indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
-import { getColorCodeByProgressValue, convertDateToString } from '../../../common/Utilities';
+import { getColorCodeByProgressValue, convertDateToString, emptyDataPage } from '../../../common/Utilities';
 
 //styles
 import { ListTaskStyle } from '../../../assets/styles/TaskStyle';
@@ -160,7 +160,7 @@ class BaseTaskList extends Component {
 
                         title={
                             <RnText style={item.IS_READ === true ? ListTaskStyle.textRead : ListTaskStyle.textNormal}>
-                                <RnText style={{fontWeight: 'bold'}}>
+                                <RnText style={{ fontWeight: 'bold' }}>
                                     Tên công việc:
                                 </RnText>
                                 <RnText>
@@ -171,7 +171,7 @@ class BaseTaskList extends Component {
 
                         subtitle={
                             <RnText style={[item.IS_READ === true ? ListTaskStyle.textRead : ListTaskStyle.textNormal, ListTaskStyle.abridgment]}>
-                                <RnText style={{fontWeight: 'bold'}}>
+                                <RnText style={{ fontWeight: 'bold' }}>
                                     Hạn xử lý:
                                 </RnText>
                                 <RnText>
@@ -193,44 +193,44 @@ class BaseTaskList extends Component {
                         <Icon name='ios-search' />
                         <Input placeholder='Tên công việc'
                             value={this.state.filterValue}
-                            onChangeText={(filterValue) => this.setState({filterValue})}
+                            onChangeText={(filterValue) => this.setState({ filterValue })}
                             onSubmitEditing={() => this.onFilter()} />
                     </Item>
                 </Header>
 
-                <Content contentContainerStyle={{flex: 1}}>
+                <Content contentContainerStyle={{ flex: 1 }}>
                     {
                         renderIf(!this.state.loadingData)(
-                            <List>
-                                <FlatList
-                                    data={this.state.data}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    renderItem={this.renderItem}
-                                    refreshControl={
-                                        <RefreshControl
-                                            refreshing={this.state.refreshingData}
-                                            onRefresh={this.handleRefresh}
-                                            title='Kéo để làm mới'
-                                            colors={[LOADER_COLOR]}
-                                            tintColor={[LOADER_COLOR]}
-                                            titleColor='red'
-                                        />
-                                    }
-                                    ListFooterComponent={
-                                        this.state.loadingMoreData ?
-                                            <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
-                                            (
-                                                this.state.data.length >= DEFAULT_PAGE_SIZE ?
-                                                    <Button full style={{ backgroundColor: '#0082ba' }} onPress={() => this.onLoadingMore()}>
-                                                        <Text>
-                                                            TẢI THÊM
+                            <FlatList
+                                data={this.state.data}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={this.renderItem}
+                                refreshControl={
+                                    <RefreshControl
+                                        refreshing={this.state.refreshingData}
+                                        onRefresh={this.handleRefresh}
+                                        title='Kéo để làm mới'
+                                        colors={[LOADER_COLOR]}
+                                        tintColor={[LOADER_COLOR]}
+                                        titleColor='red'
+                                    />
+                                }
+                                ListFooterComponent={
+                                    this.state.loadingMoreData ?
+                                        <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
+                                        (
+                                            this.state.data.length >= DEFAULT_PAGE_SIZE ?
+                                                <Button full style={{ backgroundColor: '#0082ba' }} onPress={() => this.onLoadingMore()}>
+                                                    <Text>
+                                                        TẢI THÊM
                                                         </Text>
-                                                    </Button>
-                                                    : null
-                                            )
-                                    }
-                                />
-                            </List>
+                                                </Button>
+                                                : null
+                                        )
+                                }
+
+                                ListEmptyComponent={() => emptyDataPage()}
+                            />
                         )
                     }
 

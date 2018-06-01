@@ -28,7 +28,14 @@ export function convertDateToString(date) {
     let deadline = new Date();
     if (date !== null && date !== '') {
         deadline = new Date(date);
-        let deadlineStr = (deadline.getDate() + '/' + (deadline.getMonth() + 1) + '/' + deadline.getFullYear());
+        let month = (deadline.getMonth() + 1);
+        let monthStr = '';
+        if(month < 10){
+            monthStr = '0'+ month;
+        }else{
+            monthStr = month.toString();
+        }
+        let deadlineStr = (deadline.getDate() + '/' + (monthStr) + '/' + deadline.getFullYear());
 
         return deadlineStr;
     }

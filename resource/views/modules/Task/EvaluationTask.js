@@ -8,12 +8,12 @@ import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 //lib
 import {
-    Container, Header, Left, Button, Icon, 
+    Container, Header, Left, Button, Icon,
     Body, Title, Right, Text, Content,
     Form, Item, Label, Picker, Toast
 } from 'native-base';
 import {
-    Icon as RneIcon 
+    Icon as RneIcon
 } from 'react-native-elements';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
@@ -31,7 +31,7 @@ import * as util from 'lodash';
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
 class EvaluationTask extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -49,9 +49,9 @@ class EvaluationTask extends Component {
             THANHTICH_VUOT: 0
         }
     }
-    
+
     onValueChange = (value, type) => {
-        switch(type) {
+        switch (type) {
             case 'TUCHU_CAO':
                 this.setState({
                     TUCHU_CAO: value
@@ -77,14 +77,14 @@ class EvaluationTask extends Component {
                     TIENBO_NHIEU: value
                 })
                 break;
-            default: 
+            default:
                 this.setState({
                     THANHTICH_VUOT: value
                 })
                 break;
         }
     }
-    
+
 
     onEvaluateTask = async () => {
         this.setState({
@@ -117,14 +117,14 @@ class EvaluationTask extends Component {
 
         const resultJson = await result.json();
 
-        
+
         await asyncDelay(2000);
 
         this.setState({
             executing: false
         });
 
-        if(resultJson.Status == true && !util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)){
+        if (resultJson.Status == true && !util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)) {
             const message = this.props.userInfo.Fullname + ' đã đánh giá một công việc';
             const content = {
                 title: 'GỬI ĐÁNH GIÁ CÔNG VIỆC',
@@ -145,27 +145,27 @@ class EvaluationTask extends Component {
             type: resultJson.Status ? 'success' : 'danger',
             buttonText: "OK",
             buttonStyle: { backgroundColor: '#fff' },
-            buttonTextStyle: { color: resultJson.Status ? '#337321' :'#FF0033'},
+            buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
             duration: 3000,
-            onClose: ()=> {
-                if(resultJson.Status){
+            onClose: () => {
+                if (resultJson.Status) {
                     this.navigateToDetail();
                 }
             }
         });
     }
 
-    navigateToDetail(){
+    navigateToDetail() {
         this.props.navigation.navigate('DetailTaskScreen', {
             taskId: this.state.taskId,
             taskType: this.state.taskType
         });
     }
 
-    render(){
-        return(
+    render() {
+        return (
             <Container>
-                <Header style={{backgroundColor: HEADER_COLOR}}>
+                <Header style={{ backgroundColor: HEADER_COLOR }}>
                     <Left>
                         <Button transparent onPress={() => this.navigateToDetail()}>
                             <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
@@ -178,220 +178,223 @@ class EvaluationTask extends Component {
                         </Title>
                     </Body>
 
-                    <Right/>
+                    <Right />
                 </Header>
 
                 <Content>
-                    <Grid>
-                        <Row>
-                            <Col style={[styles.columnHeader, styles.wideColumn]}>
-                                <Text style={styles.columnHeaderText}>
-                                    Hạng mục
+                    <Form>
+                        <Label style={styles.label}>Bảng điểm đánh giá:</Label>
+                        <Grid>
+                            <Row>
+                                <Col style={[styles.columnHeader, styles.wideColumn]}>
+                                    <Text style={styles.columnHeaderText}>
+                                        Hạng mục
                                 </Text>
-                            </Col>
+                                </Col>
 
-                            <Col style={[styles.columnHeader, styles.wideColumn]}>
-                                <Text style={styles.columnHeaderText}>
-                                    Điểm số
+                                <Col style={[styles.columnHeader, styles.wideColumn]}>
+                                    <Text style={styles.columnHeaderText}>
+                                        Điểm số
                                 </Text>
-                            </Col>
+                                </Col>
 
-                            <Col style={styles.columnHeader}>
-                                <Text style={styles.columnHeaderText}>
-                                    Trọng số
+                                <Col style={styles.columnHeader}>
+                                    <Text style={styles.columnHeaderText}>
+                                        Trọng số
                                 </Text>
-                            </Col>
-                        </Row>
+                                </Col>
+                            </Row>
 
-                        <Row>
-                            <Col style={[styles.column, styles.wideColumn]}>
-                                <Text>
-                                    Tự chủ cao
+                            <Row>
+                                <Col style={[styles.column, styles.wideColumn]}>
+                                    <Text>
+                                        Tự chủ cao
                                 </Text>
-                            </Col>
+                                </Col>
 
-                            <Col style={[styles.column, styles.wideColumn]}>
-                                <Picker 
-                                    iosHeader='Chọn điểm tự chủ cao'
-                                    iosIcon={<Icon name='ios-arrow-down-outline'/>}
-                                    style={{width: '100%'}}
-                                    selectedValue={this.state.TUCHU_CAO}
-                                    onValueChange={(value) => this.onValueChange(value, 'TUCHU_CAO')}
-                                    mode='dropdown'>
-                                {
-                                    this.state.arrValue.map((item, index) => (
-                                        <Picker.Item key={'0' + index.toString()}label={index.toString()} value={index.toString()}  />
-                                    ))
-                                }
-                            </Picker>
-                            </Col>
+                                <Col style={[styles.column, styles.wideColumn]}>
+                                    <Picker
+                                        iosHeader='Chọn điểm tự chủ cao'
+                                        iosIcon={<Icon name='ios-arrow-down-outline' />}
+                                        style={{ width: '100%' }}
+                                        selectedValue={this.state.TUCHU_CAO}
+                                        onValueChange={(value) => this.onValueChange(value, 'TUCHU_CAO')}
+                                        mode='dropdown'>
+                                        {
+                                            this.state.arrValue.map((item, index) => (
+                                                <Picker.Item key={'0' + index.toString()} label={index.toString()} value={index.toString()} />
+                                            ))
+                                        }
+                                    </Picker>
+                                </Col>
 
-                            <Col style={styles.column}>
-                                <Text>
-                                    2
+                                <Col style={styles.column}>
+                                    <Text>
+                                        2
                                 </Text>
-                            </Col>
-                        </Row>
+                                </Col>
+                            </Row>
 
-                        <Row>
-                            <Col style={[styles.column,styles.wideColumn]}>
-                                <Text>
-                                    Trách nhiệm lớn
+                            <Row>
+                                <Col style={[styles.column, styles.wideColumn]}>
+                                    <Text>
+                                        Trách nhiệm lớn
                                 </Text>
-                            </Col>
+                                </Col>
 
-                            <Col style={[styles.column, styles.wideColumn]}>
-                                <Picker 
-                                    iosHeader='Chọn điểm tự chủ cao'
-                                    iosIcon={<Icon name='ios-arrow-down-outline'/>}
-                                    style={{width: '100%'}}
-                                    selectedValue={this.state.TRACHNHIEM_LON}
-                                    onValueChange={(value) => this.onValueChange(value, 'TRACHNHIEM_LON')}
-                                    mode='dropdown'>
-                                {
-                                    this.state.arrValue.map((item, index) => (
-                                        <Picker.Item key={'1' + index.toString()}label={index.toString()} value={index.toString()}  />
-                                    ))
-                                }
-                            </Picker>
-                            </Col>
+                                <Col style={[styles.column, styles.wideColumn]}>
+                                    <Picker
+                                        iosHeader='Chọn điểm tự chủ cao'
+                                        iosIcon={<Icon name='ios-arrow-down-outline' />}
+                                        style={{ width: '100%' }}
+                                        selectedValue={this.state.TRACHNHIEM_LON}
+                                        onValueChange={(value) => this.onValueChange(value, 'TRACHNHIEM_LON')}
+                                        mode='dropdown'>
+                                        {
+                                            this.state.arrValue.map((item, index) => (
+                                                <Picker.Item key={'1' + index.toString()} label={index.toString()} value={index.toString()} />
+                                            ))
+                                        }
+                                    </Picker>
+                                </Col>
 
-                            <Col style={styles.column}>
-                                <Text>
-                                    2
+                                <Col style={styles.column}>
+                                    <Text>
+                                        2
                                 </Text>
-                            </Col>
-                        </Row>
+                                </Col>
+                            </Row>
 
-                        <Row>
-                            <Col style={[styles.column, styles.wideColumn]}>
-                                <Text>
-                                    Tương tác tốt
+                            <Row>
+                                <Col style={[styles.column, styles.wideColumn]}>
+                                    <Text>
+                                        Tương tác tốt
                                 </Text>
-                            </Col>
+                                </Col>
 
-                            <Col style={[styles.column, styles.wideColumn]}>
-                                <Picker 
-                                    iosHeader='Chọn điểm tự chủ cao'
-                                    iosIcon={<Icon name='ios-arrow-down-outline'/>}
-                                    style={{width: '100%'}}
-                                    selectedValue={this.state.TUONGTAC_TOT}
-                                    onValueChange={(value) => this.onValueChange(value, 'TUONGTAC_TOT')}
-                                    mode='dropdown'>
-                                {
-                                    this.state.arrValue.map((item, index) => (
-                                        <Picker.Item key={'2' + index.toString()}label={index.toString()} value={index.toString()}  />
-                                    ))
-                                }
-                            </Picker>
-                            </Col>
+                                <Col style={[styles.column, styles.wideColumn]}>
+                                    <Picker
+                                        iosHeader='Chọn điểm tự chủ cao'
+                                        iosIcon={<Icon name='ios-arrow-down-outline' />}
+                                        style={{ width: '100%' }}
+                                        selectedValue={this.state.TUONGTAC_TOT}
+                                        onValueChange={(value) => this.onValueChange(value, 'TUONGTAC_TOT')}
+                                        mode='dropdown'>
+                                        {
+                                            this.state.arrValue.map((item, index) => (
+                                                <Picker.Item key={'2' + index.toString()} label={index.toString()} value={index.toString()} />
+                                            ))
+                                        }
+                                    </Picker>
+                                </Col>
 
-                            <Col style={styles.column}>
-                                <Text>
-                                    1
+                                <Col style={styles.column}>
+                                    <Text>
+                                        1
                                 </Text>
-                            </Col>
-                        </Row>
-                        
-                        <Row>
-                            <Col style={[styles.column, styles.wideColumn]}>
-                                <Text>
-                                    Tốc độ nhanh
+                                </Col>
+                            </Row>
+
+                            <Row>
+                                <Col style={[styles.column, styles.wideColumn]}>
+                                    <Text>
+                                        Tốc độ nhanh
                                 </Text>
-                            </Col>
+                                </Col>
 
-                            <Col style={[styles.column, styles.wideColumn]}>
-                                <Picker 
-                                    iosHeader='Chọn điểm tự chủ cao'
-                                    iosIcon={<Icon name='ios-arrow-down-outline'/>}
-                                    style={{width: '100%'}}
-                                    selectedValue={this.state.TOCDO_NHANH}
-                                    onValueChange={(value) => this.onValueChange(value, 'TOCDO_NHANH')}
-                                    mode='dropdown'>
-                                {
-                                    this.state.arrValue.map((item, index) => (
-                                        <Picker.Item key={'3' + index.toString()}label={index.toString()} value={index.toString()}  />
-                                    ))
-                                }
-                            </Picker>
-                            </Col>
+                                <Col style={[styles.column, styles.wideColumn]}>
+                                    <Picker
+                                        iosHeader='Chọn điểm tự chủ cao'
+                                        iosIcon={<Icon name='ios-arrow-down-outline' />}
+                                        style={{ width: '100%' }}
+                                        selectedValue={this.state.TOCDO_NHANH}
+                                        onValueChange={(value) => this.onValueChange(value, 'TOCDO_NHANH')}
+                                        mode='dropdown'>
+                                        {
+                                            this.state.arrValue.map((item, index) => (
+                                                <Picker.Item key={'3' + index.toString()} label={index.toString()} value={index.toString()} />
+                                            ))
+                                        }
+                                    </Picker>
+                                </Col>
 
-                            <Col style={styles.column}>
-                                <Text>
-                                    1
+                                <Col style={styles.column}>
+                                    <Text>
+                                        1
                                 </Text>
-                            </Col>
-                        </Row>
+                                </Col>
+                            </Row>
 
-                        <Row>
-                            <Col style={[styles.column, styles.wideColumn]}>
-                                <Text>
-                                    Tiến bộ nhiều
+                            <Row>
+                                <Col style={[styles.column, styles.wideColumn]}>
+                                    <Text>
+                                        Tiến bộ nhiều
                                 </Text>
-                            </Col>
+                                </Col>
 
-                            <Col style={[styles.column, styles.wideColumn]}>
-                                <Picker 
-                                    iosHeader='Chọn điểm tự chủ cao'
-                                    iosIcon={<Icon name='ios-arrow-down-outline'/>}
-                                    style={{width: '100%'}}
-                                    selectedValue={this.state.TIENBO_NHIEU}
-                                    onValueChange={(value) => this.onValueChange(value, 'TIENBO_NHIEU')}
-                                    mode='dropdown'>
-                                {
-                                    this.state.arrValue.map((item, index) => (
-                                        <Picker.Item key={'4' + index.toString()}label={index.toString()} value={index.toString()}  />
-                                    ))
-                                }
-                            </Picker>
-                            </Col>
+                                <Col style={[styles.column, styles.wideColumn]}>
+                                    <Picker
+                                        iosHeader='Chọn điểm tự chủ cao'
+                                        iosIcon={<Icon name='ios-arrow-down-outline' />}
+                                        style={{ width: '100%' }}
+                                        selectedValue={this.state.TIENBO_NHIEU}
+                                        onValueChange={(value) => this.onValueChange(value, 'TIENBO_NHIEU')}
+                                        mode='dropdown'>
+                                        {
+                                            this.state.arrValue.map((item, index) => (
+                                                <Picker.Item key={'4' + index.toString()} label={index.toString()} value={index.toString()} />
+                                            ))
+                                        }
+                                    </Picker>
+                                </Col>
 
-                            <Col style={styles.column}>
-                                <Text>
-                                    1
+                                <Col style={styles.column}>
+                                    <Text>
+                                        1
                                 </Text>
-                            </Col>
-                        </Row>
+                                </Col>
+                            </Row>
 
-                        <Row>
-                            <Col style={[styles.column, styles.wideColumn]}>
-                                <Text>
-                                    Thành tích vượt
+                            <Row>
+                                <Col style={[styles.column, styles.wideColumn]}>
+                                    <Text>
+                                        Thành tích vượt
                                 </Text>
-                            </Col>
+                                </Col>
 
-                            <Col style={[styles.column, styles.wideColumn]}>
-                                <Picker 
-                                    iosHeader='Chọn điểm tự chủ cao'
-                                    iosIcon={<Icon name='ios-arrow-down-outline'/>}
-                                    style={{width: '100%'}}
-                                    selectedValue={this.state.THANHTICH_VUOT}
-                                    onValueChange={(value) => this.onValueChange(value, 'THANHTICH_VUOT')}
-                                    mode='dropdown'>
-                                {
-                                    this.state.arrValue.map((item, index) => (
-                                        <Picker.Item key={'5' + index.toString()}label={index.toString()} value={index.toString()}  />
-                                    ))
-                                }
-                            </Picker>
-                            </Col>
+                                <Col style={[styles.column, styles.wideColumn]}>
+                                    <Picker
+                                        iosHeader='Chọn điểm tự chủ cao'
+                                        iosIcon={<Icon name='ios-arrow-down-outline' />}
+                                        style={{ width: '100%' }}
+                                        selectedValue={this.state.THANHTICH_VUOT}
+                                        onValueChange={(value) => this.onValueChange(value, 'THANHTICH_VUOT')}
+                                        mode='dropdown'>
+                                        {
+                                            this.state.arrValue.map((item, index) => (
+                                                <Picker.Item key={'5' + index.toString()} label={index.toString()} value={index.toString()} />
+                                            ))
+                                        }
+                                    </Picker>
+                                </Col>
 
-                            <Col style={styles.column}>
-                                <Text>
-                                    1
+                                <Col style={styles.column}>
+                                    <Text>
+                                        1
                                 </Text>
-                            </Col>
-                        </Row>
-                    </Grid>
+                                </Col>
+                            </Row>
+                        </Grid>
 
 
-                    <Button block danger 
-                                style={{backgroundColor : HEADER_COLOR , marginTop: verticalScale(20)}}
-                                onPress={() => this.onEvaluateTask()}>
+                        <Button block danger
+                            style={{ backgroundColor: HEADER_COLOR, marginTop: verticalScale(20) }}
+                            onPress={() => this.onEvaluateTask()}>
                             <Text>
                                 GỬI ĐÁNH GIÁ CÔNG VIỆC
                             </Text>
                         </Button>
+                    </Form>
 
                 </Content>
 
@@ -427,10 +430,17 @@ const styles = StyleSheet.create({
     columnHeaderText: {
         fontWeight: 'bold',
         color: '#000',
-        textAlign: 'right'
+        textAlign: 'left'
     },
     wideColumn: {
         flex: 2
+    },
+    label: {
+        marginLeft: scale(10),
+        marginVertical: verticalScale(10),
+        fontWeight: 'bold',
+        color: '#000',
+        textDecorationLine: 'underline'
     }
 })
 

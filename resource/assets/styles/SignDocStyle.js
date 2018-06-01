@@ -17,21 +17,21 @@ export const DetailSignDocStyle = StyleSheet.create({
         borderBottomColor: '#cbd2d9'
     }, 
     listItemContainer: {
-        paddingTop: 10,
-        paddingRight: 10,
-        paddingBottom: 10,
+        paddingTop: verticalScale(10),
+        paddingRight: scale(10),
+        paddingBottom: verticalScale(10),
         borderBottomWidth: 1,
         borderBottomColor: '#e5e5e5'
     }, listItemTitleContainer: {
         fontWeight: 'bold',
         color: 'black',
-        fontSize: 14
+        fontSize: moderateScale(14,1.4)
     }, listItemSubTitleContainer: {
-        fontSize: 13,
+        fontSize: moderateScale(13,1.3),
         color: '#777',
         fontWeight: 'normal'
     }, timelineContainer: {
-        paddingTop: 20,
+        paddingTop: verticalScale(20),
         flex: 1,
     }, timeContainer: {
 
@@ -47,8 +47,8 @@ export const ListSignDocStyle = StyleSheet.create({
         alignItems: 'center',
     },
     emptyIcon: {
-        width: 100,
-        height: 100,
+        width: moderateScale(100),
+        height: moderateScale(100),
         resizeMode: 'contain'
     },
     emptyMessage: {
@@ -58,10 +58,10 @@ export const ListSignDocStyle = StyleSheet.create({
         textAlign: 'center'
     },
     leftSide: {
-        width: 30
+        width: scale(30)
     },
     rightSize: {
-        width: 30
+        width: scale(30)
     },
     leftIcon: {
         

@@ -6,6 +6,9 @@ import { Dimensions } from'react-native'
 export const WEB_URL = 'http://192.168.1.21:8355';
 export const API_URL = 'http://192.168.1.21:26633';
 
+// export const WEB_URL = 'http://103.1.210.108';
+// export const API_URL = 'http://103.1.210.108:81';
+
 export const DEFAULT_PAGE_SIZE = 20;
 export const DEFAULT_PAGE_INDEX = 1;
 
@@ -35,6 +38,12 @@ export const PLANJOB_CONSTANT = {
 export const WORKFLOW_PROCESS_TYPE = {
 	MAIN_PROCESS: 1,
 	JOIN_PROCESS: 2, 
+	ALL_PROCESS: 3
+}
+
+export const TASK_PROCESS_TYPE = {
+	MAIN_PROCESS: 1,
+	JOIN_PROCESS: 2,
 	ALL_PROCESS: 3
 }
 

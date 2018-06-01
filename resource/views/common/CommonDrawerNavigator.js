@@ -1,4 +1,4 @@
-/**
+ /**
  * @description: thanh điều hướng của toàn ứng dụng
  * @author: duynn
  * @since: 03/05/2018
@@ -38,6 +38,7 @@ import HistoryProgressTask from '../modules/Task/HistoryProgressTask';
 import ApproveEvaluationTask from '../modules/Task/ApproveEvaluationTask';
 import CreateSubTask from '../modules/Task/CreateSubTask';
 import HistoryEvaluateTask from '../modules/Task/HistoryEvaluateTask';
+import GroupSubTask from '../modules/Task/GroupSubTask';
 
 //đăng nhập
 import Login from '../modules/User/Login';
@@ -126,6 +127,9 @@ const appRoutes = {
     },
     HistoryProgressTaskScreen: {
         screen: HistoryProgressTask
+    },
+    GroupSubTaskScreen: {
+        screen: GroupSubTask
     },
     CreateSubTaskScreen: {
         screen: CreateSubTask

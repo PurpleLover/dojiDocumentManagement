@@ -18,16 +18,18 @@ import * as util from 'lodash';
 import HTMLView from 'react-native-htmlview';
 
 export default class TaskDescription extends Component {
-	constructor(props){
-		super(props);
-	}
+    constructor(props) {
+        super(props);
+    }
 
-	render(){
-		return(
-			<View style={DetailTaskStyle.container}>
-				<ScrollView>
-					<List containerStyle={DetailTaskStyle.listContainer}>
-						<ListItem style={DetailTaskStyle.listItemContainer}
+    
+
+    render() {
+        return (
+            <View style={DetailTaskStyle.container}>
+                <ScrollView>
+                    <List containerStyle={DetailTaskStyle.listContainer}>
+                        <ListItem style={DetailTaskStyle.listItemContainer}
                             hideChevron={true}
                             title={
                                 <Text style={DetailTaskStyle.listItemTitleContainer}>
@@ -74,10 +76,10 @@ export default class TaskDescription extends Component {
                             }
                             subtitle={
                                 <Text style={DetailTaskStyle.listItemSubTitleContainer}>
-                                    {util.isNull(this.props.info.LstNguoiThamGia) ? 'N/A' : this.props.info.LstNguoiThamGia.toString() }
+                                    {util.isNull(this.props.info.LstNguoiThamGia) ? 'N/A' : this.props.info.LstNguoiThamGia.toString()}
                                 </Text>
                             } />
-                         <ListItem style={DetailTaskStyle.listItemContainer}
+                        <ListItem style={DetailTaskStyle.listItemContainer}
                             hideChevron={true}
                             title={
                                 <Text style={DetailTaskStyle.listItemTitleContainer}>
@@ -86,7 +88,43 @@ export default class TaskDescription extends Component {
                             }
                             subtitle={
                                 <Text style={DetailTaskStyle.listItemSubTitleContainer}>
-                                    {this.props.info.SONGAYNHACTRUOCHAN}
+                                    {this.props.info.CongViec.SONGAYNHACTRUOCHAN}
+                                </Text>
+                            } />
+                        <ListItem style={DetailTaskStyle.listItemContainer}
+                            hideChevron={true}
+                            title={
+                                <Text style={DetailTaskStyle.listItemTitleContainer}>
+                                    NHẮC VIỆC BẰNG EMAIL
+                                </Text>
+                            }
+                            subtitle={
+                                <Text style={DetailTaskStyle.listItemSubTitleContainer}>
+                                    {this.props.info.CongViec.IS_EMAIL ? 'Có' : 'Không'}
+                                </Text>
+                            } />
+                        <ListItem style={DetailTaskStyle.listItemContainer}
+                            hideChevron={true}
+                            title={
+                                <Text style={DetailTaskStyle.listItemTitleContainer}>
+                                    NHẮC VIỆC BẰNG SMS
+                                </Text>
+                            }
+                            subtitle={
+                                <Text style={DetailTaskStyle.listItemSubTitleContainer}>
+                                    {this.props.info.CongViec.IS_SMS ? 'Có' : 'Không'}
+                                </Text>
+                            } />
+                        <ListItem style={DetailTaskStyle.listItemContainer}
+                            hideChevron={true}
+                            title={
+                                <Text style={DetailTaskStyle.listItemTitleContainer}>
+                                    NHẮC VIỆC BẰNG TIN THÔNG BÁO
+                                </Text>
+                            }
+                            subtitle={
+                                <Text style={DetailTaskStyle.listItemSubTitleContainer}>
+                                    {this.props.info.CongViec.IS_POPUP ? 'Có' : 'Không'}
                                 </Text>
                             } />
                         <ListItem style={DetailTaskStyle.listItemContainer}
@@ -151,10 +189,10 @@ export default class TaskDescription extends Component {
                                 <HTMLView
                                     value={this.props.info.CongViec.NOIDUNGCONGVIEC}
                                 />
-                            }/>
-					</List>
-				</ScrollView>
-			</View>
-		);
-	}
+                            } />
+                    </List>
+                </ScrollView>
+            </View>
+        );
+    }
 }

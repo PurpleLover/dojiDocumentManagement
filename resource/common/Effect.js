@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
         // backgroundColor: 'rgba(52, 52, 52, 0.8)'
     },
     alBorderBlock: {
-        borderRadius: moderateScale(15),
+        borderRadius: moderateScale(5),
         justifyContent: 'center',
         alignItems: 'center',
         justifyContent: 'space-around'
@@ -75,9 +75,9 @@ const styles = StyleSheet.create({
     },alExecuteText: {
         marginTop: verticalScale(10),
         fontSize: moderateScale(14,1.3),
-        color: '#F7A30A'
+        color: '#fff'
     },alExecuteBorderBlock:{
-        borderRadius: moderateScale(15),
+        borderRadius: moderateScale(5),
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
