@@ -315,15 +315,22 @@ class GroupSubTask extends Component {
                     dialogTitle={<DialogTitle title={`THÔNG TIN CÔNG VIỆC #${this.state.dataItem.CONGVIEC_ID}`} />}
                     ref={(popupDialog) => { this.popupDialog = popupDialog }}
                     width={0.8}
-                    height={verticalScale(500)}
+                    height={'auto'}
                     actions={[
                         <DialogButton
                             align={'center'}
                             buttonStyle={{
-                                height: verticalScale(50),
-                                justifyContent: 'center',
+								justifyContent: 'flex-end',
+								backgroundColor: '#4FA800',
+                                alignSelf: 'stretch',
+                                borderBottomLeftRadius: 8,
+								borderBottomRightRadius: 8,
                             }}
                             text="ĐÓNG"
+                            textStyle={{
+								fontSize: moderateScale(18, 1.5),
+								color: '#fff'
+							}}
                             onPress={() => {
                                 this.popupDialog.dismiss();
                             }}
@@ -331,7 +338,6 @@ class GroupSubTask extends Component {
                         />,
                     ]}>
 
-                    <Content>
                         <Form>
                             <Item stackedLabel>
                                 <Label style={styles.dialogLabel}>
@@ -383,7 +389,6 @@ class GroupSubTask extends Component {
                                 </Label>
                             </Item>
                         </Form>
-                    </Content>
                 </PopupDialog>
             </Container>
         );
@@ -395,7 +400,7 @@ const styles = StyleSheet.create({
         paddingLeft: scale(10)
     },
     rowItemLabel: {
-        marginHorizontal: 10,
+        marginHorizontal: scale(10),
         fontWeight: 'bold',
         color: '#000'
     }, complete: {

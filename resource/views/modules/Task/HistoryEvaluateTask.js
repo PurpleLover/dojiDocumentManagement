@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 
 import {
     ActivityIndicator, FlatList, StyleSheet, View as RnView, Text as RnText,
-    RefreshControl
+    RefreshControl, Dimensions
 } from 'react-native';
 //redux
 import { connect } from 'react-redux';
@@ -95,6 +95,7 @@ class HistoryEvaluateTask extends Component {
 
 
     renderItem = ({ item }) => {
+        const statusResponsive = (deviceWidth<340) ? 'Trạng thái: ' : ' - Trạng thái: ';
         return (
             <SwipeRow
                 leftOpenValue={75}
@@ -121,7 +122,7 @@ class HistoryEvaluateTask extends Component {
 
                         <RnText style={styles.rowLabel}>
                             <RnText>
-                                {' - Trạng thái: '}
+                                {statusResponsive}
                             </RnText>
 
                             <RnText style={(item.PHEDUYETKETQUA == true) ? styles.approveText : styles.denyText}>
@@ -130,6 +131,7 @@ class HistoryEvaluateTask extends Component {
                         </RnText>
 
                     </RnView>
+
                 }
             />
         );
@@ -226,10 +228,12 @@ class HistoryEvaluateTask extends Component {
                                     justifyContent: 'flex-end',
                                     backgroundColor: '#4FA800',
                                     alignSelf: 'stretch',
+                                    borderBottomLeftRadius: 8,
+                                    borderBottomRightRadius: 8,
                                 }}
                                 text="ĐÓNG"
                                 textStyle={{
-                                    fontSize: moderateScale(18,1.5),
+                                    fontSize: moderateScale(18, 1.5),
                                     color: '#fff'
                                 }}
                                 onPress={() => {
@@ -286,15 +290,14 @@ class HistoryEvaluateTask extends Component {
     }
 }
 
-
-
+const deviceWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
     rowContainer: {
         width: '100%',
         paddingLeft: scale(10),
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: (deviceWidth>=340) ? 'row' : 'column',
+        alignItems: (deviceWidth>=340) ? 'center': 'flex-start',
     },
     rowLabel: {
         color: '#000',

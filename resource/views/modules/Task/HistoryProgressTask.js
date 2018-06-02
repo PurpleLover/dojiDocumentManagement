@@ -219,6 +219,8 @@ class HistoryProgressTask extends Component {
 								justifyContent: 'flex-end',
 								backgroundColor: '#4FA800',
 								alignSelf: 'stretch',
+								borderBottomLeftRadius: 8,
+								borderBottomRightRadius: 8,
 							}}
 							text="ĐÓNG"
 							textStyle={{

@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { View as RnView, Text as RnText } from 'react-native';
 import {
 	ActivityIndicator, Alert, FlatList,
-	RefreshControl, StyleSheet
+	RefreshControl, StyleSheet, Dimensions
 } from 'react-native';
 //lib
 import {
@@ -108,7 +108,7 @@ class HistoryRescheduleTask extends Component {
 		}, () => {
 			Alert.alert(
 				'PHẢN HỒI YÊU CẦU LÙI HẠN',
-				'Phản hồi yêu cầu lùi hạn của ' + item.FullName,
+				'Phản hồi yêu cầu lùi hạn của \n' + item.FullName,
 				[
 					{
 						'text': 'ĐỒNG Ý', onPress: () => { this.onApproveReschedule(true, item.ID) }
@@ -204,25 +204,27 @@ class HistoryRescheduleTask extends Component {
 								{convertDateToString(item.HANKETHUC)}
 							</RnText>
 						</RnText>
-
-						<RnText style={styles.rowStatusLabel}>
-							{'Trạng thái: '}
-						</RnText>
-						{
-							util.isNull(item.IS_APPROVED) ?
-								<RnText style={[styles.notConfirmText, styles.rowStatus]}>
-									Chưa phê duyệt
+						<RnText>
+							<RnText style={styles.rowStatusLabel}>
+								{'Trạng thái: '}
+							</RnText>
+							{
+								util.isNull(item.IS_APPROVED) ?
+									<RnText style={[styles.notConfirmText, styles.rowStatus]}>
+										Chưa phê duyệt
 								</RnText> :
-								(
-									item.IS_APPROVED ?
-										<RnText style={[styles.approveText, styles.rowStatus]}>
-											Đã phê duyệt
+									(
+										item.IS_APPROVED ?
+											<RnText style={[styles.approveText, styles.rowStatus]}>
+												Đã phê duyệt
 										</RnText>
-										: <RnText style={[styles.denyText, styles.rowStatus]}>
-											Không phê duyệt
+											: <RnText style={[styles.denyText, styles.rowStatus]}>
+												Không phê duyệt
 										</RnText>
-								)
-						}
+									)
+							}
+						</RnText>
+
 					</RnView>
 				}
 
@@ -321,10 +323,12 @@ class HistoryRescheduleTask extends Component {
 								justifyContent: 'flex-end',
 								backgroundColor: '#4FA800',
 								alignSelf: 'stretch',
+								borderBottomLeftRadius: 8,
+								borderBottomRightRadius: 8,
 							}}
 							text="ĐÓNG"
 							textStyle={{
-								fontSize: moderateScale(18,1.5),
+								fontSize: moderateScale(18, 1.5),
 								color: '#fff'
 							}}
 							onPress={() => {
@@ -392,11 +396,14 @@ class HistoryRescheduleTask extends Component {
 	}
 }
 
+const deviceWidth = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
 	rowContainer: {
 		width: '100%',
 		paddingLeft: scale(10),
-		flexDirection: 'row'
+		flexDirection: (deviceWidth >= 340) ? 'row' : 'column',
+		alignItems: (deviceWidth >= 340) ? 'center' : 'flex-start',
 	},
 	rowDateContainer: {
 		color: '#000',
@@ -423,7 +430,7 @@ const styles = StyleSheet.create({
 	}, dialogLabel: {
 		fontWeight: 'bold',
 		color: '#000',
-		fontSize: moderateScale(14,1.3)
+		fontSize: moderateScale(14, 1.3)
 	}
 });
 
