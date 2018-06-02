@@ -27,7 +27,7 @@ import {
     CONGVIEC_CONSTANT, PLANJOB_CONSTANT, EMPTY_DATA_ICON_URI, EMPTY_STRING, DEFAULT_PAGE_INDEX
 } from '../../../common/SystemConstant';
 import { asyncDelay, convertDateToString, formatLongText } from '../../../common/Utilities';
-import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { verticalScale, indicatorResponsive, scale } from '../../../assets/styles/ScaleIndicator';
 import { executeLoading, dataLoading } from '../../../common/Effect';
 
 //styles
@@ -465,7 +465,7 @@ class DetailTask extends Component {
                         <Right>
                             {
                                 renderIf(menuActions.length > 0)(
-                                    <Menu style={{ marginHorizontal: 5 }}>
+                                    <Menu style={{ marginHorizontal: scale(5) }}>
                                         <MenuTrigger>
                                             <Icon name='dots-three-horizontal' color={'#fff'} type='entypo' size={verticalScale(25)} />
                                         </MenuTrigger>
@@ -512,7 +512,7 @@ class TaskContent extends Component {
         return (
             <RnView style={{ flex: 1 }}>
                 <Tabs
-                    initialPage={this.state.selectedTabIndex}
+                    initialPage={0}
                     tabBarUnderlineStyle={TabStyle.underLineStyle}
                     onChangeTab={(selectedTabIndex) => this.setState({ selectedTabIndex })}>
                     <Tab heading={
