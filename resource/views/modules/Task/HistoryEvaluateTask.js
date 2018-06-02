@@ -32,7 +32,7 @@ import {
 } from '../../../common/SystemConstant';
 import { dataLoading } from '../../../common/Effect';
 import { emptyDataPage, formatLongText, convertDateToString, convertDateTimeToString } from '../../../common/Utilities';
-import { scale, verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { scale, verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 class HistoryEvaluateTask extends Component {
     constructor(props) {
@@ -217,15 +217,21 @@ class HistoryEvaluateTask extends Component {
                         dialogTitle={<DialogTitle title='THÔNG TIN CẬP NHẬT TIẾN ĐỘ' />}
                         ref={(popupDialog) => { this.popupDialog = popupDialog }}
                         width={0.8}
-                        height={verticalScale(400)}
+                        height={'auto'}
                         actions={[
                             <DialogButton
                                 align={'center'}
                                 buttonStyle={{
-                                    height: verticalScale(50),
-                                    justifyContent: 'center',
+                                    //height: verticalScale(100),
+                                    justifyContent: 'flex-end',
+                                    backgroundColor: '#4FA800',
+                                    alignSelf: 'stretch',
                                 }}
                                 text="ĐÓNG"
+                                textStyle={{
+                                    fontSize: moderateScale(18,1.5),
+                                    color: '#fff'
+                                }}
                                 onPress={() => {
                                     this.popupDialog.dismiss();
                                 }}
@@ -302,7 +308,7 @@ const styles = StyleSheet.create({
     dialogLabel: {
         fontWeight: 'bold',
         color: '#000',
-        fontSize: verticalScale(14)
+        fontSize: moderateScale(14, 1.4)
     },
     approveText: {
         color: '#337321',

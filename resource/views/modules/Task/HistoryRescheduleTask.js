@@ -30,7 +30,7 @@ import { connect } from 'react-redux';
 import { API_URL, HEADER_COLOR, LOADER_COLOR, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '../../../common/SystemConstant';
 import { asyncDelay, emptyDataPage, formatLongText, convertDateToString } from '../../../common/Utilities';
 import { dataLoading, executeLoading } from '../../../common/Effect';
-import { scale, verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { scale, verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
 class HistoryRescheduleTask extends Component {
@@ -257,6 +257,7 @@ class HistoryRescheduleTask extends Component {
 							LỊCH SỬ LÙI HẠN
 						</Title>
 					</Body>
+					<Right></Right>
 				</Header>
 
 				<Content contentContainerStyle={{ flex: 1 }}>
@@ -311,15 +312,21 @@ class HistoryRescheduleTask extends Component {
 					dialogTitle={<DialogTitle title='THÔNG TIN LÙI HẠN' />}
 					ref={(popupDialog) => { this.popupDialog = popupDialog }}
 					width={0.8}
-					height={verticalScale(400)}
+					height={'auto'}
 					actions={[
 						<DialogButton
 							align={'center'}
 							buttonStyle={{
-								height: verticalScale(50),
-								justifyContent: 'center',
+								//height: verticalScale(100),
+								justifyContent: 'flex-end',
+								backgroundColor: '#4FA800',
+								alignSelf: 'stretch',
 							}}
 							text="ĐÓNG"
+							textStyle={{
+								fontSize: moderateScale(18,1.5),
+								color: '#fff'
+							}}
 							onPress={() => {
 								this.popupDialog.dismiss();
 							}}
@@ -416,7 +423,7 @@ const styles = StyleSheet.create({
 	}, dialogLabel: {
 		fontWeight: 'bold',
 		color: '#000',
-		fontSize: verticalScale(14)
+		fontSize: moderateScale(14,1.3)
 	}
 });
 

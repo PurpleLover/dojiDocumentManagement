@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import {
 	Container, Header, Left, Content,
 	Body, Title, Button, Text, SwipeRow,
-	Right, Form, Item, Label, 
+	Right, Form, Item, Label,
 } from 'native-base';
 import {
 	Icon as RneIcon
@@ -31,7 +31,7 @@ import {
 } from '../../../common/SystemConstant';
 import { dataLoading } from '../../../common/Effect';
 import { emptyDataPage, formatLongText, convertDateToString, convertDateTimeToString } from '../../../common/Utilities';
-import { scale, verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { scale, verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 class HistoryProgressTask extends Component {
 	constructor(props) {
@@ -150,7 +150,7 @@ class HistoryProgressTask extends Component {
 				<Header style={{ backgroundColor: HEADER_COLOR }}>
 					<Left>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
-							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+							<RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={'#fff'} type='ionicon' />
 						</Button>
 					</Left>
 					<Body>
@@ -210,15 +210,21 @@ class HistoryProgressTask extends Component {
 					dialogTitle={<DialogTitle title='THÔNG TIN CẬP NHẬT TIẾN ĐỘ' />}
 					ref={(popupDialog) => { this.popupDialog = popupDialog }}
 					width={0.8}
-					height={verticalScale(400)}
+					height={'auto'}
 					actions={[
 						<DialogButton
 							align={'center'}
 							buttonStyle={{
-								height: verticalScale(50),
-								justifyContent: 'center',
+								//height: verticalScale(100),
+								justifyContent: 'flex-end',
+								backgroundColor: '#4FA800',
+								alignSelf: 'stretch',
 							}}
 							text="ĐÓNG"
+							textStyle={{
+								fontSize: moderateScale(18,1.5),
+								color: '#fff'
+							}}
 							onPress={() => {
 								this.popupDialog.dismiss();
 							}}
@@ -285,14 +291,14 @@ const styles = StyleSheet.create({
 	},
 	rowInfo: {
 		color: '#000',
-		fontSize: verticalScale(25),
+		fontSize: moderateScale(25, 0.8),
 		fontWeight: 'bold',
 		textDecorationLine: 'none'
 	},
 	dialogLabel: {
 		fontWeight: 'bold',
 		color: '#000',
-		fontSize: verticalScale(14)
+		fontSize: moderateScale(14, 1.4)
 	}
 });
 
