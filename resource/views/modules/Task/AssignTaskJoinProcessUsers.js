@@ -24,6 +24,9 @@ import {
 } from 'react-native-elements';
 import * as util from 'lodash';
 
+//style
+import {verticalScale} from '../../../assets/styles/ScaleIndicator';
+
 class AssignTaskJoinProcessUsers extends Component {
     constructor(props) {
         super(props);
@@ -169,10 +172,10 @@ const styles = StyleSheet.create({
     titleContainer: {
     },
     listItemRow: {
-        height: 60
+        height: verticalScale(60)
     },
     listItemContainer: {
-        height: 60,
+        height: verticalScale(60),
         backgroundColor: '#FF0033',
         justifyContent: 'center'
     },
@@ -181,6 +184,6 @@ const styles = StyleSheet.create({
         color: '#fff'
     },
     body: {
-
+        overflow: 'scroll'
     }
 });

@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
         color: '#fff'
     },
     body: {
-
+        overflow: 'scroll'
     }
 });
 
