@@ -28,7 +28,7 @@ import * as taskAction from '../../../redux/modules/task/TaskAction';
 import {
 	API_URL, HEADER_COLOR, DEFAULT_PAGE_INDEX,
 	EMPTY_STRING, LOADER_COLOR, LOADMORE_COLOR,
-	TASK_PROCESS_TYPE
+	TASK_PROCESS_TYPE, SUB_HEADER_COLOR
 } from '../../../common/SystemConstant';
 import { asyncDelay, emptyDataPage } from '../../../common/Utilities';
 import { dataLoading, executeLoading } from '../../../common/Effect';
@@ -312,14 +312,14 @@ class AssignTask extends Component {
 			}
 
 			bodyContent = (
-				<Tabs initialPage={this.state.selectedTabIndex}
+				<Tabs initialPage={0}
 					onChangeTab={(selectedTabIndex) => this.setState({ selectedTabIndex })}
 					tabBarUnderlineStyle={TabStyle.underLineStyle}>
 					<Tab heading={
 						<TabHeading style={(this.state.selectedTabIndex == 0 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
 							<Icon name='ios-person-outline' style={(this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText)} />
 							<Text style={[TabStyle.tabText,
-							(this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText)]}>
+								(this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText)]}>
 								XỬ LÝ CHÍNH
 							</Text>
 						</TabHeading>
