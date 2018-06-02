@@ -32,7 +32,7 @@ import {
 } from '../../../common/SystemConstant';
 import { asyncDelay, emptyDataPage } from '../../../common/Utilities';
 import { dataLoading, executeLoading } from '../../../common/Effect';
-import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
 //styles
@@ -288,7 +288,7 @@ class AssignTask extends Component {
 							active={(this.state.selectedSegmentIndex == 0)}
 							onPress={() => this.onChangeSegment(0)}>
 							<Text style={{
-								fontSize: verticalScale(13),
+								fontSize: moderateScale(13, 1.3),
 								color: (this.state.selectedSegmentIndex == 0) ? HEADER_COLOR : '#fff'
 							}}>
 								{
@@ -301,7 +301,7 @@ class AssignTask extends Component {
 							active={(this.state.selectedSegmentIndex == 1)}
 							onPress={() => this.onChangeSegment(1)}>
 							<Text style={{
-								fontSize: verticalScale(13),
+								fontSize: moderateScale(13, 1.3),
 								color: (this.state.selectedSegmentIndex == 1) ? HEADER_COLOR : '#fff'
 							}}>
 								CHÉO

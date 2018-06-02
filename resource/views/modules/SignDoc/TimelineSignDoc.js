@@ -47,31 +47,31 @@ export default class TimelineSignDoc extends Component {
                         description: `Người xử lý: ${item.TenNguoiXuLy}`,
                         renderIcon: () => <Icon name='ios-time-outline' />,
                         renderTimeBottom: () => (
-                            <View style={{alignItems: (index % 2 == 0) ? 'flex-end': 'flex-start', backgroundColor: '#fff', borderRadius: 6, padding: 3}}>
+                            <View style={{ alignItems: (index % 2 == 0) ? 'flex-end' : 'flex-start', backgroundColor: '#fff', borderRadius: 6, padding: 3 }}>
                                 <Text>
-                                    <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold' }}>
+                                    <Text style={{ fontSize: moderateScale(11, 1.1), fontWeight: 'bold' }}>
                                         Thời gian:
                                     </Text>
 
-                                    <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold', color: '#b40000' }}>
+                                    <Text style={{ fontSize: moderateScale(11, 1.1), fontWeight: 'bold', color: '#b40000' }}>
                                         {' ' + convertTimeToString(item.create_at)}
                                     </Text>
                                 </Text>
 
                                 <Text>
-                                    <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold' }}>
+                                    <Text style={{ fontSize: moderateScale(11, 1.1), fontWeight: 'bold' }}>
                                         Người nhận:
                                     </Text>
-                                    <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold', color: '#b40000' }}>
+                                    <Text style={{ fontSize: moderateScale(11, 1.1), fontWeight: 'bold', color: '#b40000' }}>
                                         {' ' + item.TenNguoiNhan}
                                     </Text>
                                 </Text>
 
                                 <Text>
-                                    <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold' }}>
+                                    <Text style={{ fontSize: moderateScale(11, 1.1), fontWeight: 'bold' }}>
                                         Người tham gia:
                                     </Text>
-                                    <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold', color: '#b40000' }}>
+                                    <Text style={{ fontSize: moderateScale(11, 1.1), fontWeight: 'bold', color: '#b40000' }}>
                                         {' ' + (item.LstThamGia || []).toString()}
                                     </Text>
                                 </Text>
@@ -97,7 +97,7 @@ export default class TimelineSignDoc extends Component {
                             color: '#000'
                         }}
                         detailContainerStyle={{
-                            borderWidth: 2,
+                            borderWidth: moderateScale(2),
                             borderRadius: 5,
                             padding: moderateScale(5),
                             marginHorizontal: scale(5),

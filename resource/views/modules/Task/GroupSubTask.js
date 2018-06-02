@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 //lib
 import {
     Container, Header, Item, Input, Icon, Title, Form,
-    Content, Button, Text, SwipeRow, Left, Body, Toast, Label
+    Content, Button, Text, SwipeRow, Left, Body, Toast, Label, Right
 } from 'native-base';
 import { Icon as RneIcon } from 'react-native-elements';
 import renderIf from 'render-if';
@@ -36,7 +36,7 @@ import {
     EMPTY_STRING, LOADMORE_COLOR,
     LOADER_COLOR, HEADER_COLOR, DEFAULT_PAGE_SIZE
 } from '../../../common/SystemConstant';
-import { scale, verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { scale, verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 class GroupSubTask extends Component {
     constructor(props) {
@@ -249,6 +249,7 @@ class GroupSubTask extends Component {
                             CÔNG VIỆC CON
                         </Title>
                     </Body>
+                    <Right></Right>
                 </Header>
 
                 <Content contentContainerStyle={{ flex: 1 }}>
@@ -406,7 +407,7 @@ const styles = StyleSheet.create({
     }, dialogLabel: {
         fontWeight: 'bold',
         color: '#000',
-        fontSize: verticalScale(14)
+        fontSize: moderateScale(14,1.4)
     }
 })
 
