@@ -61,24 +61,14 @@ export function convertTimeToString(date) {
 
 //chuyển sang định dạng ngày/tháng/năm
 export function convertDateTimeToString(date) {
-    let deadline = new Date();
+    
     if (date !== null && date !== '') {
-        deadline = new Date(date);
-        let dateStr = deadline.getDate().toString();
-        if (deadline.getDate() < 10) {
-            dateStr = '0' + deadline.getDate().toString();
-        }
+        let deadline = new Date(date);
+        const pad = val => val < 10 ? '0' + val : val; // Append '0' before alone dateTime
 
-        let month = (deadline.getMonth() + 1);
-        let monthStr = '';
-        if (month < 10) {
-            monthStr = '0' + month;
-        } else {
-            monthStr = month.toString();
-        }
-
-        let deadlineStr = (dateStr + '/' + (monthStr) + '/' + deadline.getFullYear());
-        deadlineStr += ' ' + deadline.getHours() + ':' + deadline.getMinutes() + ':' + deadline.getSeconds();
+        let deadlineStr = pad(deadline.getDate()) + '/' + pad(deadline.getMonth()) + '/' + deadline.getFullYear();
+        
+        deadlineStr += ' ' + pad(deadline.getHours()) + ':' + pad(deadline.getMinutes()) + ':' + pad(deadline.getSeconds());
         return deadlineStr;
     }
     return 'N/A';
