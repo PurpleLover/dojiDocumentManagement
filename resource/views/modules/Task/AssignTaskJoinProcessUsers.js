@@ -6,7 +6,8 @@
 import React, { Component } from 'react';
 import {
     Animated, TouchableOpacity, Image,
-    View, Text as RnText, FlatList, StyleSheet
+    View, Text as RnText, FlatList, StyleSheet,
+    TouchableHighlight
 } from 'react-native';
 
 //redux
@@ -37,12 +38,14 @@ class AssignTaskJoinProcessUsers extends Component {
             data: props.data,
 
             expanded: true,
-            rowItemHeight: 60,
-            heightAnimation: new Animated.Value(60 * (props.data.length > 0 ? (props.data.length + 1) : 1)),
+            rowItemHeight: verticalScale(70),
+            heightAnimation: new Animated.Value(verticalScale(70) * (props.data.length > 0 ? (props.data.length + 1) : 1)),
             rotateAnimation: new Animated.Value(0),
 
             joinProcessUsers: props.joinProcessUsers
-        }
+        };
+
+        this.toggle = this.toggle.bind(this);
     }
 
     toggle = () => {
@@ -98,7 +101,7 @@ class AssignTaskJoinProcessUsers extends Component {
         return (
             <Animated.View style={[styles.container, { height: this.state.heightAnimation }]}>
                 <View style={styles.titleContainer}>
-                    <TouchableOpacity onPress={() => this.toggle()}>
+                    <TouchableHighlight onPress={this.toggle}>
                         <ListItem
                             containerStyle={styles.listItemContainer}
                             hideChevron={this.state.data.length <= 0}
@@ -108,7 +111,7 @@ class AssignTaskJoinProcessUsers extends Component {
                                 <Animated.Image source={this.icon} style={iconRotationStyle} />
                             }
                         />
-                    </TouchableOpacity>
+                    </TouchableHighlight>
                 </View>
 
                 <View style={styles.body}>
@@ -172,10 +175,10 @@ const styles = StyleSheet.create({
     titleContainer: {
     },
     listItemRow: {
-        height: verticalScale(60)
+        height: verticalScale(70)
     },
     listItemContainer: {
-        height: verticalScale(60),
+        height: verticalScale(70),
         backgroundColor: '#FF0033',
         justifyContent: 'center'
     },

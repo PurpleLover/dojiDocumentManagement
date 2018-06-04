@@ -6,7 +6,8 @@
 import React, { Component } from 'react';
 import {
     Animated, TouchableOpacity, Image,
-    View, Text as RnText, FlatList, StyleSheet
+    View, Text as RnText, FlatList, StyleSheet,
+    TouchableHighlight
 } from 'react-native';
 
 //redux
@@ -23,7 +24,8 @@ import {
 } from 'react-native-elements';
 import * as util from 'lodash';
 
-
+//style
+import {verticalScale} from '../../../assets/styles/ScaleIndicator';
 
 class AssignTaskMainProcessUsrs extends Component {
     constructor(props) {
@@ -35,10 +37,11 @@ class AssignTaskMainProcessUsrs extends Component {
             data: props.data,
 
             expanded: true,
-            rowItemHeight: 60,
-            heightAnimation: new Animated.Value(60 * (props.data.length > 0 ? (props.data.length + 1) : 1)),
+            rowItemHeight: verticalScale(70),
+            heightAnimation: new Animated.Value(verticalScale(70) * (props.data.length > 0 ? (props.data.length + 1) : 1)),
             rotateAnimation: new Animated.Value(0),
-        }
+        };
+        this.toggle = this.toggle.bind(this);
     }
 
     toggle = () => {
@@ -90,7 +93,7 @@ class AssignTaskMainProcessUsrs extends Component {
         return (
             <Animated.View style={[styles.container, { height: this.state.heightAnimation }]}>
                 <View style={styles.titleContainer}>
-                    <TouchableOpacity onPress={() => this.toggle()}>
+                    <TouchableHighlight onPress={this.toggle}>
                         <ListItem
                             containerStyle={styles.listItemContainer}
                             hideChevron={this.state.data.length <= 0}
@@ -100,7 +103,7 @@ class AssignTaskMainProcessUsrs extends Component {
                                 <Animated.Image source={this.icon} style={iconRotationStyle} />
                             }
                         />
-                    </TouchableOpacity>
+                    </TouchableHighlight>
                 </View>
 
                 <View style={styles.body}>
@@ -148,12 +151,12 @@ const styles = StyleSheet.create({
     titleContainer: {
     },
     listItemContainer: {
-        height: 60,
+        height: verticalScale(70),
         backgroundColor: '#FF0033',
         justifyContent: 'center'
     },
     listItemRow: {
-        height: 60
+        height: verticalScale(70)
     },
     listItemTitle: {
         fontWeight: 'bold',
