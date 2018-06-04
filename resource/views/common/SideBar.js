@@ -37,7 +37,7 @@ export default class SideBar extends Component {
             userInfo: {
 
             },
-            onFocusNow: '',
+            onFocusNow: '6',
         }
     }
 
@@ -97,7 +97,10 @@ export default class SideBar extends Component {
                     </ImageBackground>
                 </View>
                 <View style={SideBarStyle.body}>
-                    <ScrollView>
+                    <ScrollView ref={ref => this.scrollView = ref}
+                        onContentSizeChange={(contentWidth, contentHeight) => {
+                            this.scrollView.scrollToEnd({ animated: true });
+                        }}>
                         <Panel title='VĂN BẢN TRÌNH KÝ'>
                             <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsNotProcessedScreen', '1')} style={this.state.onFocusNow === '1' && SideBarStyle.listItemFocus}>
                                 <ListItem
