@@ -25,7 +25,8 @@ import renderIf from 'render-if';
 import {
     API_URL, HEADER_COLOR, EMPTY_STRING,
     LOADER_COLOR, CONGVIEC_CONSTANT,
-    DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE
+    DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE,
+    SEARCHBAR_COLOR
 } from '../../../common/SystemConstant';
 
 //utilities
@@ -69,9 +70,9 @@ class BaseTaskList extends Component {
         const refreshingData = this.state.refreshingData;
         const loadingData = this.state.loadingData;
 
-        const { taskType } = this.state;
-
         let apiUrlParam = 'PersonalWork';
+
+        const { taskType } = this.state;
 
         if (taskType == CONGVIEC_CONSTANT.DUOC_GIAO) {
             apiUrlParam = 'AssignedWork';
@@ -133,7 +134,7 @@ class BaseTaskList extends Component {
             <View>
                 <TouchableOpacity onPress={() => this.props.navigator.navigate('DetailTaskScreen', {
                     taskId: item.ID,
-                    taskType: this.state.type
+                    taskType: this.state.taskType
                 })}>
                     <ListItem
                         hideChevron={true}
@@ -190,12 +191,13 @@ class BaseTaskList extends Component {
         return (
             <Container>
                 <Header searchBar rounded style={{ backgroundColor: HEADER_COLOR }}>
-                    <Item>
+                    <Item style={{ backgroundColor: SEARCHBAR_COLOR }} >
                         <Icon name='ios-search' />
                         <Input placeholder='Tên công việc'
                             value={this.state.filterValue}
                             onChangeText={(filterValue) => this.setState({ filterValue })}
-                            onSubmitEditing={() => this.onFilter()} />
+                            onSubmitEditing={() => this.onFilter()}
+                        />
                     </Item>
                 </Header>
 

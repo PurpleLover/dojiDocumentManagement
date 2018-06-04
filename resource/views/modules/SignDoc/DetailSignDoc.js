@@ -51,7 +51,7 @@ class DetailSignDoc extends Component {
         }
     }
 
-    navigateBackToList() {
+    navigateBackToList = () => {
         let screenName = 'ListIsNotProcessedScreen';
 
         if (this.state.docType == VANBAN_CONSTANT.DA_XULY) {

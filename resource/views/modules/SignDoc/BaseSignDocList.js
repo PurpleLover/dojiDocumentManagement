@@ -22,9 +22,10 @@ import { List, ListItem } from 'react-native-elements';
 import { formatLongText, openSideBar, emptyDataPage } from '../../../common/Utilities';
 import {
   API_URL, HEADER_COLOR, LOADER_COLOR, DOKHAN_CONSTANT,
-  VANBAN_CONSTANT, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE
+  VANBAN_CONSTANT, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE,
+  SEARCHBAR_COLOR
 } from '../../../common/SystemConstant';
-import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
 
 //styles
@@ -183,7 +184,7 @@ class BaseSignDocList extends Component {
     return (
       <Container>
         <Header searchBar rounded style={{ backgroundColor: HEADER_COLOR }}>
-          <Item>
+          <Item style={{ backgroundColor: SEARCHBAR_COLOR }}>
             <Icon name='ios-search' />
             <Input placeholder='Mã hiệu, trích yếu'
               value={this.state.filterValue}
@@ -193,10 +194,9 @@ class BaseSignDocList extends Component {
           </Item>
         </Header>
 
-        <Content contentContainerStyle={{ flex: 1}}>
+        <Content contentContainerStyle={{ flex: 1 }}>
           {
             renderIf(!this.state.loadingData)(
-              <List>
                 <FlatList
                   data={this.state.data}
                   keyExtractor={(item, index) => index.toString()}
@@ -212,7 +212,7 @@ class BaseSignDocList extends Component {
                     />
                   }
                   ListEmptyComponent={() =>
-                    this.state.loadingData ? null : emptyDataPage() 
+                    this.state.loadingData ? null : emptyDataPage()
                   }
                   ListFooterComponent={() => this.state.loadingMore ?
                     <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
@@ -227,12 +227,11 @@ class BaseSignDocList extends Component {
                     )
                   }
                 />
-              </List>
             )
           }
           {
             renderIf(this.state.loadingData)(
-              <View style={{flex: 1, justifyContent: 'center'}}>
+              <View style={{ flex: 1, justifyContent: 'center' }}>
                 <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
               </View>
             )

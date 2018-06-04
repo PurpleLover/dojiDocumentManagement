@@ -53,7 +53,7 @@ export const ListSignDocStyle = StyleSheet.create({
     },
     emptyMessage: {
         color: '#ccc',
-        fontSize: moderateScale(16),
+        fontSize: moderateScale(16,1.5),
         fontWeight: 'bold',
         textAlign: 'center'
     },
@@ -67,7 +67,7 @@ export const ListSignDocStyle = StyleSheet.create({
         
     },
     abridgment: {
-        fontSize: moderateScale(12),
+        fontSize: moderateScale(12,1.2),
         flexWrap: 'wrap'
     },
     textNormal: {
