@@ -180,19 +180,19 @@ class DetailSignDoc extends Component {
             <MenuProvider>
                 <Container>
                     <Header hasTabs style={{ backgroundColor: HEADER_COLOR }}>
-                        <Left>
+                        <Left style={{flex:1}}>
                             <Button transparent onPress={() => this.navigateBackToList()}>
                                 <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
                             </Button>
                         </Left>
 
-                        <Body>
-                            <Title>
+                        <Body style={{flex:3}}>
+                            <Title style={{color:'#fff', fontWeight:'bold'}} >
                                 THÔNG TIN VĂN BẢN
                             </Title>
                         </Body>
 
-                        <Right>
+                        <Right style={{flex:1}}>
                             {
                                 workflowMenu
                             }

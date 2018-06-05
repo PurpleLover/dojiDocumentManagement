@@ -166,19 +166,19 @@ class EvaluationTask extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: HEADER_COLOR }}>
-                    <Left>
+                    <Left style={{flex:1}}>
                         <Button transparent onPress={() => this.navigateToDetail()}>
                             <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
                         </Button>
                     </Left>
 
-                    <Body>
-                        <Title>
+                    <Body style={{flex:3}}>
+                        <Title style={{color:'#fff', fontWeight:'bold'}}>
                             ĐÁNH GIÁ CÔNG VIỆC
                         </Title>
                     </Body>
 
-                    <Right />
+                    <Right style={{flex:1}}/>
                 </Header>
 
                 <Content>

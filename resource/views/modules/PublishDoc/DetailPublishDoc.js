@@ -119,9 +119,12 @@ class DetailPublishDoc extends Component {
                         </Button>
                     </Left>
 
-                    <Body style={{flex:4}}>
+                    <Body style={{flex:3, color:'#fff'}}>
                             THÔNG TIN VĂN BẢN
                     </Body>
+                    <Right style={{flex:1}}>
+                    
+                    </Right>
                 </Header>
                 {
                     content

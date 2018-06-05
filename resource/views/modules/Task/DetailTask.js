@@ -450,19 +450,19 @@ class DetailTask extends Component {
             <MenuProvider>
                 <Container>
                     <Header style={{ backgroundColor: HEADER_COLOR }}>
-                        <Left>
+                        <Left style={{flex:1}}>
                             <Button transparent onPress={() => this.navigateBackToList()}>
                                 <Icon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
                             </Button>
                         </Left>
 
-                        <Body>
-                            <Title>
+                        <Body style={{flex:3}}>
+                            <Title style={{color:'#fff', fontWeight:'bold'}}>
                                 THÔNG TIN CÔNG VIỆC
                             </Title>
                         </Body>
 
-                        <Right>
+                        <Right style={{flex:1}}>
                             {
                                 renderIf(menuActions.length > 0)(
                                     <Menu style={{ marginHorizontal: scale(5) }}>

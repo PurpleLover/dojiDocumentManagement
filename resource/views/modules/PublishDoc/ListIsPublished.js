@@ -188,21 +188,21 @@ class ListIsPublished extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: HEADER_COLOR }}>
-                    <Left>
+                    <Left style={{flex:1}}>
                         <Button transparent onPress={() => openSideBar(this.props.navigation)}>
-                            <Icon name='menu' />
+                            <Icon name='menu' fontSize={30} style={{color:'#fff'}}/>
                         </Button>
                     </Left>
 
-                    <Body>
-                        <Title>
+                    <Body style={{flex:3}}>
+                        <Title style={{color:'#fff', fontWeight:'bold'}}>
                             VĂN BẢN ĐÃ PHÁT HÀNH
                         </Title>
                     </Body>
 
-                    <Right>
-                        <Button transparent>
-                            <Icon name='search' onPress={() => this.toggleFilter()} />
+                    <Right style={{flex:1}}>
+                        <Button transparent  onPress={() => this.toggleFilter()}>
+                            <Icon name='search' fontSize={30} style={{color:'#fff'}} />
                         </Button>
                     </Right>
                 </Header>
