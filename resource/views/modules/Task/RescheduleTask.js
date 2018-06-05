@@ -19,10 +19,11 @@ import {
     Icon as RneIcon
 } from 'react-native-elements';
 import * as util from 'lodash';
+import DatePicker from 'react-native-datepicker';
 
 //utilities
 import { API_URL, EMPTY_STRING, HEADER_COLOR } from '../../../common/SystemConstant';
-import { asyncDelay } from '../../../common/Utilities';
+import { asyncDelay, convertDateToString } from '../../../common/Utilities';
 import { executeLoading } from '../../../common/Effect';
 import { verticalScale } from '../../../assets/styles/ScaleIndicator';
 
@@ -40,8 +41,15 @@ class RescheduleTask extends Component {
             reason: EMPTY_STRING,
             deadline: EMPTY_STRING,
             executing: false,
+            chosenDate: new Date(),
         }
     }
+
+    setDate = (newDate) => {
+		this.setState({
+			chosenDate: newDate,
+		})
+	}
 
     navigateBackToDetail() {
         this.props.navigation.navigate('DetailTaskScreen', {
@@ -50,34 +58,37 @@ class RescheduleTask extends Component {
         });
     }
 
-    onOpenCalendar = async () => {
-        try {
-            const { action, year, month, day } = await DatePickerAndroid.open({
-                date: new Date()
-            });
+    // onOpenCalendar = async () => {
+    //     try {
+    //         const { action, year, month, day } = await DatePickerAndroid.open({
+    //             date: new Date()
+    //         });
 
-            if (action !== DatePickerAndroid.dissmissedAction) {
-                if (day && month && year) {
-                    if (day < 10) {
-                        day = '0' + day;
-                    }
-                    if (month < 10) {
-                        month = '0' + (month + 1);
-                    }
+    //         if (action !== DatePickerAndroid.dissmissedAction) {
+    //             if (day && month && year) {
+    //                 if (day < 10) {
+    //                     day = '0' + day;
+    //                 }
+    //                 if (month < 10) {
+    //                     month = '0' + (month + 1);
+    //                 }
 
-                    const deadline = day + '/' + month + '/' + year;
+    //                 const deadline = day + '/' + month + '/' + year;
 
-                    this.setState({
-                        deadline
-                    });
-                }
-            }
-        } catch ({ code, message }) {
-            console.warn('Open datepicker error', err);
-        }
-    }
+    //                 this.setState({
+    //                     deadline
+    //                 });
+    //             }
+    //         }
+    //     } catch ({ code, message }) {
+    //         console.warn('Open datepicker error', err);
+    //     }
+    // }
 
     onSaveExtendTask = async () => {
+        this.setState({
+            deadline: convertDateToString(this.state.chosenDate),
+        });
         if (util.isNull(this.state.deadline) || util.isEmpty(this.state.deadline)) {
             Toast.show({
                 text: 'Vui lòng nhập thời hạn xin lùi',
@@ -172,9 +183,31 @@ class RescheduleTask extends Component {
                 <Content>
                     <Form>
                         <Item>
-                            <Input placeholder='Xin lùi tới ngày' value={this.state.deadline} editable={false}
+                            <DatePicker
+                                style={{ width: moderateScale(200) }}
+                                date={this.state.chosenDate}
+                                mode="date"
+                                placeholder='Hạn hoàn thành'
+                                format='DD-MM-YYYY'
+                                minDate={new Date()}
+                                confirmBtnText='CHỌN'
+								cancelBtnText='BỎ'
+                                customStyles={{
+                                    dateIcon: {
+                                        position: 'absolute',
+                                        left: 0,
+                                        top: 4,
+                                        marginLeft: 0
+                                    },
+                                    dateInput: {
+                                        marginLeft: scale(36)
+                                    }
+                                }}
+                                onDateChange={this.setDate}
+                            />
+                            {/* <Input placeholder='Xin lùi tới ngày' value={this.state.deadline} editable={false}
                                 onChangeText={(deadline) => this.setState({ deadline })} />
-                            <Icon active name='ios-calendar-outline' onPress={() => this.onOpenCalendar()} />
+                            <Icon active name='ios-calendar-outline' onPress={() => this.onOpenCalendar()} /> */}
                         </Item>
 
                         <Item>

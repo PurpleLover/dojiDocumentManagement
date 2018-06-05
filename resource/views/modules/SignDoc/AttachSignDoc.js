@@ -78,13 +78,11 @@ export default class AttachSignDoc extends Component {
                     mediaScannable: true, // Make the file scannable  by media scanner
                 }
             }
-
             if (Platform.OS == 'ios') {
                 config = {
                     fileCache: true
                 }
             }
-
             RNFetchBlob.config(config)
                 .fetch('GET', fileLink)
                 .then((response) => {
