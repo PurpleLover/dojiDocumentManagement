@@ -54,6 +54,10 @@ import WorkflowStreamProcess from '../modules/Workflow/WorkflowStreamProcess';
 import WorkflowStreamProcessUsers from '../modules/Workflow/WorkflowStreamProcessUsers';
 import WorkflowRequestReviewUsers from '../modules/Workflow/WorkflowRequestReviewUsers';
 
+//comment
+import ListComment from '../modules/Comment/ListComment';
+import ReplyComment from '../modules/Comment/ReplyComment';
+
 const appRoutes = {
     ListIsNotProcessedScreen: {
         screen: ListIsNotProcessed
@@ -148,11 +152,18 @@ const appRoutes = {
     },
     WorkflowStreamProcessUsersScreen: {
         screen: WorkflowStreamProcessUsers
+    },
+    ListCommentScreen: {
+        screen: ListComment
+    },
+    ReplyCommentScreen: {
+        screen: ReplyComment
     }
 }
 const appConfig = {
     headerMode: 'none',
     initialRouteName: 'ListIsNotProcessedScreen',
+    //initialRouteName: 'ListCommentScreen',
     drawerWidth: width * 0.8,
     contentComponent: props => <SideBar {...props} />
 }

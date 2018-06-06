@@ -15,7 +15,7 @@ import {
     Container, Header, Left, Button, Body,
     Title, Right, Toast, Tabs, Tab, TabHeading, ScrollableTab,
     Icon as NbIcon, Text, SwipeRow, Item, Input,
-    Content
+    Content, Form
 } from 'native-base';
 import { Icon } from 'react-native-elements';
 import renderIf from 'render-if';
@@ -152,6 +152,14 @@ class DetailTask extends Component {
         }
 
         this.props.navigation.navigate(screenName);
+    }
+
+    onOpenComment = () => {
+        this.props.navigation.navigate('ListCommentScreen', {
+            // this.state.taskId,
+            // this.state.taskType,
+            // this.state.userId
+        });
     }
 
     render() {
@@ -461,6 +469,9 @@ class DetailTask extends Component {
                         </Body>
 
                         <Right style={{ flex: 1 }}>
+                            <Button transparent onPress={this.onOpenComment}>
+                                    <Icon name='comment' type='font-awesome' color={Colors.WHITE} size={moderateScale(25)} />
+                            </Button>
                             {
                                 renderIf(menuActions.length > 0)(
                                     <Menu style={{ marginHorizontal: scale(5) }}>
