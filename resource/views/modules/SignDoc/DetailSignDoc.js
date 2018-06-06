@@ -76,7 +76,6 @@ class DetailSignDoc extends Component {
 
     navigateBackToList() {
         let screenName = 'ListIsNotProcessedScreen';
-
         if (this.state.docType == VANBAN_CONSTANT.DA_XULY) {
             screenName = 'ListIsProcessedScreen'
         } else if (this.state.docType == VANBAN_CONSTANT.CAN_REVIEW) {
@@ -176,19 +175,19 @@ class DetailSignDoc extends Component {
             <MenuProvider>
                 <Container>
                     <Header hasTabs style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                        <Left>
+                        <Left style={{flex: 1}}>
                             <Button transparent onPress={() => this.navigateBackToList()}>
                                 <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                             </Button>
                         </Left>
 
-                        <Body>
-                            <Title>
+                        <Body style={{flex:3}}>
+                            <Title style={{color:'#fff', fontWeight:'bold'}} >
                                 THÔNG TIN VĂN BẢN
                             </Title>
                         </Body>
 
-                        <Right>
+                        <Right style={{flex:1}}>
                             {
                                 workflowMenu
                             }

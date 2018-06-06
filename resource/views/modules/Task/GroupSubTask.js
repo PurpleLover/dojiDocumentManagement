@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 //lib
 import {
     Container, Header, Item, Input, Icon, Title, Form,
-    Content, Button, Text, SwipeRow, Left, Body, Toast, Label
+    Content, Button, Text, SwipeRow, Left, Body, Toast, Label, Right
 } from 'native-base';
 import { Icon as RneIcon } from 'react-native-elements';
 import renderIf from 'render-if';
@@ -36,7 +36,7 @@ import {
     EMPTY_STRING, LOADMORE_COLOR,
     LOADER_COLOR, HEADER_COLOR, DEFAULT_PAGE_SIZE, Colors
 } from '../../../common/SystemConstant';
-import { scale, verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { scale, verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 class GroupSubTask extends Component {
     constructor(props) {
@@ -238,20 +238,18 @@ class GroupSubTask extends Component {
         return (
             <Container>
                 <Header searchBar style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left>
+                    <Left style={{flex:1}}>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
                             <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
-                    <Body>
-                        <Title>
+                    <Body style={{flex:3}}>
+                        <Title style={{color:'#fff', fontWeight:'bold'}}>
                             CÔNG VIỆC CON
                         </Title>
                     </Body>
-                    <Right>
-
-                    </Right>
+                    <Right style={{flex:1}}></Right>
                 </Header>
 
                 <Content contentContainerStyle={{ flex: 1 }}>
@@ -317,15 +315,22 @@ class GroupSubTask extends Component {
                     dialogTitle={<DialogTitle title={`THÔNG TIN CÔNG VIỆC #${this.state.dataItem.CONGVIEC_ID}`} />}
                     ref={(popupDialog) => { this.popupDialog = popupDialog }}
                     width={0.8}
-                    height={verticalScale(500)}
+                    height={'auto'}
                     actions={[
                         <DialogButton
                             align={'center'}
                             buttonStyle={{
-                                height: verticalScale(50),
-                                justifyContent: 'center',
+								justifyContent: 'flex-end',
+								backgroundColor: '#4FA800',
+                                alignSelf: 'stretch',
+                                borderBottomLeftRadius: 8,
+								borderBottomRightRadius: 8,
                             }}
                             text="ĐÓNG"
+                            textStyle={{
+								fontSize: moderateScale(18, 1.5),
+								color: '#fff'
+							}}
                             onPress={() => {
                                 this.popupDialog.dismiss();
                             }}
@@ -333,7 +338,6 @@ class GroupSubTask extends Component {
                         />,
                     ]}>
 
-                    <Content>
                         <Form>
                             <Item stackedLabel>
                                 <Label style={styles.dialogLabel}>
@@ -385,7 +389,6 @@ class GroupSubTask extends Component {
                                 </Label>
                             </Item>
                         </Form>
-                    </Content>
                 </PopupDialog>
             </Container>
         );
@@ -397,7 +400,7 @@ const styles = StyleSheet.create({
         paddingLeft: scale(10)
     },
     rowItemLabel: {
-        marginHorizontal: 10,
+        marginHorizontal: scale(10),
         fontWeight: 'bold',
         color: '#000'
     }, complete: {
@@ -409,7 +412,7 @@ const styles = StyleSheet.create({
     }, dialogLabel: {
         fontWeight: 'bold',
         color: '#000',
-        fontSize: verticalScale(14)
+        fontSize: moderateScale(14,1.4)
     }
 })
 

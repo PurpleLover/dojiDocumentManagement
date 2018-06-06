@@ -5,7 +5,7 @@
  */
 'use strict'
 import React, { Component } from 'react';
-import { AsyncStorage,Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { AsyncStorage, Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { API_URL } from '../../common/SystemConstant'
 
@@ -14,13 +14,13 @@ import { Header } from 'react-native-elements';
 import { Footer } from 'native-base';
 
 //style
-import {scale, verticalScale, moderateScale} from '../../assets/styles/ScaleIndicator';
+import { scale, verticalScale, moderateScale } from '../../assets/styles/ScaleIndicator';
 
 export default class Confirm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isVisible: false, 
+            isVisible: false,
             title: props.title || ''
         }
     }
@@ -29,19 +29,19 @@ export default class Confirm extends Component {
         console.log('Confirm Action', 'Modal has closed.');
     }
 
-    showModal(){
+    showModal() {
         this.setState({
             isVisible: true
         })
     }
 
-    closeModal(){
+    closeModal() {
         this.setState({
             isVisible: false
         })
     }
 
-    async signOut(){
+    async signOut() {
         //lấy thông tin người dùng từ storage
         const userInfoJSON = await AsyncStorage.getItem('userInfo');
         const userInfo = JSON.parse(userInfoJSON);
@@ -51,19 +51,19 @@ export default class Confirm extends Component {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type':'application/json; charset=utf-8'
-            },body: JSON.stringify({
+                'Content-Type': 'application/json; charset=utf-8'
+            }, body: JSON.stringify({
                 userId: userInfo.ID,
                 token: userInfo.Token
             })
         }).then(response => response.json())
-        .then(responseJson => {
-            return responseJson
-        });
+            .then(responseJson => {
+                return responseJson
+            });
 
 
         //xóa dữ liệu storage of người dùng trên thiết bị
-        AsyncStorage.removeItem('userInfo').then(()=> {
+        AsyncStorage.removeItem('userInfo').then(() => {
             this.props.navigation.navigate('LoadingScreen');
         });
     }
@@ -77,21 +77,23 @@ export default class Confirm extends Component {
                 onRequestClose={() => this.onModalClose()}>
                 <View style={styles.container}>
                     <View style={styles.body}>
-                        <Header outerContainerStyles={styles.headerOuter} 
+                        <Header 
+                            outerContainerStyles={styles.headerOuter}
                             centerComponent={
-                            <Text style={styles.headerCenterTitle}>
-                                {this.state.title}
-                            </Text>
-                        }/>
+                                <Text style={styles.headerCenterTitle}>
+                                    {this.state.title}
+                                </Text>
+                            }
+                        />
                         <View style={styles.content}>
                             <Text style={styles.contentText}>
-                                Bạn có chắc chắn muốn thoát ứng dụng D-OFFICE?
+                                Bạn có chắc chắn muốn thoát {'\n'} ứng dụng D-OFFICE?
                             </Text>
                         </View>
 
                         <View style={styles.footer}>
                             <View style={styles.leftFooter}>
-                                <TouchableOpacity onPress={()=> this.closeModal()} style={styles.footerButton}>
+                                <TouchableOpacity onPress={() => this.closeModal()} style={styles.footerButton}>
                                     <Text style={styles.footerText}>
                                         Không
                                     </Text>
@@ -99,7 +101,7 @@ export default class Confirm extends Component {
                             </View>
 
                             <View style={styles.rightFooter}>
-                                <TouchableOpacity onPress={()=> this.signOut()} style={styles.footerButton}>
+                                <TouchableOpacity onPress={() => this.signOut()} style={styles.footerButton}>
                                     <Text style={styles.footerText}>
                                         Có
                                     </Text>
@@ -126,32 +128,34 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderWidth: 1,
         borderColor: '#ececec'
-    },headerCenterTitle: {
+    }, headerCenterTitle: {
         color: '#2455A6',
         fontWeight: 'bold'
     }, headerOuter: {
         height: verticalScale(50),
         borderBottomColor: '#2455A6',
         borderBottomWidth: 3,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        paddingHorizontal:scale(10),
+        paddingVertical:verticalScale(10)
     }, content: {
         height: verticalScale(100),
         justifyContent: 'center',
         alignItems: 'center',
     }, contentText: {
         color: '#000',
-        fontSize: moderateScale(18,1.3),
+        fontSize: moderateScale(18, 1.3),
         textAlign: 'center'
-    },footer: {
+    }, footer: {
         height: verticalScale(50),
         borderTopColor: '#ececec',
         borderTopWidth: verticalScale(2),
         flexDirection: 'row'
-    },leftFooter: {
+    }, leftFooter: {
         flex: 1,
         borderRightWidth: scale(2),
         borderRightColor: '#ececec'
-    },rightFooter: {
+    }, rightFooter: {
         flex: 1,
     }, footerText: {
         color: '#000'

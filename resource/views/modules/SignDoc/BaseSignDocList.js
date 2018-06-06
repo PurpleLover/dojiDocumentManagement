@@ -25,7 +25,7 @@ import {
   VANBAN_CONSTANT, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE,
   Colors
 } from '../../../common/SystemConstant';
-import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
 
 //styles
@@ -196,38 +196,36 @@ class BaseSignDocList extends Component {
 
           {
             renderIf(!this.state.loadingData)(
-              <List>
-                <FlatList
-                  data={this.state.data}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={this.renderItem}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={this.state.refreshingData}
-                      onRefresh={this.handleRefresh}
-                      colors={[Colors.BLUE_PANTONE_640C]}
-                      tintColor={[Colors.BLUE_PANTONE_640C]}
-                      title='Kéo để làm mới'
-                      titleColor={Colors.RED}
-                    />
-                  }
-                  ListEmptyComponent={() =>
-                    this.state.loadingData ? null : emptyDataPage()
-                  }
-                  ListFooterComponent={() => this.state.loadingMore ?
-                    <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
-                    (
-                      this.state.data.length >= DEFAULT_PAGE_SIZE ?
-                        <Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadingMore()}>
-                          <Text>
-                            TẢI THÊM
+              <FlatList
+                data={this.state.data}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={this.renderItem}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={this.state.refreshingData}
+                    onRefresh={this.handleRefresh}
+                    colors={[Colors.BLUE_PANTONE_640C]}
+                    tintColor={[Colors.BLUE_PANTONE_640C]}
+                    title='Kéo để làm mới'
+                    titleColor={Colors.RED}
+                  />
+                }
+                ListEmptyComponent={() =>
+                  this.state.loadingData ? null : emptyDataPage()
+                }
+                ListFooterComponent={() => this.state.loadingMore ?
+                  <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
+                  (
+                    this.state.data.length >= DEFAULT_PAGE_SIZE ?
+                      <Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadingMore()}>
+                        <Text>
+                          TẢI THÊM
                           </Text>
-                        </Button>
-                        : null
-                    )
-                  }
-                />
-              </List>
+                      </Button>
+                      : null
+                  )
+                }
+              />
             )
           }
         </Content>

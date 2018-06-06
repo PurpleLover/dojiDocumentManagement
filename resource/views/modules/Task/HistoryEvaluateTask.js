@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 
 import {
     ActivityIndicator, FlatList, StyleSheet, View as RnView, Text as RnText,
-    RefreshControl
+    RefreshControl, Dimensions
 } from 'react-native';
 //redux
 import { connect } from 'react-redux';
@@ -32,7 +32,7 @@ import {
 } from '../../../common/SystemConstant';
 import { dataLoading } from '../../../common/Effect';
 import { emptyDataPage, formatLongText, convertDateToString, convertDateTimeToString } from '../../../common/Utilities';
-import { scale, verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { scale, verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 class HistoryEvaluateTask extends Component {
     constructor(props) {
@@ -93,6 +93,7 @@ class HistoryEvaluateTask extends Component {
 
 
     renderItem = ({ item }) => {
+        const statusResponsive = (deviceWidth<340) ? 'Trạng thái: ' : ' - Trạng thái: ';
         return (
             <SwipeRow
                 leftOpenValue={75}
@@ -119,7 +120,7 @@ class HistoryEvaluateTask extends Component {
 
                         <RnText style={styles.rowLabel}>
                             <RnText>
-                                {' - Trạng thái: '}
+                                {statusResponsive}
                             </RnText>
 
                             <RnText style={(item.PHEDUYETKETQUA == true) ? styles.approveText : styles.denyText}>
@@ -128,6 +129,7 @@ class HistoryEvaluateTask extends Component {
                         </RnText>
 
                     </RnView>
+
                 }
             />
         );
@@ -153,17 +155,17 @@ class HistoryEvaluateTask extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left>
+                    <Left style={{flex:1}}>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
                             <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
-                    <Body>
-                        <Title>
-                            LỊCH SỬ PHẢN HỒI TIẾN ĐỘ
+                    <Body style={{flex:3}}>
+                        <Title style={{color:'#fff', fontWeight:'bold'}}>
+                            LỊCH SỬ PHÊ DUYỆT TIẾN ĐỘ
 						</Title>
                     </Body>
-                    <Right />
+                    <Right style={{flex:1}}/>
                 </Header>
 
                 <Content contentContainerStyle={{ flex: 1 }}>
@@ -214,15 +216,23 @@ class HistoryEvaluateTask extends Component {
                         dialogTitle={<DialogTitle title='THÔNG TIN CẬP NHẬT TIẾN ĐỘ' />}
                         ref={(popupDialog) => { this.popupDialog = popupDialog }}
                         width={0.8}
-                        height={verticalScale(400)}
+                        height={'auto'}
                         actions={[
                             <DialogButton
                                 align={'center'}
                                 buttonStyle={{
-                                    height: verticalScale(50),
-                                    justifyContent: 'center',
+                                    //height: verticalScale(100),
+                                    justifyContent: 'flex-end',
+                                    backgroundColor: '#4FA800',
+                                    alignSelf: 'stretch',
+                                    borderBottomLeftRadius: 8,
+                                    borderBottomRightRadius: 8,
                                 }}
                                 text="ĐÓNG"
+                                textStyle={{
+                                    fontSize: moderateScale(18, 1.5),
+                                    color: '#fff'
+                                }}
                                 onPress={() => {
                                     this.popupDialog.dismiss();
                                 }}
@@ -277,15 +287,14 @@ class HistoryEvaluateTask extends Component {
     }
 }
 
-
-
+const deviceWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
     rowContainer: {
         width: '100%',
         paddingLeft: scale(10),
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: (deviceWidth>=340) ? 'row' : 'column',
+        alignItems: (deviceWidth>=340) ? 'center': 'flex-start',
     },
     rowLabel: {
         color: '#000',
@@ -299,7 +308,7 @@ const styles = StyleSheet.create({
     dialogLabel: {
         fontWeight: 'bold',
         color: '#000',
-        fontSize: verticalScale(14)
+        fontSize: moderateScale(14, 1.4)
     },
     approveText: {
         color: '#337321',

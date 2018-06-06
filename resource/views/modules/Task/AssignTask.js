@@ -32,7 +32,7 @@ import {
 } from '../../../common/SystemConstant';
 import { asyncDelay, emptyDataPage } from '../../../common/Utilities';
 import { dataLoading, executeLoading } from '../../../common/Effect';
-import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
 //styles
@@ -285,7 +285,7 @@ class AssignTask extends Component {
 							active={(this.state.selectedSegmentIndex == 0)}
 							onPress={() => this.onChangeSegment(0)}>
 							<Text style={{
-								fontSize: verticalScale(13),
+								fontSize: moderateScale(13, 1.3),
 								color: (this.state.selectedSegmentIndex == 0) ? Colors.RED_PANTONE_186C : Colors.WHITE
 							}}>
 								{
@@ -298,7 +298,7 @@ class AssignTask extends Component {
 							active={(this.state.selectedSegmentIndex == 1)}
 							onPress={() => this.onChangeSegment(1)}>
 							<Text style={{
-								fontSize: verticalScale(13),
+								fontSize: moderateScale(13, 1.3),
 								color: (this.state.selectedSegmentIndex == 1) ? Colors.RED_PANTONE_186C : Colors.WHITE
 							}}>
 								CHÉO
@@ -309,14 +309,14 @@ class AssignTask extends Component {
 			}
 
 			bodyContent = (
-				<Tabs initialPage={this.state.selectedTabIndex}
+				<Tabs initialPage={0}
 					onChangeTab={(selectedTabIndex) => this.setState({ selectedTabIndex })}
 					tabBarUnderlineStyle={TabStyle.underLineStyle}>
 					<Tab heading={
 						<TabHeading style={(this.state.selectedTabIndex == 0 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
 							<Icon name='ios-person-outline' style={(this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText)} />
 							<Text style={[TabStyle.tabText,
-							(this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText)]}>
+								(this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText)]}>
 								XỬ LÝ CHÍNH
 							</Text>
 						</TabHeading>
@@ -420,19 +420,19 @@ class AssignTask extends Component {
 		return (
 			<Container>
 				<Header style={{ backgroundColor: HEADER_COLOR }}>
-					<Left>
+					<Left style={{flex:1}}>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
 							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
 						</Button>
 					</Left>
 
-					<Body>
-						<Title>
+					<Body style={{flex:3}}>
+						<Title style={{color:'#fff', fontWeight:'bold'}}>
 							GIAO VIỆC
 						</Title>
 					</Body>
 
-					<Right>
+					<Right style={{flex:1}}>
 						<Button transparent onPress={() => this.onAssginTask()}>
 							<RneIcon name='md-send' size={verticalScale(30)} color={'#fff'} type='ionicon' />
 						</Button>

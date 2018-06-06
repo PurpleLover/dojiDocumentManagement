@@ -39,7 +39,7 @@ export default class SideBar extends Component {
             userInfo: {
 
             },
-            onFocusNow: '',
+            onFocusNow: '6',
         }
     }
 
@@ -95,7 +95,10 @@ export default class SideBar extends Component {
                 <View style={SideBarStyle.body}>
                     <ScrollView>
                         <Panel title='VĂN BẢN TRÌNH KÝ'>
-                            <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsNotProcessedScreen', '1')} style={this.state.onFocusNow === '1' && SideBarStyle.listItemFocus}>
+                            <TouchableOpacity 
+                                onPress={() => this.setCurrentFocus('ListIsNotProcessedScreen', '1')} 
+                                style={this.state.onFocusNow === '1' && SideBarStyle.listItemFocus}
+                            >
                                 <ListItem
                                     leftIcon={
                                         this.state.onFocusNow !== '1' ?
@@ -105,6 +108,7 @@ export default class SideBar extends Component {
                                     rightIcon={
                                         this.state.onFocusNow !== '1' ? mainItemIcon : subItemIcon
                                     }
+                                    containerStyle={SideBarStyle.subItemContainer}
                                     title={'Chưa xử lý'}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '1' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     contentContainerStyle={SideBarStyle.subItemContainer} />
@@ -119,6 +123,7 @@ export default class SideBar extends Component {
                                     rightIcon={
                                         this.state.onFocusNow !== '2' ? mainItemIcon : subItemIcon
                                     }
+                                    containerStyle={SideBarStyle.subItemContainer}
                                     title={'Đã xử lý'}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '2' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     contentContainerStyle={SideBarStyle.subItemContainer} />
@@ -133,6 +138,7 @@ export default class SideBar extends Component {
                                     rightIcon={
                                         this.state.onFocusNow !== '3' ? mainItemIcon : subItemIcon
                                     }
+                                    containerStyle={SideBarStyle.subItemContainer}
                                     title={'Cần review'}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '3' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     contentContainerStyle={SideBarStyle.subItemContainer} />
@@ -148,6 +154,7 @@ export default class SideBar extends Component {
                                         this.state.onFocusNow !== '4' ? mainItemIcon : subItemIcon
                                     }
                                     title={'Đã review'}
+                                    containerStyle={SideBarStyle.subItemContainer}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '4' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     contentContainerStyle={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
@@ -164,6 +171,7 @@ export default class SideBar extends Component {
                                     rightIcon={
                                         this.state.onFocusNow !== '5' ? mainItemIcon : subItemIcon
                                     }
+                                    containerStyle={SideBarStyle.subItemContainer}
                                     title={'Danh sách'}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '5' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     contentContainerStyle={SideBarStyle.subItemContainer} />
@@ -182,6 +190,7 @@ export default class SideBar extends Component {
                                     rightIcon={
                                         this.state.onFocusNow !== '6' ? mainItemIcon : subItemIcon
                                     }
+                                    containerStyle={SideBarStyle.subItemContainer}
                                     title={'Cá nhân'}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '6' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     style={SideBarStyle.subItemContainer} />
@@ -196,6 +205,7 @@ export default class SideBar extends Component {
                                     rightIcon={
                                         this.state.onFocusNow !== '7' ? mainItemIcon : subItemIcon
                                     }
+                                    containerStyle={SideBarStyle.subItemContainer}
                                     title={'Được giao'}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '7' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     style={SideBarStyle.subItemContainer} />
@@ -211,6 +221,7 @@ export default class SideBar extends Component {
                                     rightIcon={
                                         this.state.onFocusNow !== '8' ? mainItemIcon : subItemIcon
                                     }
+                                    containerStyle={SideBarStyle.subItemContainer}
                                     title={'Phối hợp xử lý'}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '8' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     style={SideBarStyle.subItemContainer} />
@@ -227,6 +238,7 @@ export default class SideBar extends Component {
                                         this.state.onFocusNow !== '9' ? mainItemIcon : subItemIcon
                                     }
                                     title={'Đã giao xử lý'}
+                                    containerStyle={SideBarStyle.subItemContainer}
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '9' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     style={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>

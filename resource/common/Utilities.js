@@ -10,7 +10,9 @@ import * as util from 'lodash';
 //lib
 import { Button, Icon, Text as NBText } from 'native-base'
 import { SAD_FACE_ICON_URI, EMTPY_DATA_MESSAGE, EMPTY_DATA_ICON_URI } from './SystemConstant'
-import { moderateScale } from '../assets/styles/ScaleIndicator';
+
+//style
+import { verticalScale, moderateScale } from '../assets/styles/ScaleIndicator';
 
 //rút gọn đoạn văn dài
 export function formatLongText(text, size) {
@@ -59,24 +61,14 @@ export function convertTimeToString(date) {
 
 //chuyển sang định dạng ngày/tháng/năm
 export function convertDateTimeToString(date) {
-    let deadline = new Date();
+    
     if (date !== null && date !== '') {
-        deadline = new Date(date);
-        let dateStr = deadline.getDate().toString();
-        if (deadline.getDate() < 10) {
-            dateStr = '0' + deadline.getDate().toString();
-        }
+        let deadline = new Date(date);
+        const pad = val => val < 10 ? '0' + val : val; // Append '0' before alone dateTime
 
-        let month = (deadline.getMonth() + 1);
-        let monthStr = '';
-        if (month < 10) {
-            monthStr = '0' + month;
-        } else {
-            monthStr = month.toString();
-        }
-
-        let deadlineStr = (dateStr + '/' + (monthStr) + '/' + deadline.getFullYear());
-        deadlineStr += ' ' + deadline.getHours() + ':' + deadline.getMinutes() + ':' + deadline.getSeconds();
+        let deadlineStr = pad(deadline.getDate()) + '/' + pad(deadline.getMonth()) + '/' + deadline.getFullYear();
+        
+        deadlineStr += ' ' + pad(deadline.getHours()) + ':' + pad(deadline.getMinutes()) + ':' + pad(deadline.getSeconds());
         return deadlineStr;
     }
     return 'N/A';
@@ -90,10 +82,10 @@ export function unAuthorizePage(navigation) {
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Image source={require('../assets/images/error.png')} style={{ width: '30%', height: '30%', resizeMode: 'contain' }} />
-            <Text style={{ color: '#FF0033', fontWeight: 'bold', fontSize: 16 }}>
+            <Text style={{ color: '#FF0033', fontWeight: 'bold', fontSize: moderateScale(16, 1.2) }}>
                 XIN LỖI!
             </Text>
-            <Text style={{ color: '#FF0033', fontWeight: 'normal', marginBottom: 20 }}>
+            <Text style={{ color: '#FF0033', fontWeight: 'normal', marginBottom: verticalScale(20) }}>
                 BẠN KHÔNG CÓ QUYỀN TRUY CẬP VĂN BẢN NÀY
             </Text>
         </View>
@@ -108,13 +100,13 @@ export function emptyDataPage() {
             alignItems: 'center'
         }}>
             <Image source={EMPTY_DATA_ICON_URI} style={{
-                width: 100,
-                height: 100,
+                width: moderateScale(100),
+                height: moderateScale(100),
                 resizeMode: 'contain'
             }} />
             <Text style={{
                 color: '#ccc',
-                fontSize: moderateScale(16),
+                fontSize: moderateScale(16, 1.2),
                 fontWeight: 'bold',
                 textAlign: 'center'
             }}>

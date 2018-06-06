@@ -27,7 +27,7 @@ import {
     CONGVIEC_CONSTANT, PLANJOB_CONSTANT, EMPTY_DATA_ICON_URI, EMPTY_STRING, DEFAULT_PAGE_INDEX
 } from '../../../common/SystemConstant';
 import { asyncDelay, convertDateToString, formatLongText } from '../../../common/Utilities';
-import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { verticalScale, indicatorResponsive, scale } from '../../../assets/styles/ScaleIndicator';
 import { executeLoading, dataLoading } from '../../../common/Effect';
 
 //styles
@@ -448,22 +448,22 @@ class DetailTask extends Component {
             <MenuProvider>
                 <Container>
                     <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                        <Left>
+                        <Left style={{flex:1}}>
                             <Button transparent onPress={() => this.navigateBackToList()}>
                                 <Icon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                             </Button>
                         </Left>
 
-                        <Body>
-                            <Title>
+                        <Body style={{flex:3}}>
+                            <Title style={{color:'#fff', fontWeight:'bold'}}>
                                 THÔNG TIN CÔNG VIỆC
                             </Title>
                         </Body>
 
-                        <Right>
+                        <Right style={{flex:1}}>
                             {
                                 renderIf(menuActions.length > 0)(
-                                    <Menu style={{ marginHorizontal: 5 }}>
+                                    <Menu style={{ marginHorizontal: scale(5) }}>
                                         <MenuTrigger>
                                             <Icon name='dots-three-horizontal' color={Colors.WHITE} type='entypo' size={verticalScale(25)} />
                                         </MenuTrigger>
@@ -510,7 +510,7 @@ class TaskContent extends Component {
         return (
             <RnView style={{ flex: 1 }}>
                 <Tabs
-                    initialPage={this.state.selectedTabIndex}
+                    initialPage={0}
                     tabBarUnderlineStyle={TabStyle.underLineStyle}
                     onChangeTab={(selectedTabIndex) => this.setState({ selectedTabIndex })}>
                     <Tab heading={

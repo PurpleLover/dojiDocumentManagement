@@ -162,7 +162,7 @@ class ApproveProgressTask extends Component {
                         </Title>
                     </Body>
 
-                    <Right />
+                    <Right style={{flex:1}}/>
                 </Header>
 
                 <Content>

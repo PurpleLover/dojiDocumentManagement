@@ -207,19 +207,19 @@ class WorkflowRequestReview extends Component {
 		return (
 			<Container>
 				<Header hasTabs style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-					<Left>
+					<Left style={{flex:1}}>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
 							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Left>
 
-					<Body>
-						<Title>
+					<Body style={{flex:3}}>
+						<Title style={{color:'#fff', fontWeight:'bold'}}>
 							{this.state.stepName}
 						</Title>
 					</Body>
 
-					<Right>
+					<Right style={{flex:1}}>
 						<Button transparent onPress={() => this.saveRequestReview()}>
 							<RneIcon name='md-send' size={verticalScale(30)} color={Colors.WHITE} type='ionicon' />
 						</Button>

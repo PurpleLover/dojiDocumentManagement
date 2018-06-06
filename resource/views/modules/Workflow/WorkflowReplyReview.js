@@ -169,19 +169,19 @@ class WorkflowReplyReview extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left>
+                    <Left style={{flex:1}}>
                         <Button transparent onPress={() => this.navigateBack()}>
                             <Icon name='ios-arrow-round-back' size={30} color={Colors.WHITE} type="ionicon" />
                         </Button>
                     </Left>
 
-                    <Body>
-                        <Title>
+                    <Body style={{flex:3}}>
+                        <Title style={{color:'#fff', fontWeight:'bold'}}>
                             REVIEW VĂN BẢN TRÌNH KÝ
                         </Title>
                     </Body>
 
-                    <Right>
+                    <Right style={{flex:1}}>
                         <Button transparent>
                         </Button>
                     </Right>

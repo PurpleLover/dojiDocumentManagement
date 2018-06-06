@@ -94,12 +94,12 @@ class DetailPubslishDoc extends Component {
                         </Button>
                     </Left>
 
-                    <Body>
+                    <Body style={{ flex: 3, color: '#fff' }}>
                         <Title>
                             THÔNG TIN VĂN BẢN
                         </Title>
                     </Body>
-                    <Right />
+                    <Right style={{ flex: 1 }}></Right>
                 </Header>
 
                 {

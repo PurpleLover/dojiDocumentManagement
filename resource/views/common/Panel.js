@@ -16,6 +16,8 @@ import { ListItem } from 'react-native-elements';
 import { PanelStyle } from '../../assets/styles/PanelStyle';
 import { SideBarStyle } from '../../assets/styles/SideBarStyle';
 import { doc_Default, work_Default } from '../../assets/styles/SideBarIcons';
+import { verticalScale } from '../../assets/styles/ScaleIndicator';
+
 import SideBar from './SideBar';
 
 export default class Panel extends Component {
@@ -25,9 +27,9 @@ export default class Panel extends Component {
 
         this.state = {
             title: props.title,
-            expanded: false,
+            expanded: true,
             rotateAnimation: new Animated.Value(0),
-            heightAnimation: new Animated.Value(60),
+            heightAnimation: new Animated.Value(verticalScale(60 * (this.props.children.length + 1))), //used to 60
         };
         this.setMaxHeight = this.setMaxHeight.bind(this);
         this.setMinHeight = this.setMinHeight.bind(this);
@@ -50,8 +52,8 @@ export default class Panel extends Component {
         const finalHeightValue = this.state.expanded ? this.state.minHeight : (this.state.minHeight + this.state.maxHeight);
         this.state.heightAnimation.setValue(initialHeightValue);
 
-        const initRotateValue = this.state.expanded ? 1 : 0;
-        const finalRotateValue = this.state.expanded ? 0 : 1;
+        const initRotateValue = this.state.expanded ? 0 : 1;
+        const finalRotateValue = this.state.expanded ? 1 : 0;
         this.state.rotateAnimation.setValue(initRotateValue)
 
         this.setState({

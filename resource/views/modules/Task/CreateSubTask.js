@@ -5,7 +5,7 @@
 */
 'use strict'
 import React, { Component } from 'react';
-import { DatePickerAndroid } from 'react-native';
+import { Platform } from 'react-native';
 //lib
 import {
 	Container, Header, Left, Body, Content,
@@ -13,16 +13,20 @@ import {
 	Button, Form, Picker, Toast, Label
 } from 'native-base'
 import { Icon as RneIcon } from 'react-native-elements';
+import DatePicker from 'react-native-datepicker';
 
 //utilities
 import { API_URL, HEADER_COLOR, EMPTY_STRING, Colors } from '../../../common/SystemConstant';
 import { verticalScale } from '../../../assets/styles/ScaleIndicator';
 import { executeLoading } from '../../../common/Effect';
-import { asyncDelay } from '../../../common/Utilities';
+import { asyncDelay, convertDateToString } from '../../../common/Utilities';
 import * as util from 'lodash';
 
 //redux
 import { connect } from 'react-redux';
+
+//style
+import { scale, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 class CreateSubTask extends Component {
 	constructor(props) {
@@ -39,14 +43,21 @@ class CreateSubTask extends Component {
 			priorityValue: '101', //độ ưu tiên
 			urgencyValue: '98', //đô khẩn
 
-			executing: false
+			executing: false,
+			chosenDate: new Date(),
 		}
+	}
+
+	setDate = (newDate) => {
+		this.setState({
+			chosenDate: newDate,
+		})
 	}
 
 	onPriorityValueChange(value) {
 		this.setState({
 			priorityValue: value
-		});
+		})
 	}
 
 	onUrgencyValueChange(value) {
@@ -62,34 +73,50 @@ class CreateSubTask extends Component {
 		});
 	}
 
-	onOpenCalendar = async () => {
-		try {
-			const { action, year, month, day } = await DatePickerAndroid.open({
-				date: new Date()
-			});
+	// onOpenCalendar = async () => {
+	// 	if (Platform.OS === 'android') {
+	// 		try {
+	// 			const { action, year, month, day } = await DatePickerAndroid.open({
+	// 				date: new Date()
+	// 			});
 
-			if (action !== DatePickerAndroid.dissmissedAction) {
-				if (day && month && year) {
-					if (day < 10) {
-						day = '0' + day;
-					}
-					if (month < 10) {
-						month = '0' + (month + 1);
-					}
+	// 			if (action !== DatePickerAndroid.dissmissedAction) {
+	// 				if (day && month && year) {
+	// 					if (day < 10) {
+	// 						day = '0' + day;
+	// 					}
+	// 					if (month < 10) {
+	// 						month = '0' + (month + 1);
+	// 					}
 
-					const deadline = day + '/' + month + '/' + year;
+	// 					const deadline = day + '/' + month + '/' + year;
 
-					this.setState({
-						deadline
-					});
-				}
-			}
-		} catch ({ code, message }) {
-			console.warn('Open datepicker error', err);
-		}
-	}
-
+	// 					this.setState({
+	// 						deadline
+	// 					});
+	// 				}
+	// 			}
+	// 		} catch ({ code, message }) {
+	// 			console.warn('Open datepicker error', err);
+	// 		}
+	// 	}
+	// 	else {
+	// 		return (
+	// 			<View style={{ flex: 1, justifyContent: 'center' }}>
+	// 				<DatePickerIOS
+	// 					date={this.state.chosenDate}
+	// 					onDateChange={this.setDate}
+	// 					mode={'date'}
+	// 					minimumDate={new Date()}
+	// 				/>
+	// 			</View>
+	// 		)
+	// 	}
+	// }
 	onCreateSubTask = async () => {
+		this.setState({
+			deadline: convertDateToString(this.state.chosenDate),
+		});
 		if (util.isNull(this.state.content) || util.isEmpty(this.state.content)) {
 			Toast.show({
 				text: 'Vui lòng nhập nội dung',
@@ -158,6 +185,7 @@ class CreateSubTask extends Component {
 	}
 
 	render() {
+		const pickerStyle = Platform.OS === 'ios' ? {justifyContent:'center'} : {width:'100%'};
 		return (
 			<Container>
 				<Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
@@ -167,13 +195,13 @@ class CreateSubTask extends Component {
 						</Button>
 					</Left>
 
-					<Body>
-						<Title>
+					<Body style={{flex:3}}>
+						<Title style={{color:'#fff', fontWeight:'bold'}}>
 							TẠO CÔNG VIỆC CON
 						</Title>
 					</Body>
 
-					<Right />
+					<Right style={{flex:1}}/>
 				</Header>
 
 				<Content>
@@ -187,16 +215,13 @@ class CreateSubTask extends Component {
 						</Item>
 
 						<Item stackedLabel>
-							<Label>
-								Độ ưu tiên
-							</Label>
-
+							<Label>Độ ưu tiên</Label>
 							<Picker
 								iosHeader='Chọn độ ưu tiên'
 								mode='dropdown'
-								iosIcon={<Icon name='ios-arrow-donw-outline' />}
-								style={{ width: '100%' }}
-								seletedValue={this.state.priorityValue}
+								iosIcon={<Icon name='ios-arrow-down-outline' />}
+								style={pickerStyle}
+								selectedValue={this.state.priorityValue} //sai chinh ta @@
 								onValueChange={this.onPriorityValueChange.bind(this)}>
 								<Picker.Item value="101" label="Cao" />
 								<Picker.Item value="102" label="Thấp" />
@@ -207,10 +232,10 @@ class CreateSubTask extends Component {
 						<Item stackedLabel>
 							<Label>Độ khẩn</Label>
 							<Picker
-								iosHeader="Chọn độ khẩn"
-								mode="dropdown"
+								iosHeader='Chọn độ khẩn'
+								mode='dropdown'
 								iosIcon={<Icon name='ios-arrow-down-outline' />}
-								style={{ width: '100%' }}
+								style={pickerStyle}
 								selectedValue={this.state.urgencyValue}
 								onValueChange={this.onUrgencyValueChange.bind(this)}>
 								<Picker.Item value="98" label="Khẩn" />
@@ -219,13 +244,36 @@ class CreateSubTask extends Component {
 							</Picker>
 						</Item>
 
-						<Item>
-							<Input placeholder={'Hạn hoàn thành'} value={this.state.deadline} editable={false} />
-							<Icon active name='ios-calendar-outline' onPress={() => this.onOpenCalendar()} />
+						<Item stackedLabel style={{height: verticalScale(100)}}>
+							<Label>Hạn hoàn thành</Label>
+							<DatePicker
+								style={{ width: scale(300), alignSelf:'center', marginTop: verticalScale(30) }}
+								date={this.state.chosenDate}
+								mode="date"
+								placeholder='Hạn hoàn thành'
+								format='YYYY-MM-DD'
+								minDate={new Date()}
+								confirmBtnText='CHỌN'
+								cancelBtnText='BỎ'
+								customStyles={{
+									dateIcon: {
+										position: 'absolute',
+										left: 0,
+										top: 4,
+										marginLeft: 0
+									},
+									dateInput: {
+										marginLeft: scale(36),
+									}
+								}}
+								onDateChange={this.setDate}
+							/>
+							{/* <Input placeholder={'Hạn hoàn thành'} value={this.state.deadline} editable={false} />
+							<Icon active name='ios-calendar-outline' onPress={() => this.onOpenCalendar()} /> */}
 						</Item>
 
 						<Button block danger
-							style={{ backgroundColor: Colors.RED_PANTONE_186C, marginTop: verticalScale(20) }}
+							style={{ backgroundColor: HEADER_COLOR, marginTop: verticalScale(10) }}
 							onPress={() => this.onCreateSubTask()}>
 							<Text>
 								TẠO CÔNG VIỆC CON

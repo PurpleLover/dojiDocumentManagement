@@ -193,13 +193,13 @@ class ApproveEvaluationTask extends Component {
                         </Button>
                     </Left>
 
-                    <Body>
-                        <Title>
+                    <Body style={{flex:3}}>
+                        <Title style={{color:'#fff', fontWeight:'bold'}} >
                             PHÊ DUYỆT ĐÁNH GIÁ CÔNG VIỆC
                         </Title>
                     </Body>
 
-                    <Right />
+                    <Right style={{flex:1}} />
                 </Header>
 
                 <Content>

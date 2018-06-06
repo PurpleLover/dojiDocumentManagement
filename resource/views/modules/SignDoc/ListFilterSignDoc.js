@@ -113,7 +113,7 @@ class ListFilterSignDoc extends Component {
                   backgroundColor: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? '#FF0033' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? '#FF6600' : '#337321'),
                   borderRadius: 3
                 }}>
-                  <Text style={{fontSize: moderateScale(10), fontWeight: 'bold'}}>
+                  <Text style={{fontSize: moderateScale(10,0.9), fontWeight: 'bold'}}>
                     {(item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? 'T.KHẨN' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? 'KHẨN' : 'THƯỜNG')}
                   </Text>
                 </Button>

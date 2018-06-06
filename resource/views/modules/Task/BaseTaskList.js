@@ -70,9 +70,9 @@ class BaseTaskList extends Component {
         const refreshingData = this.state.refreshingData;
         const loadingData = this.state.loadingData;
 
-        const { taskType } = this.state;
-
         let apiUrlParam = 'PersonalWork';
+
+        const { taskType } = this.state;
 
         if (taskType == CONGVIEC_CONSTANT.DUOC_GIAO) {
             apiUrlParam = 'AssignedWork';
@@ -128,7 +128,7 @@ class BaseTaskList extends Component {
             <View>
                 <TouchableOpacity onPress={() => this.props.navigator.navigate('DetailTaskScreen', {
                     taskId: item.ID,
-                    taskType: this.state.type
+                    taskType: this.state.taskType
                 })}>
                     <ListItem
                         hideChevron={true}
@@ -190,7 +190,8 @@ class BaseTaskList extends Component {
                         <Input placeholder='Tên công việc'
                             value={this.state.filterValue}
                             onChangeText={(filterValue) => this.setState({ filterValue })}
-                            onSubmitEditing={() => this.onFilter()} />
+                            onSubmitEditing={() => this.onFilter()}
+                        />
                     </Item>
                 </Header>
 
