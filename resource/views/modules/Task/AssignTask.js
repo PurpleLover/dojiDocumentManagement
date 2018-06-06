@@ -28,7 +28,7 @@ import * as taskAction from '../../../redux/modules/task/TaskAction';
 import {
 	API_URL, HEADER_COLOR, DEFAULT_PAGE_INDEX,
 	EMPTY_STRING, LOADER_COLOR, LOADMORE_COLOR,
-	TASK_PROCESS_TYPE
+	TASK_PROCESS_TYPE, Colors
 } from '../../../common/SystemConstant';
 import { asyncDelay, emptyDataPage } from '../../../common/Utilities';
 import { dataLoading, executeLoading } from '../../../common/Effect';
@@ -157,9 +157,6 @@ class AssignTask extends Component {
 			pageIndex: (this.state.searchingMainProcess || this.state.loadingMoreMainProcess) ? this.state.mainProcessPageIndex : this.state.joinProcessPageIndex
 		});
 
-		console.log('thông tin truyền lên', body);
-		return false;
-
 		const result = await fetch(url, {
 			method: 'POST',
 			headers,
@@ -204,8 +201,8 @@ class AssignTask extends Component {
 				text: 'Vui lòng chọn người xử lý chính',
 				type: 'danger',
 				buttonText: "OK",
-				buttonStyle: { backgroundColor: '#fff' },
-				buttonTextStyle: { color: '#FF0033' },
+				buttonStyle: { backgroundColor: Colors.WHITE },
+				buttonTextStyle: { color: Colors.RED_PANTONE_186C },
 			});
 		} else {
 			this.setState({
@@ -260,9 +257,9 @@ class AssignTask extends Component {
 				text: resultJson.Status ? 'Giao việc thành công' : 'Giao việc không thành công',
 				type: resultJson.Status ? 'success' : 'danger',
 				buttonText: "OK",
-				buttonStyle: { backgroundColor: '#fff' },
-				buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
-				duration: 5000,
+				buttonStyle: { backgroundColor: Colors.WHITE },
+				buttonTextStyle: { color: resultJson.Status ? Colors.GREEN_PANTONE_364C : Colors.RED_PANTONE_186C },
+				duration: 3000,
 				onClose: () => {
 					this.props.resetTaskProcessors(TASK_PROCESS_TYPE.ALL_PROCESS);
 					if (resultJson.Status) {
@@ -283,13 +280,13 @@ class AssignTask extends Component {
 		} else {
 			if (this.state.dataAssignTask.AllowAssignDiffDept) {
 				segmentBody = (
-					<Segment style={{ backgroundColor: HEADER_COLOR }}>
+					<Segment style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
 						<Button first
 							active={(this.state.selectedSegmentIndex == 0)}
 							onPress={() => this.onChangeSegment(0)}>
 							<Text style={{
 								fontSize: verticalScale(13),
-								color: (this.state.selectedSegmentIndex == 0) ? HEADER_COLOR : '#fff'
+								color: (this.state.selectedSegmentIndex == 0) ? Colors.RED_PANTONE_186C : Colors.WHITE
 							}}>
 								{
 									this.state.dataAssignTask.IsCapPhongBan ? 'CÁN BỘ TRONG PHÒNG' : 'PHÒNG BAN TRONG ĐƠN VỊ'
@@ -302,7 +299,7 @@ class AssignTask extends Component {
 							onPress={() => this.onChangeSegment(1)}>
 							<Text style={{
 								fontSize: verticalScale(13),
-								color: (this.state.selectedSegmentIndex == 1) ? HEADER_COLOR : '#fff'
+								color: (this.state.selectedSegmentIndex == 1) ? Colors.RED_PANTONE_186C : Colors.WHITE
 							}}>
 								CHÉO
 							</Text>
@@ -336,7 +333,7 @@ class AssignTask extends Component {
 							{
 								renderIf(this.state.searchingMainProcess)(
 									<View style={{ flex: 1, justifyContent: 'center' }}>
-										<ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+										<ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
 									</View>
 								)
 							}
@@ -350,10 +347,10 @@ class AssignTask extends Component {
 										ListEmptyComponent={emptyDataPage()}
 										ListFooterComponent={
 											this.state.loadingMoreMainProcess ?
-												<ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
+												<ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
 												(
 													this.state.dataMainProcessUsers.length >= 5 ?
-														<Button full style={{ backgroundColor: LOADMORE_COLOR }} onPress={() => this.loadingMore(true)}>
+														<Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadingMore(true)}>
 															<Text>
 																TẢI THÊM
 															</Text>
@@ -387,7 +384,7 @@ class AssignTask extends Component {
 							{
 								renderIf(this.state.searchingJoinProcess)(
 									<View style={{ flex: 1, justifyContent: 'center' }}>
-										<ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+										<ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
 									</View>
 								)
 							}
@@ -401,10 +398,10 @@ class AssignTask extends Component {
 										ListEmptyComponent={emptyDataPage()}
 										ListFooterComponent={
 											this.state.loadingMoreJoinProcess ?
-												<ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
+												<ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
 												(
 													this.state.dataJoinProcessUsers.length >= 5 ?
-														<Button full style={{ backgroundColor: LOADMORE_COLOR }} onPress={() => this.loadingMore(false)}>
+														<Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadingMore(false)}>
 															<Text>
 																TẢI THÊM
 															</Text>

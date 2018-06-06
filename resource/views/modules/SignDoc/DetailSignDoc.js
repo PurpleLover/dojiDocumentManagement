@@ -10,7 +10,7 @@ import { View, Text as RnText } from 'react-native';
 import { connect } from 'react-redux';
 
 //utilities
-import { API_URL, VANBAN_CONSTANT, HEADER_COLOR } from '../../../common/SystemConstant';
+import { API_URL, VANBAN_CONSTANT, HEADER_COLOR, Colors } from '../../../common/SystemConstant';
 import { asyncDelay, unAuthorizePage } from '../../../common/Utilities';
 import { dataLoading } from '../../../common/Effect';
 import * as util from 'lodash';
@@ -51,19 +51,6 @@ class DetailSignDoc extends Component {
         }
     }
 
-    navigateBackToList() {
-        let screenName = 'ListIsNotProcessedScreen';
-
-        if (this.state.docType == VANBAN_CONSTANT.DA_XULY) {
-            screenName = 'ListIsProcessedScreen'
-        } else if (this.state.docType == VANBAN_CONSTANT.CAN_REVIEW) {
-            screenName = 'ListIsNotReviewedScreen'
-        } else if (this.state.docType == VANBAN_CONSTANT.DA_REVIEW) {
-            screenName = 'ListIsReviewedScreen'
-        }
-        this.props.navigation.navigate(screenName);
-    }
-
     componentWillMount() {
         this.fetchData()
     }
@@ -75,20 +62,29 @@ class DetailSignDoc extends Component {
 
         const url = `${API_URL}/api/VanBanDi/GetDetail/${this.state.docId}/${this.state.userId}`;
 
-        const result = await fetch(url)
-            .then(response => response.json())
-            .then(responseJson => {
-                return responseJson;
-            });
-        console.log('url', url);
+        const result = await fetch(url);
+        const resultJson = await result.json();
 
         await asyncDelay(2000);
 
         this.setState({
             loading: false,
-            docInfo: result,
-            isUnAuthorize: util.isNull(result)
+            docInfo: resultJson,
+            isUnAuthorize: util.isNull(resultJson)
         });
+    }
+
+    navigateBackToList() {
+        let screenName = 'ListIsNotProcessedScreen';
+
+        if (this.state.docType == VANBAN_CONSTANT.DA_XULY) {
+            screenName = 'ListIsProcessedScreen'
+        } else if (this.state.docType == VANBAN_CONSTANT.CAN_REVIEW) {
+            screenName = 'ListIsNotReviewedScreen'
+        } else if (this.state.docType == VANBAN_CONSTANT.DA_REVIEW) {
+            screenName = 'ListIsReviewedScreen'
+        }
+        this.props.navigation.navigate(screenName);
     }
 
     onReplyReview() {
@@ -154,7 +150,7 @@ class DetailSignDoc extends Component {
                     workflowMenu = (
                         <Menu>
                             <MenuTrigger>
-                                <RneIcon name='dots-three-horizontal' color={'#fff'} type='entypo' size={verticalScale(25)} />
+                                <RneIcon name='dots-three-horizontal' color={Colors.WHITE} type='entypo' size={verticalScale(25)} />
                             </MenuTrigger>
 
                             <MenuOptions>
@@ -179,10 +175,10 @@ class DetailSignDoc extends Component {
         return (
             <MenuProvider>
                 <Container>
-                    <Header hasTabs style={{ backgroundColor: HEADER_COLOR }}>
+                    <Header hasTabs style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
                         <Left>
                             <Button transparent onPress={() => this.navigateBackToList()}>
-                                <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+                                <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                             </Button>
                         </Left>
 

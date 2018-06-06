@@ -14,6 +14,6 @@ import signDocReducer from '../modules/signdoc/SignDocReducer';
 export const globalReducer = combineReducers({
     userState: userReducer,
     workflowState: workflowReducer,
-    taskState: taskReducer,
+    taskState: taskReducer,  
     signDocState: signDocReducer
 });

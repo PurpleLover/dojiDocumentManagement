@@ -21,7 +21,7 @@ import {
 import * as util from 'lodash';
 
 //utilities
-import { API_URL, EMPTY_STRING, HEADER_COLOR } from '../../../common/SystemConstant';
+import { API_URL, EMPTY_STRING, HEADER_COLOR, Colors } from '../../../common/SystemConstant';
 import { asyncDelay } from '../../../common/Utilities';
 import { executeLoading } from '../../../common/Effect';
 import { verticalScale } from '../../../assets/styles/ScaleIndicator';
@@ -83,16 +83,16 @@ class RescheduleTask extends Component {
                 text: 'Vui lòng nhập thời hạn xin lùi',
                 type: 'danger',
                 buttonText: "OK",
-                buttonStyle: { backgroundColor: '#fff' },
-                buttonTextStyle: { color: '#FF0033' },
+                buttonStyle: { backgroundColor: Colors.WHITE },
+                buttonTextStyle: { color: Colors.RED_PANTONE_186C },
             });
         } else if (util.isNull(this.state.reason) || util.isEmpty(this.state.reason)) {
             Toast.show({
                 text: 'Vui lòng nhập nguyên nhân xin lùi hạn',
                 type: 'danger',
                 buttonText: "OK",
-                buttonStyle: { backgroundColor: '#fff' },
-                buttonTextStyle: { color: '#FF0033' },
+                buttonStyle: { backgroundColor: Colors.WHITE },
+                buttonTextStyle: { color: Colors.RED_PANTONE_186C },
             });
         } else {
             this.setState({
@@ -139,8 +139,8 @@ class RescheduleTask extends Component {
                 text: resultJson.Status ? 'Xin lùi hạn công việc thành công' : 'Xin lùi hạn công việc không thành công',
                 type: resultJson.Status ? 'success' : 'danger',
                 buttonText: "OK",
-                buttonStyle: { backgroundColor: '#fff' },
-                buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
+                buttonStyle: { backgroundColor: Colors.WHITE },
+                buttonTextStyle: { color: resultJson.Status ? Colors.GREEN_PANTONE_364C : Colors.RED_PANTONE_186C },
                 duration: 3000,
                 onClose: () => {
                     if (resultJson.Status) {
@@ -154,10 +154,10 @@ class RescheduleTask extends Component {
     render() {
         return (
             <Container>
-                <Header style={{ backgroundColor: HEADER_COLOR }} hasTabs>
+                <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }} hasTabs>
                     <Left>
-                        <Button transparent onPress={() => this.navigateToDetail()}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+                        <Button transparent onPress={() => this.navigateBackToDetail()}>
+                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
@@ -185,7 +185,7 @@ class RescheduleTask extends Component {
                     </Form>
 
                     <Button block danger
-                        style={{ backgroundColor: HEADER_COLOR, marginTop: verticalScale(20) }}
+                        style={{ backgroundColor: Colors.RED_PANTONE_186C, marginTop: verticalScale(20) }}
                         onPress={() => this.onSaveExtendTask()}>
                         <Text>
                             LÙI HẠN CÔNG VIỆC

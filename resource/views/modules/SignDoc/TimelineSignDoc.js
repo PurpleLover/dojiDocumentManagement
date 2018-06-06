@@ -16,7 +16,7 @@ import renderIf from 'render-if';
 
 //utilities
 import { convertDateTimeToString, emptyDataPage, convertTimeToString, convertDateToString } from '../../../common/Utilities';
-import { LOADER_COLOR } from '../../../common/SystemConstant';
+import { LOADER_COLOR, Colors } from '../../../common/SystemConstant';
 import { verticalScale, moderateScale, scale } from '../../../assets/styles/ScaleIndicator';
 
 export default class TimelineSignDoc extends Component {
@@ -47,7 +47,7 @@ export default class TimelineSignDoc extends Component {
                         description: `Người xử lý: ${item.TenNguoiXuLy}`,
                         renderIcon: () => <Icon name='ios-time-outline' />,
                         renderTimeBottom: () => (
-                            <View style={{alignItems: (index % 2 == 0) ? 'flex-end': 'flex-start', backgroundColor: '#fff', borderRadius: 6, padding: 3}}>
+                            <View style={{alignItems: (index % 2 == 0) ? 'flex-end': 'flex-start', backgroundColor: Colors.WHITE, borderRadius: 6, padding: 3}}>
                                 <Text>
                                     <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold' }}>
                                         Thời gian:
@@ -94,7 +94,7 @@ export default class TimelineSignDoc extends Component {
                     <TimeLine
                         timeStyle={{
                             fontWeight: 'normal',
-                            color: '#000'
+                            color: Colors.BLACK
                         }}
                         detailContainerStyle={{
                             borderWidth: 2,

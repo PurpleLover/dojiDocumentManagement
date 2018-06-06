@@ -28,7 +28,7 @@ import PopupDialog, { DialogTitle, DialogButton } from 'react-native-popup-dialo
 //utilities
 import {
     API_URL, LOADER_COLOR, HEADER_COLOR, EMPTY_STRING,
-    DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE
+    DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE, Colors
 } from '../../../common/SystemConstant';
 import { dataLoading } from '../../../common/Effect';
 import { emptyDataPage, formatLongText, convertDateToString, convertDateTimeToString } from '../../../common/Utilities';
@@ -75,8 +75,6 @@ class HistoryEvaluateTask extends Component {
         const result = await fetch(url);
         const resultJson = await result.json();
 
-        console.log('đường dẫn', url);
-
         this.setState({
             data: this.state.loadingMore ? [...this.state.data, ...resultJson] : resultJson,
             loading: false,
@@ -102,7 +100,7 @@ class HistoryEvaluateTask extends Component {
                 disableLeftSwipe={true}
                 left={
                     <Button style={{ backgroundColor: '#d1d2d3' }} onPress={() => this.onShowEvaluateInfo(item)}>
-                        <RneIcon name='info' type='foundation' size={verticalScale(30)} color={'#fff'} />
+                        <RneIcon name='info' type='foundation' size={verticalScale(30)} color={Colors.WHITE} />
                     </Button>
                 }
                 body={
@@ -146,7 +144,6 @@ class HistoryEvaluateTask extends Component {
         this.setState({
             refreshing: true,
             pageIndex: DEFAULT_PAGE_INDEX,
-            pageSize: DEFAULT_PAGE_SIZE
         }, () => {
             this.fetchData()
         })
@@ -155,15 +152,15 @@ class HistoryEvaluateTask extends Component {
     render() {
         return (
             <Container>
-                <Header style={{ backgroundColor: HEADER_COLOR }}>
+                <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
                     <Left>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
                     <Body>
                         <Title>
-                            LỊCH SỬ PHÊ DUYỆT TIẾN ĐỘ
+                            LỊCH SỬ PHẢN HỒI TIẾN ĐỘ
 						</Title>
                     </Body>
                     <Right />
@@ -185,11 +182,11 @@ class HistoryEvaluateTask extends Component {
                                 ListEmptyComponent={() => emptyDataPage()}
                                 ListFooterComponent={() =>
                                     this.state.loadingMore ?
-                                        <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+                                        <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
                                         :
                                         (
                                             this.state.data.length >= DEFAULT_PAGE_SIZE ?
-                                                <Button full style={{ backgroundColor: '#0082ba' }} onPress={() => this.loadMore()}>
+                                                <Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadMore()}>
                                                     <Text>
                                                         TẢI THÊM
 										  			</Text>
@@ -203,8 +200,8 @@ class HistoryEvaluateTask extends Component {
                                         refreshing={this.state.refreshing}
                                         onRefresh={this.handleRefresh}
                                         title='Kéo để làm mới'
-                                        colors={[LOADER_COLOR]}
-                                        tintColor={[LOADER_COLOR]}
+                                        colors={[Colors.BLUE_PANTONE_640C]}
+                                        tintColor={[Colors.BLUE_PANTONE_640C]}
                                         titleColor='red'
                                     />
                                 }

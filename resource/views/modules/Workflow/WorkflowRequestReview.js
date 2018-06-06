@@ -15,7 +15,7 @@ import * as workflowAction from '../../../redux/modules/workflow/WorkflowAction'
 import { asyncDelay, emptyDataPage } from '../../../common/Utilities';
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 import {
-	API_URL, EMPTY_STRING, HEADER_COLOR, LOADER_COLOR,
+	API_URL, EMPTY_STRING, HEADER_COLOR, LOADER_COLOR, Colors,
 	LOADMORE_COLOR, DEFAULT_PAGE_INDEX, WORKFLOW_PROCESS_TYPE
 } from '../../../common/SystemConstant';
 import { dataLoading, executeLoading } from '../../../common/Effect';
@@ -26,7 +26,7 @@ import renderIf from 'render-if';
 import * as util from 'lodash';
 import {
 	Container, Content, Header, Left, Text, Icon, Title, Textarea,
-	Right, Body, Item, Button, Tabs, Tab, TabHeading, Form, Input, Toast
+	Right, Body, Item, Button, Tabs, Tab, TabHeading, Form, Input, Toast, Col
 }
 	from 'native-base';
 import { Icon as RneIcon } from 'react-native-elements';
@@ -141,19 +141,23 @@ class WorkflowRequestReview extends Component {
 			this.setState({
 				executing: true
 			});
-			const result = await fetch(API_URL + '/api/VanBanDi/SaveReview', {
+
+			const url = `${API_URL}/api/VanBanDi/SaveReview`;
+			const headers = new Headers({
+				'Accept': 'application/json',
+				'Content-Type': 'application/json; charset=utf-8'
+			});
+			const body = JSON.stringify({
+				userId: this.state.userId,
+				joinUser: this.props.reviewUsers.toString(),
+				stepID: this.state.stepId,
+				processID: this.state.processId,
+				message: this.state.message
+			});
+			const result = await fetch(url, {
 				method: 'POST',
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json; charset=utf-8',
-				},
-				body: JSON.stringify({
-					userId: this.state.userId,
-					joinUser: this.props.reviewUsers.toString(),
-					stepID: this.state.stepId,
-					processID: this.state.processId,
-					message: this.state.message
-				})
+				headers,
+				body
 			});
 
 			const resultJson = await result.json();
@@ -185,8 +189,8 @@ class WorkflowRequestReview extends Component {
 				text: resultJson.Status ? 'Lưu yêu cầu review thành công' : 'Lưu yêu cầu review không thành công',
 				type: resultJson.Status ? 'success' : 'danger',
 				buttonText: "OK",
-				buttonStyle: { backgroundColor: '#fff' },
-				buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
+				buttonStyle: { backgroundColor: Colors.WHITE },
+				buttonTextStyle: { color: resultJson.Status ? Colors.GREEN_PANTONE_364C : Colors.RED_PANTONE_186C },
 				duration: 5000,
 				onClose: () => {
 					this.props.resetProcessUsers(WORKFLOW_PROCESS_TYPE.ALL_PROCESS);
@@ -202,10 +206,10 @@ class WorkflowRequestReview extends Component {
 	render() {
 		return (
 			<Container>
-				<Header hasTabs style={{ backgroundColor: HEADER_COLOR }}>
+				<Header hasTabs style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
 					<Left>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
-							<RneIcon name='ios-arrow-round-back'  size={verticalScale(40)} color={'#fff'} type='ionicon'/>
+							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Left>
 
@@ -217,7 +221,7 @@ class WorkflowRequestReview extends Component {
 
 					<Right>
 						<Button transparent onPress={() => this.saveRequestReview()}>
-							<RneIcon name='md-send' size={verticalScale(30)} color={'#fff'} type='ionicon' />
+							<RneIcon name='md-send' size={verticalScale(30)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Right>
 				</Header>
@@ -255,7 +259,7 @@ class WorkflowRequestReview extends Component {
 									{
 										renderIf(this.state.searching)(
 											<View style={{ flex: 1, justifyContent: 'center' }}>
-												<ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+												<ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
 											</View>
 										)
 									}
@@ -266,18 +270,18 @@ class WorkflowRequestReview extends Component {
 												keyExtractor={(item, index) => index.toString()}
 												data={this.state.groupMainProcessors}
 												renderItem={this.renderItem}
-												ListEmptyComponent = {
+												ListEmptyComponent={
 													this.state.loading ? null : emptyDataPage()
 												}
 												ListFooterComponent={
 													this.state.loadingMore ?
-														<ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
+														<ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
 														(
 															this.state.groupMainProcessors.length >= 5 ?
-																<Button full style={{ backgroundColor: LOADMORE_COLOR }} onPress={() => this.loadMore()}>
+																<Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadMore()}>
 																	<Text>
 																		TẢI THÊM
-																</Text>
+																	</Text>
 																</Button>
 																: null
 														)

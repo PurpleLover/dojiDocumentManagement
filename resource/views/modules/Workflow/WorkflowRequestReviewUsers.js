@@ -24,7 +24,7 @@ import {
 	API_URL, DEFAULT_PAGE_INDEX,
 	DEFAULT_PAGE_SIZE, EMPTY_DATA_ICON_URI,
 	EMPTY_STRING, EMTPY_DATA_MESSAGE,
-	HEADER_COLOR, LOADER_COLOR
+	HEADER_COLOR, LOADER_COLOR, Colors
 } from '../../../common/SystemConstant';
 
 //effect
@@ -107,7 +107,7 @@ class WorkflowRequestReviewUsers extends Component {
 				</Body>
 
 				<Right>
-					<CheckBox checked={this.state.reviewUsers.length > 0} color={'#FF993B'} />
+					<CheckBox checked={this.state.reviewUsers.length > 0} color={Colors.RED_PANTONE_186C} />
 				</Right>
 			</NBListItem>
 		);

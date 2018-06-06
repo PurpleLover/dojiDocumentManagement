@@ -25,7 +25,8 @@ import renderIf from 'render-if';
 import {
     API_URL, HEADER_COLOR, EMPTY_STRING,
     LOADER_COLOR, CONGVIEC_CONSTANT,
-    DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE
+    DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE,
+    Colors
 } from '../../../common/SystemConstant';
 
 //utilities
@@ -83,21 +84,15 @@ class BaseTaskList extends Component {
 
         const url = `${API_URL}/api/HscvCongViec/${apiUrlParam}/${this.state.userId}/${this.state.pageSize}/${this.state.pageIndex}?query=${this.state.filterValue}`;
 
-        let result = await fetch(url).then(response => {
-            return response.json();
-        }).then(responseJson => {
-            return responseJson.ListItem;
-        }).catch(err => {
-            console.log(`Error in URL: ${url}`, err);
-            return []
-        });
+        const result = await fetch(url);
+        const resultJson = await result.json();
 
         this.setState({
             loadingData: false,
             refreshingData: false,
             searchingData: false,
             loadingMoreData: false,
-            data: (loadingData || refreshingData) ? result : [...this.state.data, ...result]
+            data: (loadingData || refreshingData) ? resultJson.ListItem : [...this.state.data, ...resultJson.ListItem]
         });
     }
 
@@ -140,7 +135,7 @@ class BaseTaskList extends Component {
                         badge={{
                             value: (item.PHANTRAMHOANTHANH || 0) + '%',
                             textStyle: {
-                                color: '#fff',
+                                color: Colors.WHITE,
                                 fontWeight: 'bold'
                             },
                             containerStyle: {
@@ -189,7 +184,7 @@ class BaseTaskList extends Component {
     render() {
         return (
             <Container>
-                <Header searchBar rounded style={{ backgroundColor: HEADER_COLOR }}>
+                <Header searchBar rounded style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
                     <Item>
                         <Icon name='ios-search' />
                         <Input placeholder='Tên công việc'
@@ -201,6 +196,14 @@ class BaseTaskList extends Component {
 
                 <Content contentContainerStyle={{ flex: 1 }}>
                     {
+                        renderIf(this.state.loadingData)(
+                            <View style={{ flex: 1, justifyContent: 'center' }}>
+                                <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
+                            </View>
+                        )
+                    }
+                    
+                    {
                         renderIf(!this.state.loadingData)(
                             <FlatList
                                 data={this.state.data}
@@ -211,17 +214,17 @@ class BaseTaskList extends Component {
                                         refreshing={this.state.refreshingData}
                                         onRefresh={this.handleRefresh}
                                         title='Kéo để làm mới'
-                                        colors={[LOADER_COLOR]}
-                                        tintColor={[LOADER_COLOR]}
-                                        titleColor='red'
+                                        colors={[Colors.BLUE_PANTONE_640C]}
+                                        tintColor={[Colors.BLUE_PANTONE_640C]}
+                                        titleColor={Colors.RED}
                                     />
                                 }
                                 ListFooterComponent={
                                     this.state.loadingMoreData ?
-                                        <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
+                                        <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
                                         (
                                             this.state.data.length >= DEFAULT_PAGE_SIZE ?
-                                                <Button full style={{ backgroundColor: '#0082ba' }} onPress={() => this.onLoadingMore()}>
+                                                <Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.onLoadingMore()}>
                                                     <Text>
                                                         TẢI THÊM
                                                         </Text>
@@ -235,13 +238,6 @@ class BaseTaskList extends Component {
                         )
                     }
 
-                    {
-                        renderIf(this.state.loadingData)(
-                            <View style={{ flex: 1, justifyContent: 'center' }}>
-                                <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
-                            </View>
-                        )
-                    }
                 </Content>
             </Container>
         )

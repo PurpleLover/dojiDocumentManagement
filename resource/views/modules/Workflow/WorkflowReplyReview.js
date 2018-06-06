@@ -13,7 +13,7 @@ import {
 
 //constant
 import {
-    API_URL, HEADER_COLOR, EMPTY_STRING
+    API_URL, HEADER_COLOR, EMPTY_STRING, Colors
 } from '../../../common/SystemConstant';
 
 //native-base
@@ -42,6 +42,7 @@ import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-
 import * as workflowAction from '../../../redux/modules/workflow/WorkflowAction';
 
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
+import { verticalScale } from '../../../assets/styles/ScaleIndicator';
 
 class WorkflowReplyReview extends Component {
     constructor(props) {
@@ -73,101 +74,104 @@ class WorkflowReplyReview extends Component {
     }
 
     onConfirmReplyReview() {
-        Alert.alert(
-            'XÁC NHẬN PHẢN HỒI',
-            'Bạn có chắc chắn muốn thực hiện việc này?',
-            [
-                {
-                    text: 'Đồng ý', onPress: () => {
-                        this.saveReplyReview();
-                    }
-                },
-
-                {
-                    text: 'Hủy bỏ', onPress: () => {
-
-                    }
-                }
-            ]
-        )
-    }
-
-    async saveReplyReview() {
         if (util.isNull(this.state.message) || util.isEmpty(this.state.message)) {
             Toast.show({
                 text: 'Vui lòng nhập nội dung phản hồi',
                 type: 'danger',
                 buttonText: "OK",
-                buttonStyle: { backgroundColor: '#fff' },
-                buttonTextStyle: { color: '#FF0033' },
+                buttonStyle: { backgroundColor: Colors.WHITE },
+                buttonTextStyle: { color: Colors.RED_PANTONE_186C },
             });
         } else {
-            this.setState({
-                executing: true
-            });
+            Alert.alert(
+                'XÁC NHẬN PHẢN HỒI',
+                'Bạn có chắc chắn muốn thực hiện việc này?',
+                [
+                    {
+                        text: 'Đồng ý', onPress: () => {
+                            this.saveReplyReview();
+                        }
+                    },
 
-            const result = await fetch(API_URL + '/api/VanBanDi/SaveReplyReview', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json; charset=utf-8',
-                },
-                body: JSON.stringify({
-                    userID: this.state.userId,
-                    phanHoiVanBan: this.state.message,
-                    pheDuyetVanBan: this.state.selected,
-                    itemId: this.state.docId,
-                    itemType: this.state.itemType
-                })
-            });
+                    {
+                        text: 'Hủy bỏ', onPress: () => {
 
-            const resultJson = await result.json();
-
-            await asyncDelay(2000);
-
-            this.setState({
-                executing: false
-            });
-
-            if (!util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)) {
-                const message = this.props.userInfo.Fullname + " đã trả lời yêu cầu review 1 văn bản";
-                const content = {
-                    title: 'TRẢ LỜI REVIEW VĂN BẢN',
-                    message,
-                    isTaskNotification: false,
-                    targetScreen: 'DetailSignDocScreen',
-                    targetDocId: this.state.docId,
-                    targetDocType: this.state.docType
-                }
-                resultJson.GroupTokens.forEach(token => {
-                    pushFirebaseNotify(content, token, "notification");
-                });
-            }
-
-            Toast.show({
-                text: resultJson.Status ? 'Phản hồi yêu cầu review thành công' : 'Phản hồi yêu cầu review không thành công',
-                type: resultJson.Status ? 'success' : 'danger',
-                buttonText: "OK",
-                buttonStyle: { backgroundColor: '#fff' },
-                buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
-                duration: 5000,
-                onClose: () => {
-                    this.props.resetProcessUsers();
-                    if (resultJson.Status) {
-                        this.navigateBack();
+                        }
                     }
-                }
+                ]
+            )
+        }
+    }
+
+    async saveReplyReview() {
+        this.setState({
+            executing: true
+        });
+        const url = `${API_URL}/api/VanBanDi/SaveReplyReview`;
+        const headers = new Headers({
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8'
+        });
+        const body = JSON.stringify({
+            userID: this.state.userId,
+            phanHoiVanBan: this.state.message,
+            pheDuyetVanBan: this.state.selected,
+            itemId: this.state.docId,
+            itemType: this.state.itemType
+        });
+
+        const result = await fetch(url, {
+            method: 'POST',
+            headers,
+            body
+        });
+
+        const resultJson = await result.json();
+
+        await asyncDelay(2000);
+
+        this.setState({
+            executing: false
+        });
+
+        if (!util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)) {
+            const message = this.props.userInfo.Fullname + " đã trả lời yêu cầu review 1 văn bản";
+            const content = {
+                title: 'TRẢ LỜI REVIEW VĂN BẢN',
+                message,
+                isTaskNotification: false,
+                targetScreen: 'DetailSignDocScreen',
+                targetDocId: this.state.docId,
+                targetDocType: this.state.docType
+            }
+            resultJson.GroupTokens.forEach(token => {
+                pushFirebaseNotify(content, token, "notification");
             });
         }
+
+        Toast.show({
+            text: resultJson.Status ? 'Phản hồi yêu cầu review thành công' : 'Phản hồi yêu cầu review không thành công',
+            type: resultJson.Status ? 'success' : 'danger',
+            buttonText: "OK",
+            buttonStyle: { backgroundColor: Colors.WHITE },
+            buttonTextStyle: { color: resultJson.Status ? Colors.GREEN_PANTONE_364C : Colors.RED_PANTONE_186C },
+            duration: 5000,
+            onClose: () => {
+                this.props.resetProcessUsers();
+                if (resultJson.Status) {
+                    this.navigateBack();
+                }
+            }
+        });
     }
 
     render() {
         return (
             <Container>
-                <Header style={{ backgroundColor: HEADER_COLOR }}>
+                <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
                     <Left>
                         <Button transparent onPress={() => this.navigateBack()}>
-                            <Icon name='ios-arrow-round-back' size={30} color={'#fff'} type="ionicon" />
+                            <Icon name='ios-arrow-round-back' size={30} color={Colors.WHITE} type="ionicon" />
                         </Button>
                     </Left>
 
@@ -203,7 +207,7 @@ class WorkflowReplyReview extends Component {
                             </Picker>
                         </Item>
 
-                        <Button block style={{ backgroundColor: '#ff0033', marginTop: 20 }} onPress={() => this.onConfirmReplyReview()}>
+                        <Button block style={{ backgroundColor: Colors.RED_PANTONE_186C , marginTop: verticalScale(20) }} onPress={() => this.onConfirmReplyReview()}>
                             <NBText>
                                 PHẢN HỒI YÊU CẦU
                             </NBText>

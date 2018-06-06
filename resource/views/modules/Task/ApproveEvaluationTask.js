@@ -22,7 +22,7 @@ import {
 import * as util from 'lodash';
 
 //utilities
-import { API_URL, EMPTY_STRING, HEADER_COLOR } from '../../../common/SystemConstant';
+import { API_URL, EMPTY_STRING, HEADER_COLOR, Colors } from '../../../common/SystemConstant';
 import { executeLoading } from '../../../common/Effect';
 import { asyncDelay } from '../../../common/Utilities';
 import { scale, verticalScale } from '../../../assets/styles/ScaleIndicator';
@@ -163,8 +163,8 @@ class ApproveEvaluationTask extends Component {
             text: resultJson.Status ? 'Phê duyệt đánh giá công việc thành công' : 'Phê duyệt đánh giá công việc không thành công',
             type: resultJson.Status ? 'success' : 'danger',
             buttonText: "OK",
-            buttonStyle: { backgroundColor: '#fff' },
-            buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
+            buttonStyle: { backgroundColor: Colors.WHITE },
+            buttonTextStyle: { color: resultJson.Status ? Colors.GREEN_PANTONE_364C : Colors.RED_PANTONE_186C },
             duration: 3000,
             onClose: () => {
                 if (resultJson.Status) {
@@ -186,10 +186,10 @@ class ApproveEvaluationTask extends Component {
     render() {
         return (
             <Container>
-                <Header style={{ backgroundColor: HEADER_COLOR }}>
+                <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
                     <Left>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
@@ -210,26 +210,26 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.columnHeader, styles.wideColumn]}>
                                     <Text style={styles.columnHeaderText}>
                                         Hạng mục
-                            </Text>
+                                    </Text>
                                 </Col>
 
                                 <Col style={[styles.columnHeader, styles.wideColumn]}>
                                     <Text style={styles.columnHeaderText}>
                                         Đ.tự đánh giá
-                            </Text>
+                                    </Text>
                                 </Col>
 
 
                                 <Col style={[styles.columnHeader, styles.wideColumn]}>
                                     <Text style={styles.columnHeaderText}>
                                         Đ.duyệt
-                            </Text>
+                                    </Text>
                                 </Col>
 
                                 <Col style={styles.columnHeader}>
                                     <Text style={styles.columnHeaderText}>
                                         Trọng số
-                            </Text>
+                                    </Text>
                                 </Col>
                             </Row>
 
@@ -237,7 +237,7 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.column]}>
                                     <Text >
                                         Tự chủ cao
-                            </Text>
+                                    </Text>
                                 </Col>
 
                                 <Col style={[styles.column]}>
@@ -265,7 +265,7 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.column]}>
                                     <Text >
                                         2
-                            </Text>
+                                    </Text>
                                 </Col>
                             </Row>
 
@@ -273,7 +273,7 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.column]}>
                                     <Text >
                                         Trách nhiệm lớn
-                            </Text>
+                                    </Text>
                                 </Col>
 
                                 <Col style={[styles.column]}>
@@ -301,7 +301,7 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.column]}>
                                     <Text >
                                         2
-                            </Text>
+                                    </Text>
                                 </Col>
                             </Row>
 
@@ -309,7 +309,7 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.column]}>
                                     <Text >
                                         Tương tác tốt
-                            </Text>
+                                    </Text>
                                 </Col>
 
                                 <Col style={[styles.column]}>
@@ -337,7 +337,7 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.column]}>
                                     <Text >
                                         1
-                            </Text>
+                                    </Text>
                                 </Col>
                             </Row>
 
@@ -345,7 +345,7 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.column]}>
                                     <Text >
                                         Tốc độ nhanh
-                            </Text>
+                                    </Text>
                                 </Col>
 
                                 <Col style={[styles.column]}>
@@ -373,7 +373,7 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.column]}>
                                     <Text >
                                         1
-                            </Text>
+                                    </Text>
                                 </Col>
                             </Row>
 
@@ -381,7 +381,7 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.column]}>
                                     <Text >
                                         Tiến bộ nhiều
-                            </Text>
+                                    </Text>
                                 </Col>
 
                                 <Col style={[styles.column]}>
@@ -409,7 +409,7 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.column]}>
                                     <Text >
                                         1
-                            </Text>
+                                    </Text>
                                 </Col>
                             </Row>
 
@@ -417,7 +417,7 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.column]}>
                                     <Text >
                                         Thành tích vượt
-                            </Text>
+                                    </Text>
                                 </Col>
 
                                 <Col style={[styles.column]}>
@@ -445,7 +445,7 @@ class ApproveEvaluationTask extends Component {
                                 <Col style={[styles.column]}>
                                     <Text >
                                         1
-                                </Text>
+                                    </Text>
                                 </Col>
                             </Row>
                         </Grid>
@@ -456,7 +456,7 @@ class ApproveEvaluationTask extends Component {
                             onChangeText={(comment) => this.setState({ comment })} />
 
                         <Button block danger
-                            style={{ backgroundColor: HEADER_COLOR, marginTop: verticalScale(20) }}
+                            style={{ backgroundColor: Colors.RED_PANTONE_021C, marginTop: verticalScale(20) }}
                             onPress={() => this.onApproveEvaluateTask()}>
                             <Text>
                                 PHÊ DUYỆT ĐÁNH GIÁ CÔNG VIỆC

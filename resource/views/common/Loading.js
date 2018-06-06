@@ -73,7 +73,7 @@ class Loading extends Component {
                 this.props.setUserInfo(userInfoStorage);
                 setTimeout(()=> {
                     this.props.navigation.navigate('App');
-                }, 100)
+                }, 1000)
             }else{
                 this.props.navigation.navigate('Auth');
             }

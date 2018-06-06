@@ -20,7 +20,7 @@ import { EMPTY_STRING, API_URL } from '../../../common/SystemConstant';
 
 //styles
 import { LoginStyle } from '../../../assets/styles/LoginStyle';
-import {moderateScale} from '../../../assets/styles/ScaleIndicator';
+import { moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 import { authenticateLoading } from '../../../common/Effect';
 import { asyncDelay } from '../../../common/Utilities'
@@ -142,42 +142,43 @@ class Login extends Component {
     }
 
     async onLogin() {
-        //delay
-        // const timeout = (ms)=> {
-        //     return new Promise(result => setTimeout(result, ms));
-        // };
 
         this.setState({
             loading: true
         });
 
-        const userLoginResult = await fetch(API_URL + '/api/Account/Login', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json; charset=utf-8',
-            },
-            body: JSON.stringify({
-                UserName: this.state.userName,
-                Password: this.state.password
-            })
+        const url = `${API_URL}/api/Account/Login`;
+        const headers = new Headers({
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8',
         });
 
-        const userLoginJsonResult = await userLoginResult.json();
+        const body = JSON.stringify({
+            UserName: this.state.userName,
+            Password: this.state.password
+        });
+
+        const result = await fetch(url, {
+            method: 'POST',
+            headers,
+            body
+        });
+
+        const resultJson = await result.json();
 
         await asyncDelay(2000);
 
-        if (!util.isNull(userLoginJsonResult)) {
+        if (!util.isNull(resultJson)) {
             //tạo token cho thiết bị nếu lần đầu đăng nhập
             await FCM.getFCMToken().then(token => {
-                userLoginJsonResult.Token = token;
+                resultJson.Token = token;
             });
 
 
             //trường hợp lần đầu cài đặt thiết bị token có thể bị null;
-            if (util.isNull(userLoginJsonResult.Token) || util.isEmpty(userLoginJsonResult.Token)) {
+            if (util.isNull(resultJson.Token) || util.isEmpty(resultJson.Token)) {
                 await FCM.on(FCMEvent.RefreshToken, token => {
-                    userLoginJsonResult.Token = token;
+                    resultJson.Token = token;
                 });
             }
 
@@ -190,16 +191,16 @@ class Login extends Component {
                     'Content-Type': 'application/json; charset=utf-8',
                 },
                 body: JSON.stringify({
-                    userId: userLoginJsonResult.ID,
-                    token: userLoginJsonResult.Token
+                    userId: resultJson.ID,
+                    token: resultJson.Token
                 })
             }).then(response => response.json()).then(responseJson => {
                 return responseJson;
             });
 
             if (activeTokenResult) {
-                AsyncStorage.setItem('userInfo', JSON.stringify(userLoginJsonResult)).then(() => {
-                    this.props.setUserInfo(userLoginJsonResult);
+                AsyncStorage.setItem('userInfo', JSON.stringify(resultJson)).then(() => {
+                    this.props.setUserInfo(resultJson);
                     this.props.navigation.navigate('App');
                 });
             } else {
@@ -208,10 +209,10 @@ class Login extends Component {
                 }, () => {
                     Toast.show({
                         text: 'Hệ thống đang cập nhật! Vui lòng trở lại sau!',
-                        textStyle: { fontSize: moderateScale(12,1.5) },
+                        textStyle: { fontSize: moderateScale(12, 1.5) },
                         buttonText: "OK",
                         buttonStyle: { backgroundColor: "#acb7b1" },
-                        duration: 5000
+                        duration: 3000
                     });
                 });
             }
@@ -221,10 +222,10 @@ class Login extends Component {
             }, () => {
                 Toast.show({
                     text: 'Thông tin đăng nhập không chính xác!',
-                    textStyle: { fontSize: moderateScale(12,1.5) },
+                    textStyle: { fontSize: moderateScale(12, 1.5) },
                     buttonText: "OK",
                     buttonStyle: { backgroundColor: "#acb7b1" },
-                    duration: 5000
+                    duration: 3000
                 });
             });
         }
@@ -232,8 +233,8 @@ class Login extends Component {
 
     render() {
         const { userName, password } = this.state;
-        const toggleLoginStyleButton = (userName !== EMPTY_STRING && password !== EMPTY_STRING) ? {backgroundColor: '#da2032'} : {backgroundColor: 'lightgrey'};
-        const toggleLoginStyleText = (userName !== EMPTY_STRING && password !== EMPTY_STRING) ? {color: 'white'} : {color: 'grey'};
+        const toggleLoginStyleButton = (userName !== EMPTY_STRING && password !== EMPTY_STRING) ? { backgroundColor: '#da2032' } : { backgroundColor: 'lightgrey' };
+        const toggleLoginStyleText = (userName !== EMPTY_STRING && password !== EMPTY_STRING) ? { color: 'white' } : { color: 'grey' };
         return (
             <ImageBackground source={uriBackground} style={{ flex: 1 }}>
                 <Container>

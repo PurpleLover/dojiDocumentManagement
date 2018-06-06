@@ -1,141 +1,120 @@
 /**
- * @description: chi tiết văn bản đã xuất bản
+ * @description: màn hình chi tiết văn bản trình ký
  * @author: duynn
- * @since: 03/05/2018
+ * @since: 05/06/2018
  */
 'use strict'
 import React, { Component } from 'react';
-import {
-    ActivityIndicator, View, Text, Modal,
-    FlatList, Image
-} from 'react-native';
+import { View } from 'react-native';
 
-//constant
-import { API_URL, HEADER_COLOR, LOADER_COLOR, DOKHAN_CONSTANT } from '../../../common/SystemConstant';
-//styles
-import { DetailPublishDocStyle } from '../../../assets/styles/PublishDocStyle';
-import { dataLoading } from '../../../common/Effect';
-import { asyncDelay, unAuthorizePage, openSideBar } from '../../../common/Utilities';
-import { TabStyle } from '../../../assets/styles/TabStyle';
+//redux
+import { connect } from 'react-redux';
 
 //lib
-import { connect } from 'react-redux';
-import renderIf from 'render-if';
-import * as util from 'lodash';
-import { ListItem, Icon } from 'react-native-elements';
 import {
-    Button, Icon as NBIcon, Item, Input, Title,
-    Container, Header, Content, Left, Right, Body,
-    ScrollableTab, Tab, TabHeading, Tabs, Text as NBText
+    Container, Header, Content, Left, Right,
+    Button, Body, Item, Icon as NBIcon, Title,
+    Tab, Tabs, Text as NBText, ScrollableTab, TabHeading
 } from 'native-base';
-import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
+import {
+    Icon as RneIcon
+} from 'react-native-elements';
+import * as util from 'lodash';
+
+//utilities
+import { dataLoading } from '../../../common/Effect';
+import { asyncDelay, unAuthorizePage } from '../../../common/Utilities';
+import { API_URL, Colors } from '../../../common/SystemConstant';
+import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+
+//styles
+import { TabStyle } from '../../../assets/styles/TabStyle';
+import { DetailPublishDocStyle } from '../../../assets/styles/PublishDocStyle';
 
 //views
 import AttachPublishDoc from './AttachPublishDoc';
 import MainInfoPublishDoc from './MainInfoPublishDoc';
 import TimelinePublishDoc from './TimelinePublishDoc';
 
-class DetailPublishDoc extends Component {
-
+class DetailPubslishDoc extends Component {
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
-            userId: this.props.userInfo.ID,
-            isUnAuthorize: false,
-            loading: false,
-            docInfo: {}
+            userId: props.userInfo.ID,
+            docId: props.navigation.state.params.docId,
+            docInfo: {},
+            loading: true,
+            isUnAuthorize: false
         }
     }
 
     componentWillMount() {
-        this.getInfo();
-    }
-
-    async getInfo() {
         this.setState({
             loading: true
-        });
+        }, () => {
+            this.fetchData();
+        })
+    }
 
-        const docId = this.props.navigation.state.params.docId;
-        const url = `${API_URL}/api/VanBanDen/GetDetail/${docId}/${this.state.userId}`;
-        const docInfo = await fetch(url)
-            .then((response) => response.json())
-            .then(responseJson => {
-                return responseJson;
-            });
+    fetchData = async () => {
+        const url = `${API_URL}/api/VanBanDen/GetDetail/${this.state.docId}/${this.state.userId}`;
+        const result = await fetch(url);
+        const resultJson = await result.json();
 
         await asyncDelay(2000);
 
         this.setState({
-            docInfo,
-            isUnAuthorize: util.isNull(docInfo),
-            loading: false
+            loading: false,
+            docInfo: resultJson,
+            isUnAuthorize: util.isNull(resultJson)
         });
     }
 
-    navigateBack(){
+    navigateBackToList = () => {
         this.props.navigation.navigate('ListIsPublishedScreen');
     }
 
     render() {
-        let content = null;
-        let menuSteps = null;
-        if (this.state.isUnAuthorize) {
-            content = unAuthorizePage(this.props.navigation);
-        } else if (this.state.loading) {
-            content = dataLoading(true);
-        } else {
-            content = <PublisDocContent info={this.state.docInfo} />
-            // menuSteps = this.state.docInfo.vanBanDen.LstStep.length > 0 ? (
-            //     <Menu>
-            //         <MenuTrigger>
-            //             <Icon name='dots-three-horizontal' size={30} color={'#fff'} type="entypo" />
-            //         </MenuTrigger>
-            //         <MenuOptions>
-            //             {
-            //                 this.state.docInfo.vanBanDen.LstStep.map((item, index) => (
-            //                     <MenuOption key={index}
-            //                         style={[MenuOptionStyle.wrapper,
-            //                             (index !== this.state.docInfo.vanBanDen.LstStep.length - 1 ? MenuOptionStyle.wrapperBorder : null)
-            //                         ]}>
-            //                         <Text style={MenuOptionStyle.text}>
-            //                             {util.toUpper(item.NAME)}
-            //                         </Text>
-            //                     </MenuOption>
-            //                 ))
-            //             }
-            //         </MenuOptions>
-            //     </Menu>
-            // ) : null;
+        let bodyContent = null;
+        if (this.state.loading) {
+            bodyContent = dataLoading(true);
         }
-
+        else if (this.state.isUnAuthorize) {
+            bodyContent = unAuthorizePage(this.props.navigation);
+        } else {
+            bodyContent = <PublishDocContent info={this.state.docInfo} />
+        }
         return (
-            <Container hasTabs>
-                <Header style={{ backgroundColor: HEADER_COLOR, justifyContent:'space-between' }}>
-                    <Left style={{flex:1}}>
-                        <Button transparent onPress={() => this.navigateBack()}>
-                                <Icon name='ios-arrow-dropleft-circle' size={30} color={'#fff'} type="ionicon" />
+            <Container>
+                <Header hasTabs style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
+                    <Left>
+                        <Button transparent onPress={this.navigateBackToList}>
+                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
-                    <Body style={{flex:4}}>
+                    <Body>
+                        <Title>
                             THÔNG TIN VĂN BẢN
+                        </Title>
                     </Body>
+                    <Right />
                 </Header>
+
                 {
-                    content
+                    bodyContent
                 }
             </Container>
         );
     }
 }
 
-class PublisDocContent extends Component {
+class PublishDocContent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentTab: 0
+            selectedTabIndex: 0
         }
     }
 
@@ -143,20 +122,16 @@ class PublisDocContent extends Component {
         return (
             <View style={{ flex: 1 }}>
                 <Tabs renderTabBar={() => <ScrollableTab />}
-                    initialPage={this.state.currentTab}
+                    initialPage={this.state.selectedTabIndex}
                     onChangeTab={({ index }) => this.setState({
                         currentTab: index
                     })}
-                    tabBarUnderlineStyle={
-                        {
-                            borderBottomWidth: 4,
-                            borderBottomColor: '#FF6600'
-                        }}>
+                    tabBarUnderlineStyle={TabStyle.underLineStyle}>
                     <Tab heading={
-                        <TabHeading style={(this.state.currentTab == 0 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
-                            <NBIcon name='information-circle' style={(this.state.currentTab == 0 ? TabStyle.activeText : TabStyle.inActiveText)} />
+                        <TabHeading style={(this.state.selectedTabIndex == 0 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
+                            <NBIcon name='information-circle' style={TabStyle.activeText} />
                             <NBText style={[TabStyle.tabText,
-                            (this.state.currentTab == 0 ? TabStyle.activeText : TabStyle.inActiveText)]}>
+                            (this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText)]}>
                                 THÔNG TIN CHÍNH
                             </NBText>
                         </TabHeading>
@@ -164,33 +139,32 @@ class PublisDocContent extends Component {
                         <MainInfoPublishDoc info={this.props.info.vanBanDen} />
                     </Tab>
 
+                    <Tab heading={
+                        <TabHeading style={(this.state.selectedTabIndex == 1 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
+                            <NBIcon name='attach' style={TabStyle.activeText} />
+                            <NBText style={[TabStyle.tabText,
+                            (this.state.selectedTabIndex == 1 ? TabStyle.activeText : TabStyle.inActiveText)]}>
+                                ĐÍNH KÈM
+                            </NBText>
+                        </TabHeading>
+                    }>
+                        <AttachPublishDoc info={this.props.info} />
+                    </Tab>
 
                     <Tab heading={
-                        <TabHeading style={(this.state.currentTab == 1 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
-                            <NBIcon name='time' style={(this.state.currentTab == 1 ? TabStyle.activeText : TabStyle.inActiveText)} />
+                        <TabHeading style={(this.state.selectedTabIndex == 2 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
+                            <NBIcon name='time' style={TabStyle.activeText} />
                             <NBText style={[TabStyle.tabText,
-                            (this.state.currentTab == 1 ? TabStyle.activeText : TabStyle.inActiveText)]}>
+                            (this.state.selectedTabIndex == 2 ? TabStyle.activeText : TabStyle.inActiveText)]}>
                                 LỊCH SỬ XỬ LÝ
                                 </NBText>
                         </TabHeading>
                     }>
-                        <TimelinePublishDoc info={this.props.info.lstLog} />
-                    </Tab>
-
-                    <Tab heading={
-                        <TabHeading style={(this.state.currentTab == 2 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
-                            <NBIcon name='attach' style={(this.state.currentTab == 2 ? TabStyle.activeText : TabStyle.inActiveText)} />
-                            <NBText style={[TabStyle.tabText,
-                            (this.state.currentTab == 2 ? TabStyle.activeText : TabStyle.inActiveText)]}>
-                                TÀI LIỆU ĐÍNH KÈM
-                            </NBText>
-                        </TabHeading>
-                    }>
-                        <AttachPublishDoc info={this.props.info.ListTaiLieu} />
+                        <TimelinePublishDoc info={this.props.info} />
                     </Tab>
                 </Tabs>
             </View>
-        )
+        );
     }
 }
 
@@ -199,4 +173,5 @@ const mapStateToProps = (state) => {
         userInfo: state.userState.userInfo
     }
 }
-export default connect(mapStateToProps)(DetailPublishDoc);
+
+export default connect(mapStateToProps)(DetailPubslishDoc);

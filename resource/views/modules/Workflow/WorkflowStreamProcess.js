@@ -8,9 +8,9 @@ import React, { Component } from 'react';
 import { ActivityIndicator, View, Text as RnText, FlatList } from 'react-native';
 
 //utilites
-import { 
+import {
     API_URL, HEADER_COLOR, LOADER_COLOR, LOADMORE_COLOR, EMPTY_STRING,
-    DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE, WORKFLOW_PROCESS_TYPE
+    DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE, WORKFLOW_PROCESS_TYPE, Colors
 } from '../../../common/SystemConstant';
 import { asyncDelay, emptyDataPage } from '../../../common/Utilities';
 import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
@@ -53,9 +53,10 @@ class WorkflowStreamProcess extends Component {
             stepId: this.props.navigation.state.params.stepId,
             stepName: util.toUpper(this.props.navigation.state.params.stepName),
             isStepBack: this.props.navigation.state.params.isStepBack,
-            
+
             executing: false,
             loadingData: false,
+            flowData: {},
             mainProcessUsers: [],
             joinProcessUsers: [],
             message: EMPTY_STRING,
@@ -90,6 +91,7 @@ class WorkflowStreamProcess extends Component {
 
         this.setState({
             loadingData: false,
+            flowData: resultJson,
             mainProcessUsers: resultJson.dsNgNhanChinh || [],
             joinProcessUsers: resultJson.dsNgThamGia || []
         })
@@ -104,49 +106,50 @@ class WorkflowStreamProcess extends Component {
 
     saveFlow = async () => {
         //validate
-        if(this.state.mainProcessUsers.length > 0 && this.props.mainProcessUser == 0){
+        if (this.state.mainProcessUsers.length > 0 && this.props.mainProcessUser == 0) {
             Toast.show({
                 text: 'Vui lòng chọn người xử lý chính',
                 type: 'danger',
                 buttonText: "OK",
-                buttonStyle: { backgroundColor: '#fff' },
-                buttonTextStyle: { color: '#FF0033'},
+                buttonStyle: { backgroundColor: Colors.WHITE },
+                buttonTextStyle: { color: Colors.RED_PANTONE_186C },
             });
-            return false
-        }else{
+        } else {
             this.setState({
                 executing: true
             });
 
             const url = `${API_URL}/api/VanBanDi/SaveFlow`;
+            const headers = new Headers({
+                'Accept': 'application/json',
+                'Content-Type': 'application/json; charset=utf-8'
+            });
+            const body = JSON.stringify({
+                userId: this.state.userId,
+                processID: this.state.processId,
+                stepID: this.state.stepId,
+                mainUser: this.props.mainProcessUser,
+                joinUser: this.props.joinProcessUsers.toString(),
+                message: this.state.message,
+                IsBack: this.state.isStepBack ? 1 : 0,
+                LogID: 0
+            });
 
             const result = await fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json; charset=utf-8'
-                },
-                body: JSON.stringify({
-                    userId: this.state.userId,
-                    processID: this.state.processId,
-                    stepID: this.state.stepId,
-                    mainUser: this.props.mainProcessUser,
-                    joinUser: this.props.joinProcessUsers.toString(),
-                    message: this.state.message,
-                    IsBack: this.state.isStepBack ? 1 : 0,
-                    LogID: 0
-                })
+                headers,
+                body
             });
 
             const resultJson = await result.json();
 
             await asyncDelay(2000);
-            
+
             this.setState({
                 executing: false
             })
 
-            if(!util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)){
+            if (!util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)) {
                 const message = this.props.userInfo.Fullname + " đã gửi bạn xử lý văn bản mới";
                 const content = {
                     title: 'GỬI XỬ LÝ VĂN BẢN TRÌNH KÝ',
@@ -165,12 +168,12 @@ class WorkflowStreamProcess extends Component {
                 text: this.state.stepName + (resultJson.Status ? ' thành công' : ' không thành công'),
                 type: resultJson.Status ? 'success' : 'danger',
                 buttonText: "OK",
-                buttonStyle: { backgroundColor: '#fff' },
-                buttonTextStyle: { color: resultJson.Status ? '#337321' :'#FF0033'},
+                buttonStyle: { backgroundColor: Colors.WHITE },
+                buttonTextStyle: { color: resultJson.Status ? Colors.GREEN_PANTONE_364C : Colors.RED_PANTONE_186C },
                 duration: 3000,
-                onClose: ()=> {
+                onClose: () => {
                     this.props.resetProcessUsers(WORKFLOW_PROCESS_TYPE.ALL_PROCESS);
-                    if(resultJson.Status){
+                    if (resultJson.Status) {
                         this.navigateBackToDetail();
                     }
                 }
@@ -181,10 +184,10 @@ class WorkflowStreamProcess extends Component {
     filterData = async (isMainProcess) => {
         let pageIndex = DEFAULT_PAGE_INDEX;
         let query = EMPTY_STRING;
-        if(isMainProcess){
+        if (isMainProcess) {
             query = this.state.mainProcessFilterValue;
             pageIndex = this.state.mainProcessPageIndex;
-        }else {
+        } else {
             query = this.state.joinProcessFilterValue;
             pageIndex = this.state.joinProcessPageIndex;
         }
@@ -193,13 +196,13 @@ class WorkflowStreamProcess extends Component {
         const result = await fetch(url);
         const resultJson = await result.json();
 
-        if(isMainProcess){
+        if (isMainProcess) {
             this.setState({
                 searchingInMain: false,
                 loadingMoreInMain: false,
                 mainProcessUsers: this.state.searchingInMain ? (resultJson.dsNgNhanChinh || []) : [...this.state.mainProcessUsers, ...(resultJson.dsNgNhanChinh || [])]
             })
-        }else {
+        } else {
             this.setState({
                 searchingInJoin: false,
                 loadingMoreInJoin: false,
@@ -209,180 +212,359 @@ class WorkflowStreamProcess extends Component {
     }
 
     onFilter = (isMainProcess) => {
-        if(isMainProcess){
+        if (isMainProcess) {
             this.props.resetProcessUsers(WORKFLOW_PROCESS_TYPE.MAIN_PROCESS);
             this.setState({
                 searchingInMain: true,
-                mainProcessPageIndex : DEFAULT_PAGE_INDEX
-            }, ()=> this.filterData(isMainProcess));
-        }else{
+                mainProcessPageIndex: DEFAULT_PAGE_INDEX
+            }, () => this.filterData(isMainProcess));
+        } else {
             this.props.resetProcessUsers(WORKFLOW_PROCESS_TYPE.JOIN_PROCESS);
             this.setState({
                 searchingInJoin: true,
                 joinProcessPageIndex: DEFAULT_PAGE_INDEX
-            }, ()=> this.filterData(isMainProcess))
+            }, () => this.filterData(isMainProcess))
         }
     }
 
     loadingMore = (isMainProcess) => {
-        if(isMainProcess){
+        if (isMainProcess) {
             this.setState({
                 loadingMoreInMain: true,
-                mainProcessPageIndex : this.state.mainProcessPageIndex + 1
-            }, ()=> this.filterData(isMainProcess));
-        }else{
+                mainProcessPageIndex: this.state.mainProcessPageIndex + 1
+            }, () => this.filterData(isMainProcess));
+        } else {
             this.setState({
                 loadingMoreInJoin: true,
                 joinProcessPageIndex: this.state.joinProcessPageIndex + 1
-            }, ()=> this.filterData(isMainProcess))
+            }, () => this.filterData(isMainProcess))
         }
     }
 
     renderMainProcessUsers = ({ item }) => {
         return (
-            <WorkflowStreamMainProcessUsers title={item.PhongBan.NAME} users={item.LstNguoiDung}/>
+            <WorkflowStreamMainProcessUsers title={item.PhongBan.NAME} users={item.LstNguoiDung} />
         );
     }
 
     renderJoinProcessUsers = ({ item }) => {
         return (
-            <WorkflowStreamJoinProcessUsers  title={item.PhongBan.NAME} users={item.LstNguoiDung} />
+            <WorkflowStreamJoinProcessUsers title={item.PhongBan.NAME} users={item.LstNguoiDung} />
         );
     }
 
     render() {
-        const bodyContent = (
-            <Tabs renderTabBar={() => <ScrollableTab />}
-                initialPage={this.state.currentTabIndex}
-                onChangeTab={({ currentTabIndex }) => this.setState({ currentTabIndex })}
-                tabBarUnderlineStyle={TabStyle.underLineStyle}>
-                <Tab heading={
-                    <TabHeading style={(this.state.currentTabIndex == 0) ? TabStyle.activeTab : TabStyle.inActiveTab}>
-                        <Icon name='ios-person-outline' style={TabStyle.activeText} />
-                        <Text style={(this.state.currentTabIndex == 0) ? TabStyle.activeText : TabStyle.inActiveText}>
-                            CHÍNH
-                        </Text>
-                    </TabHeading>
-                }>
-                    <Item>
-                        <Icon name='ios-search'/>
-                        <Input placeholder='Họ tên'
-                                value={this.state.mainProcessFilterValue}
-                                onSubmitEditing={()=> this.onFilter(true)}
-                                onChangeText={(mainProcessFilterValue) => this.setState({mainProcessFilterValue})}/>
-                    </Item>
+        let bodyContent = null;
 
-                    <Content contentContainerStyle={{flex: 1}}>
-                        {
-                            renderIf(this.state.searchingInMain)(
-                                <View style={{flex: 1, justifyContent: 'center'}}>
-                                    <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
-                                </View>
-                            )
-                        }
+        if (!this.state.loadingData) {
+            if (this.state.flowData.hasMainProcess && this.state.flowData.hasJoinProcess) {
+                bodyContent = (
+                    <Tabs renderTabBar={() => <ScrollableTab />}
+                        initialPage={this.state.currentTabIndex}
+                        onChangeTab={({ currentTabIndex }) => this.setState({ currentTabIndex })}
+                        tabBarUnderlineStyle={TabStyle.underLineStyle}>
+                        <Tab heading={
+                            <TabHeading style={(this.state.currentTabIndex == 0) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                                <Icon name='ios-person-outline' style={TabStyle.activeText} />
+                                <Text style={(this.state.currentTabIndex == 0) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                    CHÍNH
+                            </Text>
+                            </TabHeading>
+                        }>
+                            <Item>
+                                <Icon name='ios-search' />
+                                <Input placeholder='Họ tên'
+                                    value={this.state.mainProcessFilterValue}
+                                    onSubmitEditing={() => this.onFilter(true)}
+                                    onChangeText={(mainProcessFilterValue) => this.setState({ mainProcessFilterValue })} />
+                            </Item>
 
-                        {
-                            renderIf(!this.state.searchingInMain)(
-                                <FlatList
-                                    keyExtractor={(item, index) => index.toString()}
-                                    data={this.state.mainProcessUsers}
-                                    renderItem={this.renderMainProcessUsers}
-                                    ListEmptyComponent={
-                                        this.state.loadingData ? null : emptyDataPage()
-                                    }
-                                    ListFooterComponent={
-                                        this.state.loadingMoreInMain ? 
-                                        <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
-                                        (
-                                            this.state.mainProcessUsers.length >= 5 ? 
-                                                <Button full style={{backgroundColor: LOADMORE_COLOR}} onPress={() => this.loadingMore(true)}>
-                                                    <Text>
-                                                        TẢI THÊM
+                            <Content contentContainerStyle={{ flex: 1 }}>
+                                {
+                                    renderIf(this.state.searchingInMain)(
+                                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                                            <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
+                                        </View>
+                                    )
+                                }
+
+                                {
+                                    renderIf(!this.state.searchingInMain)(
+                                        <FlatList
+                                            keyExtractor={(item, index) => index.toString()}
+                                            data={this.state.mainProcessUsers}
+                                            renderItem={this.renderMainProcessUsers}
+                                            ListEmptyComponent={
+                                                this.state.loadingData ? null : emptyDataPage()
+                                            }
+                                            ListFooterComponent={
+                                                this.state.loadingMoreInMain ?
+                                                    <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
+                                                    (
+                                                        this.state.mainProcessUsers.length >= 5 ?
+                                                            <Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadingMore(true)}>
+                                                                <Text>
+                                                                    TẢI THÊM
+                                                            </Text>
+                                                            </Button>
+                                                            : null
+                                                    )
+                                            }
+                                        />
+                                    )
+                                }
+                            </Content>
+                        </Tab>
+
+                        <Tab heading={
+                            <TabHeading style={(this.state.currentTabIndex == 1) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                                <Icon name='ios-people-outline' style={TabStyle.activeText} />
+                                <Text style={(this.state.currentTabIndex == 1) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                    PHỐI HỢP
+                    </Text>
+                            </TabHeading>
+                        }>
+                            <Item>
+                                <Icon name='ios-search' />
+                                <Input placeholder='Họ tên'
+                                    value={this.state.joinProcessFilterValue}
+                                    onSubmitEditing={() => this.onFilter(false)}
+                                    onChangeText={(joinProcessFilterValue) => this.setState({ joinProcessFilterValue })} />
+                            </Item>
+
+                            <Content contentContainerStyle={{ flex: 1 }}>
+                                {
+                                    renderIf(this.state.searchingInJoin)(
+                                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                                            <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
+                                        </View>
+                                    )
+                                }
+                                {
+                                    renderIf(!this.state.searchingInJoin)(
+                                        <FlatList
+                                            keyExtractor={(item, index) => index.toString()}
+                                            data={this.state.joinProcessUsers}
+                                            renderItem={this.renderJoinProcessUsers}
+                                            ListEmptyComponent={
+                                                this.state.loadingData ? null : emptyDataPage()
+                                            }
+                                            ListFooterComponent={
+                                                this.state.loadingMoreInJoin ?
+                                                    <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
+                                                    (
+                                                        this.state.joinProcessUsers.length >= 5 ?
+                                                            <Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadingMore(false)}>
+                                                                <Text>
+                                                                    TẢI THÊM
+                                                            </Text>
+                                                            </Button>
+                                                            : null
+                                                    )
+                                            }
+                                        />
+                                    )
+                                }
+                            </Content>
+                        </Tab>
+
+                        <Tab heading={
+                            <TabHeading style={(this.state.currentTabIndex == 2) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                                <Icon name='ios-chatbubbles-outline' style={TabStyle.activeText} />
+                                <Text style={(this.state.currentTabIndex == 2) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                    TIN NHẮN
+                    </Text>
+                            </TabHeading>
+                        }>
+                            <Content>
+                                <Form>
+                                    <Textarea rowSpan={5} bordered placeholder='Nội dung tin nhắn' onChangeText={(message) => this.setState({ message })} />
+                                </Form>
+                            </Content>
+                        </Tab>
+                    </Tabs>
+                )
+            } else if (this.state.flowData.hasMainProcess && this.state.flowData.hasJoinProcess == false) {
+                bodyContent = (
+                    <Tabs
+                        initialPage={this.state.currentTabIndex}
+                        onChangeTab={({ currentTabIndex }) => this.setState({ currentTabIndex })}
+                        tabBarUnderlineStyle={TabStyle.underLineStyle}>
+                        <Tab heading={
+                            <TabHeading style={(this.state.currentTabIndex == 0) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                                <Icon name='ios-person-outline' style={TabStyle.activeText} />
+                                <Text style={(this.state.currentTabIndex == 0) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                    CHÍNH
+                            </Text>
+                            </TabHeading>
+                        }>
+                            <Item>
+                                <Icon name='ios-search' />
+                                <Input placeholder='Họ tên'
+                                    value={this.state.mainProcessFilterValue}
+                                    onSubmitEditing={() => this.onFilter(true)}
+                                    onChangeText={(mainProcessFilterValue) => this.setState({ mainProcessFilterValue })} />
+                            </Item>
+
+                            <Content contentContainerStyle={{ flex: 1 }}>
+                                {
+                                    renderIf(this.state.searchingInMain)(
+                                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                                            <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
+                                        </View>
+                                    )
+                                }
+
+                                {
+                                    renderIf(!this.state.searchingInMain)(
+                                        <FlatList
+                                            keyExtractor={(item, index) => index.toString()}
+                                            data={this.state.mainProcessUsers}
+                                            renderItem={this.renderMainProcessUsers}
+                                            ListEmptyComponent={
+                                                this.state.loadingData ? null : emptyDataPage()
+                                            }
+                                            ListFooterComponent={
+                                                this.state.loadingMoreInMain ?
+                                                    <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
+                                                    (
+                                                        this.state.mainProcessUsers.length >= 5 ?
+                                                            <Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadingMore(true)}>
+                                                                <Text>
+                                                                    TẢI THÊM
                                                     </Text>
-                                                </Button>
-                                            : null
-                                        )
-                            }
-                        />
-                            )
-                        }
-                    </Content>
-                </Tab>
+                                                            </Button>
+                                                            : null
+                                                    )
+                                            }
+                                        />
+                                    )
+                                }
+                            </Content>
+                        </Tab>
 
-                <Tab heading={
-                    <TabHeading style={(this.state.currentTabIndex == 1) ? TabStyle.activeTab : TabStyle.inActiveTab}>
-                        <Icon name='ios-people-outline' style={TabStyle.activeText} />
-                        <Text style={(this.state.currentTabIndex == 1) ? TabStyle.activeText : TabStyle.inActiveText}>
-                            PHỐI HỢP
-                        </Text>
-                    </TabHeading>
-                }>
-                    <Item>
-                        <Icon name='ios-search'/>
-                        <Input placeholder='Họ tên'
-                                value={this.state.joinProcessFilterValue}
-                                onSubmitEditing={()=> this.onFilter(false)}
-                                onChangeText={(joinProcessFilterValue) => this.setState({joinProcessFilterValue})}/>
-                    </Item>
-                    
-                    <Content contentContainerStyle={{flex: 1}}>
-                        {
-                            renderIf(this.state.searchingInJoin)(
-                                <View style={{flex: 1, justifyContent: 'center'}}>
-                                    <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
-                                </View>
-                            )
-                        }
-                        {
-                            renderIf(!this.state.searchingInJoin)(
-                                <FlatList
-                                    keyExtractor={(item, index) => index.toString()}
-                                    data={this.state.joinProcessUsers}
-                                    renderItem={this.renderJoinProcessUsers}
-                                    ListEmptyComponent={
-                                        this.state.loadingData ? null : emptyDataPage()
-                                    }
-                                    ListFooterComponent={
-                                    this.state.loadingMoreInJoin ? 
-                                    <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
-                                        (
-                                            this.state.joinProcessUsers.length >= 5 ? 
-                                                <Button full style={{backgroundColor: LOADMORE_COLOR}} onPress={() => this.loadingMore(false)}>
-                                                    <Text>
-                                                        TẢI THÊM
+                        <Tab heading={
+                            <TabHeading style={(this.state.currentTabIndex == 1) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                                <Icon name='ios-chatbubbles-outline' style={TabStyle.activeText} />
+                                <Text style={(this.state.currentTabIndex == 1) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                    TIN NHẮN
+                            </Text>
+                            </TabHeading>
+                        }>
+                            <Content>
+                                <Form>
+                                    <Textarea rowSpan={5} bordered placeholder='Nội dung tin nhắn' onChangeText={(message) => this.setState({ message })} />
+                                </Form>
+                            </Content>
+                        </Tab>
+                    </Tabs>
+                )
+            } else if (this.state.flowData.hasMainProcess == false && this.state.flowData.hasJoinProcess) {
+                bodyContent = (
+                    <Tabs
+                        initialPage={this.state.currentTabIndex}
+                        onChangeTab={({ currentTabIndex }) => this.setState({ currentTabIndex })}
+                        tabBarUnderlineStyle={TabStyle.underLineStyle}>
+
+                        <Tab heading={
+                            <TabHeading style={(this.state.currentTabIndex == 0) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                                <Icon name='ios-people-outline' style={TabStyle.activeText} />
+                                <Text style={(this.state.currentTabIndex == 0) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                    PHỐI HỢP
+                            </Text>
+                            </TabHeading>
+                        }>
+                            <Item>
+                                <Icon name='ios-search' />
+                                <Input placeholder='Họ tên'
+                                    value={this.state.joinProcessFilterValue}
+                                    onSubmitEditing={() => this.onFilter(false)}
+                                    onChangeText={(joinProcessFilterValue) => this.setState({ joinProcessFilterValue })} />
+                            </Item>
+
+                            <Content contentContainerStyle={{ flex: 1 }}>
+                                {
+                                    renderIf(this.state.searchingInJoin)(
+                                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                                            <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
+                                        </View>
+                                    )
+                                }
+                                {
+                                    renderIf(!this.state.searchingInJoin)(
+                                        <FlatList
+                                            keyExtractor={(item, index) => index.toString()}
+                                            data={this.state.joinProcessUsers}
+                                            renderItem={this.renderJoinProcessUsers}
+                                            ListEmptyComponent={
+                                                this.state.loadingData ? null : emptyDataPage()
+                                            }
+                                            ListFooterComponent={
+                                                this.state.loadingMoreInJoin ?
+                                                    <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
+                                                    (
+                                                        this.state.joinProcessUsers.length >= 5 ?
+                                                            <Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadingMore(false)}>
+                                                                <Text>
+                                                                    TẢI THÊM
                                                     </Text>
-                                                </Button>
-                                            : null
-                                        )
-                                    }
-                                />
-                            )
-                        }
-                    </Content>
-                </Tab>
+                                                            </Button>
+                                                            : null
+                                                    )
+                                            }
+                                        />
+                                    )
+                                }
+                            </Content>
+                        </Tab>
 
-                <Tab heading={
-                    <TabHeading style={(this.state.currentTabIndex == 2) ? TabStyle.activeTab : TabStyle.inActiveTab}>
-                        <Icon name='ios-chatbubbles-outline' style={TabStyle.activeText} />
-                        <Text style={(this.state.currentTabIndex == 2) ? TabStyle.activeText : TabStyle.inActiveText}>
-                            TIN NHẮN
-                        </Text>
-                    </TabHeading>
-                }>
-                    <Content>
-                        <Form>
-                            <Textarea rowSpan={5} bordered placeholder='Nội dung tin nhắn' onChangeText={(message) => this.setState({ message })} />
-                        </Form>
-                    </Content>
-                </Tab>
-            </Tabs>
-        );
+                        <Tab heading={
+                            <TabHeading style={(this.state.currentTabIndex == 2) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                                <Icon name='ios-chatbubbles-outline' style={TabStyle.activeText} />
+                                <Text style={(this.state.currentTabIndex == 2) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                    TIN NHẮN
+                            </Text>
+                            </TabHeading>
+                        }>
+                            <Content>
+                                <Form>
+                                    <Textarea rowSpan={5} bordered placeholder='Nội dung tin nhắn' onChangeText={(message) => this.setState({ message })} />
+                                </Form>
+                            </Content>
+                        </Tab>
+                    </Tabs>
+                )
+            } else {
+                bodyContent = (
+                    <Tabs
+                        initialPage={this.state.currentTabIndex}
+                        onChangeTab={({ currentTabIndex }) => this.setState({ currentTabIndex })}
+                        tabBarUnderlineStyle={TabStyle.underLineStyle}>
+                        <Tab heading={
+                            <TabHeading style={(this.state.currentTabIndex == 0) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                                <Icon name='ios-chatbubbles-outline' style={TabStyle.activeText} />
+                                <Text style={(this.state.currentTabIndex == 0) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                    TIN NHẮN
+                            </Text>
+                            </TabHeading>
+                        }>
+                            <Content>
+                                <Form>
+                                    <Textarea rowSpan={5} bordered placeholder='Nội dung tin nhắn' onChangeText={(message) => this.setState({ message })} />
+                                </Form>
+                            </Content>
+                        </Tab>
+                    </Tabs>
+                )
+            }
+        }
+
         return (
             <Container>
-                <Header hasTabs style={{ backgroundColor: HEADER_COLOR }}>
+                <Header hasTabs style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
                     <Left>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
-                            <RneIcon name='ios-arrow-round-back'  size={verticalScale(40)} color={'#fff'} type='ionicon'/>
+                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
@@ -394,7 +576,7 @@ class WorkflowStreamProcess extends Component {
 
                     <Right>
                         <Button transparent onPress={() => this.saveFlow()}>
-                            <RneIcon name='md-send' size={verticalScale(30)} color={'#fff'} type='ionicon'/>
+                            <RneIcon name='md-send' size={verticalScale(30)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Right>
                 </Header>
@@ -428,7 +610,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        resetProcessUsers: (workflowProcessType)=> dispatch(workflowAction.resetProcessUsers(workflowProcessType))
+        resetProcessUsers: (workflowProcessType) => dispatch(workflowAction.resetProcessUsers(workflowProcessType))
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(WorkflowStreamProcess);

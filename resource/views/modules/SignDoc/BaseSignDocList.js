@@ -22,7 +22,8 @@ import { List, ListItem } from 'react-native-elements';
 import { formatLongText, openSideBar, emptyDataPage } from '../../../common/Utilities';
 import {
   API_URL, HEADER_COLOR, LOADER_COLOR, DOKHAN_CONSTANT,
-  VANBAN_CONSTANT, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE
+  VANBAN_CONSTANT, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE,
+  Colors
 } from '../../../common/SystemConstant';
 import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
@@ -56,8 +57,6 @@ class BaseSignDocList extends Component {
   }
 
   async fetchData() {
-    const refreshingData = this.state.refreshingData;
-    const loadingData = this.state.loadingData;
     let apiUrlParam = 'GetListProcessing';
 
     const { docType } = this.state;
@@ -72,19 +71,14 @@ class BaseSignDocList extends Component {
 
     const url = `${API_URL}/api/VanBanDi/${apiUrlParam}/${this.state.userId}/${this.state.pageSize}/${this.state.pageIndex}?query=${this.state.filterValue}`;
 
-    let result = await fetch(url).then(response => response.json())
-      .then(responseJson => {
-        return responseJson.ListItem
-      }).catch(err => {
-        console.log(`Error in url: ${url}`, err);
-        return []
-      });
+    const result = await fetch(url);
+    const resultJson = await result.json();
 
     this.setState({
+      data: this.state.loadingMoreData ? [...this.state.data, ...resultJson.ListItem] : resultJson.ListItem,
       refreshingData: false,
       loadingData: false,
       loadingMore: false,
-      data: (refreshingData || loadingData) ? result : [...this.state.data, ...result]
     });
   }
 
@@ -98,8 +92,7 @@ class BaseSignDocList extends Component {
   onFilter = () => {
     this.setState({
       loadingData: true,
-      pageIndex: DEFAULT_PAGE_INDEX,
-      pageSize: DEFAULT_PAGE_SIZE
+      pageIndex: DEFAULT_PAGE_INDEX
     }, () => {
       this.fetchData()
     })
@@ -114,6 +107,15 @@ class BaseSignDocList extends Component {
     })
   }
 
+  handleRefresh = () => {
+    this.setState({
+      refreshingData: true,
+      pageIndex: DEFAULT_PAGE_INDEX,
+    }, () => {
+      this.fetchData()
+    })
+  }
+
   renderItem = ({ item, index }) => {
     return (
       <View>
@@ -123,11 +125,11 @@ class BaseSignDocList extends Component {
             badge={{
               value: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? 'T.KHẨN' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? 'KHẨN' : 'THƯỜNG'),
               textStyle: {
-                color: '#fff',
+                color: Colors.WHITE,
                 fontWeight: 'bold'
               },
               containerStyle: {
-                backgroundColor: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? '#FF0033' : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? '#FF6600' : '#337321'),
+                backgroundColor: (item.DOKHAN_ID == DOKHAN_CONSTANT.THUONG_KHAN) ? Colors.RED_PANTONE_186C : ((item.DOKHAN_ID == DOKHAN_CONSTANT.KHAN) ? Colors.RED_PANTONE_021C : Colors.GREEN_PANTONE_364C),
                 borderRadius: 3
               }
             }}
@@ -169,20 +171,10 @@ class BaseSignDocList extends Component {
     );
   }
 
-  handleRefresh = () => {
-    this.setState({
-      refreshingData: true,
-      pageIndex: DEFAULT_PAGE_INDEX,
-      pageSize: DEFAULT_PAGE_SIZE
-    }, () => {
-      this.fetchData()
-    })
-  }
-
   render() {
     return (
       <Container>
-        <Header searchBar rounded style={{ backgroundColor: HEADER_COLOR }}>
+        <Header searchBar rounded style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
           <Item>
             <Icon name='ios-search' />
             <Input placeholder='Mã hiệu, trích yếu'
@@ -193,7 +185,15 @@ class BaseSignDocList extends Component {
           </Item>
         </Header>
 
-        <Content contentContainerStyle={{ flex: 1}}>
+        <Content contentContainerStyle={{ flex: 1 }}>
+          {
+            renderIf(this.state.loadingData)(
+              <View style={{ flex: 1, justifyContent: 'center' }}>
+                <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
+              </View>
+            )
+          }
+
           {
             renderIf(!this.state.loadingData)(
               <List>
@@ -205,20 +205,20 @@ class BaseSignDocList extends Component {
                     <RefreshControl
                       refreshing={this.state.refreshingData}
                       onRefresh={this.handleRefresh}
+                      colors={[Colors.BLUE_PANTONE_640C]}
+                      tintColor={[Colors.BLUE_PANTONE_640C]}
                       title='Kéo để làm mới'
-                      colors={[LOADER_COLOR]}
-                      tintColor={[LOADER_COLOR]}
-                      titleColor='red'
+                      titleColor={Colors.RED}
                     />
                   }
                   ListEmptyComponent={() =>
-                    this.state.loadingData ? null : emptyDataPage() 
+                    this.state.loadingData ? null : emptyDataPage()
                   }
                   ListFooterComponent={() => this.state.loadingMore ?
-                    <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
+                    <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
                     (
                       this.state.data.length >= DEFAULT_PAGE_SIZE ?
-                        <Button full style={{ backgroundColor: '#0082ba' }} onPress={() => this.loadingMore()}>
+                        <Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadingMore()}>
                           <Text>
                             TẢI THÊM
                           </Text>
@@ -228,13 +228,6 @@ class BaseSignDocList extends Component {
                   }
                 />
               </List>
-            )
-          }
-          {
-            renderIf(this.state.loadingData)(
-              <View style={{flex: 1, justifyContent: 'center'}}>
-                <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
-              </View>
             )
           }
         </Content>

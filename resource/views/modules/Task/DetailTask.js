@@ -23,7 +23,7 @@ import * as util from 'lodash'
 
 //utilities
 import {
-    API_URL, LOADER_COLOR, HEADER_COLOR,
+    API_URL, LOADER_COLOR, HEADER_COLOR, Colors,
     CONGVIEC_CONSTANT, PLANJOB_CONSTANT, EMPTY_DATA_ICON_URI, EMPTY_STRING, DEFAULT_PAGE_INDEX
 } from '../../../common/SystemConstant';
 import { asyncDelay, convertDateToString, formatLongText } from '../../../common/Utilities';
@@ -71,8 +71,6 @@ class DetailTask extends Component {
             taskInfo: resultJson,
             subTaskData: resultJson.LstTask || []
         });
-
-        console.log('kết quả', this.state.taskInfo);
     }
 
     //xác nhận bắt đầu công việc
@@ -129,8 +127,8 @@ class DetailTask extends Component {
             text: resultJson.Status ? 'Bắt đầu công việc thành công' : 'Bắt đầu công việc không thành công',
             type: resultJson.Status ? 'success' : 'danger',
             buttonText: "OK",
-            buttonStyle: { backgroundColor: '#fff' },
-            buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
+            buttonStyle: { backgroundColor: Colors.WHITE },
+            buttonTextStyle: { color: resultJson.Status ? Colors.GREEN_PANTONE_364C : Colors.RED_PANTONE_186C },
             duration: 3000,
             onClose: () => {
                 if (resultJson.Status) {
@@ -449,10 +447,10 @@ class DetailTask extends Component {
         return (
             <MenuProvider>
                 <Container>
-                    <Header style={{ backgroundColor: HEADER_COLOR }}>
+                    <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
                         <Left>
                             <Button transparent onPress={() => this.navigateBackToList()}>
-                                <Icon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+                                <Icon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                             </Button>
                         </Left>
 
@@ -467,7 +465,7 @@ class DetailTask extends Component {
                                 renderIf(menuActions.length > 0)(
                                     <Menu style={{ marginHorizontal: 5 }}>
                                         <MenuTrigger>
-                                            <Icon name='dots-three-horizontal' color={'#fff'} type='entypo' size={verticalScale(25)} />
+                                            <Icon name='dots-three-horizontal' color={Colors.WHITE} type='entypo' size={verticalScale(25)} />
                                         </MenuTrigger>
 
                                         <MenuOptions>

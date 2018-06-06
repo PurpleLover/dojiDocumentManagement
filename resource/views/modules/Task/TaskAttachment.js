@@ -21,7 +21,7 @@ import { Container, Content, Header, Item, Input, Icon } from 'native-base';
 import { ListTaskStyle, DetailTaskStyle } from '../../../assets/styles/TaskStyle';
 
 import {
-    EMTPY_DATA_MESSAGE, WEB_URL,
+    EMTPY_DATA_MESSAGE, WEB_URL, Colors,
     EMPTY_STRING, LOADER_COLOR, API_URL
 } from '../../../common/SystemConstant';
 
@@ -49,26 +49,23 @@ export default class TaskAttachment extends Component {
         });
 
         const url = `${API_URL}/api/HscvCongViec/SearchAttachment?id=${this.state.CongViec.ID}&attQuery=${this.state.filterValue}`;
+        const headers = new Headers({
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8'
+        })
 
         const result = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json; charset=utf-8'
-            }
-        }).then(response => response.json())
-            .then(responseJson => {
-                return responseJson;
-            })
+            headers
+        });
+        const resultJson = await result.json();
 
         await asyncDelay(1000);
 
         this.setState({
             searching: false,
-            attachments: result
+            attachments: resultJson
         });
-
-        console.log('kết quả', result);
     }
 
     renderItem = ({ item }) => (
@@ -84,13 +81,13 @@ export default class TaskAttachment extends Component {
             rightIcon={
                 <View style={ListTaskStyle.rightSize}>
                     <TouchableOpacity onPress={() => this.downloadFile(item.TENTAILIEU, item.DUONGDAN_FILE, item.DINHDANG_FILE)}>
-                        <RneIcon name='download' color={'#4FA800'} size={verticalScale(25)} type='entypo' />
+                        <RneIcon name='download' color={Colors.GREEN_PANTON_396C} size={verticalScale(25)} type='entypo' />
                     </TouchableOpacity>
                 </View>
             }
             title={formatLongText(item.TENTAILIEU)}
             titleStyle={{
-                color: 'black',
+                color: Colors.BLACK,
                 fontWeight: 'bold'
             }}
         />
@@ -135,7 +132,7 @@ export default class TaskAttachment extends Component {
                         [
                             {
                                 text: 'OK',
-                                onPress: () => { console.log('Lỗi', err) }
+                                onPress: () => { }
                             }
                         ]
                     )
@@ -147,7 +144,7 @@ export default class TaskAttachment extends Component {
                 buttons: [
                     {
                         text: 'OK',
-                        onPress: () => { console.log('close alert') }
+                        onPress: () => { }
                     }
                 ]
             })
@@ -157,7 +154,7 @@ export default class TaskAttachment extends Component {
     render() {
         return (
             <Container>
-                <Header searchBar style={{ backgroundColor: '#fff' }}>
+                <Header searchBar style={{ backgroundColor: Colors.WHITE }}>
                     <Item>
                         <Icon name='ios-search' />
                         <Input placeholder='Tên tài liệu'
@@ -171,7 +168,7 @@ export default class TaskAttachment extends Component {
                 <Content contentContainerStyle={{ flex: 1, justifyContent: (this.state.searching) ? 'center' : 'flex-start' }}>
                     {
                         renderIf(this.state.searching)(
-                            <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+                            <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
                         )
                     }
 

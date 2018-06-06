@@ -10,8 +10,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 //lib
-import { 
-    Container, Header, Left, Text, Content, Label,Toast,
+import {
+    Container, Header, Left, Text, Content, Label, Toast,
     Body, Right, Icon, Title, Button, Form, Item, Input
 } from 'native-base';
 import { Icon as RneIcon } from 'react-native-elements';
@@ -20,7 +20,7 @@ import * as util from 'lodash';
 
 //utilities
 import {
-    API_URL, HEADER_COLOR, EMPTY_STRING, LOADER_COLOR
+    API_URL, HEADER_COLOR, EMPTY_STRING, LOADER_COLOR, Colors
 } from '../../../common/SystemConstant';
 import { asyncDelay } from '../../../common/Utilities';
 import { executeLoading } from '../../../common/Effect';
@@ -30,9 +30,9 @@ import { verticalScale, scale } from '../../../assets/styles/ScaleIndicator';
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
 class UpdateProgressTask extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        
+
         this.progressInitialValue = this.props.navigation.state.params.progressValue;
         this.state = {
             userId: props.userInfo.ID,
@@ -48,15 +48,15 @@ class UpdateProgressTask extends Component {
     }
 
     onUpdateProgressTask = async () => {
-        if(util.isNull(this.state.comment) || util.isEmpty(this.state.comment)){
+        if (util.isNull(this.state.comment) || util.isEmpty(this.state.comment)) {
             Toast.show({
                 text: 'Vui lòng nhập nội dung',
                 type: 'danger',
                 buttonText: "OK",
-                buttonStyle: { backgroundColor: '#fff' },
-                buttonTextStyle: { color: '#FF0033'},
+                buttonStyle: { backgroundColor: Colors.WHITE },
+                buttonTextStyle: { color: Colors.RED_PANTONE_186C },
             });
-        }else{
+        } else {
             this.setState({
                 executing: true
             })
@@ -75,19 +75,19 @@ class UpdateProgressTask extends Component {
 
             const result = await fetch(url, {
                 method: 'POST',
-                headers, 
+                headers,
                 body
             });
 
             const resultJson = await result.json();
 
             await asyncDelay(2000);
-        
+
             this.setState({
                 executing: false
             });
 
-            if(resultJson.Status == true && !util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)){
+            if (resultJson.Status == true && !util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)) {
                 const message = this.props.userInfo.Fullname + ' đã cập nhật tiến độ một công việc';
                 const content = {
                     title: 'CẬP NHẬT TIẾN ĐỘ CÔNG VIỆC',
@@ -107,18 +107,18 @@ class UpdateProgressTask extends Component {
                 text: resultJson.Status ? 'Cập nhật tiến độ công việc thành công' : 'Cập nhật tiến độ công việc không thành công',
                 type: resultJson.Status ? 'success' : 'danger',
                 buttonText: "OK",
-                buttonStyle: { backgroundColor: '#fff' },
-                buttonTextStyle: { color: resultJson.Status ? '#337321' :'#FF0033'},
+                buttonStyle: { backgroundColor: Colors.WHITE },
+                buttonTextStyle: { color: resultJson.Status ? Colors.GREEN_PANTONE_364C : Colors.RED_PANTONE_186C },
                 duration: 3000,
-                onClose: ()=> {
-                    if(resultJson.Status){
+                onClose: () => {
+                    if (resultJson.Status) {
                         this.navigateBackToDetail();
                     }
                 }
             });
         }
     }
-    
+
     navigateBackToDetail = () => {
         this.props.navigation.navigate('DetailTaskScreen', {
             taskId: this.state.taskId,
@@ -127,13 +127,13 @@ class UpdateProgressTask extends Component {
     }
 
 
-    render(){
-        return(
+    render() {
+        return (
             <Container>
-                <Header style={{ backgroundColor: HEADER_COLOR }}>
+                <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
                     <Left>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
@@ -148,20 +148,20 @@ class UpdateProgressTask extends Component {
                 </Header>
 
                 <Content>
-                    <Slider 
+                    <Slider
                         step={1}
                         minimumValue={0}
                         maximumValue={100}
-                        minimumTrackTintColor={'#ff0033'}
-                        maximumTrackTintColor={'#fff'}
+                        minimumTrackTintColor={Colors.RED_PANTONE_186C}
+                        maximumTrackTintColor={Colors.WHITE}
                         value={this.progressInitialValue}
-                        onValueChange={progressValue => this.setState({progressValue})}
+                        onValueChange={progressValue => this.setState({ progressValue })}
                         thumbStyle={{
                             height: verticalScale(50),
                             width: scale(25),
-                            backgroundColor: '#fff',
+                            backgroundColor: Colors.WHITE,
                             borderRadius: 4,
-                            borderColor:'#cccccc',
+                            borderColor: '#cccccc',
                             borderWidth: 1
                         }}
                         trackStyle={{
@@ -175,28 +175,28 @@ class UpdateProgressTask extends Component {
                             marginHorizontal: scale(5),
                             marginVertical: verticalScale(50),
                             height: verticalScale(50),
-                            
-                        }}/>
 
-                        <Form>
-                            <Item stackedLabel>
-                                <Label>Phần trăm hoàn thành (%)</Label>
-                                <Input editable={false} value={this.state.progressValue.toString()}/>
-                            </Item>
+                        }} />
 
-                            <Item stackedLabel>
-                                <Label>Nội dung</Label>
-                                <Input value={this.state.comment} onChangeText={(comment) => this.setState({comment})}/>
-                            </Item>
+                    <Form>
+                        <Item stackedLabel>
+                            <Label>Phần trăm hoàn thành (%)</Label>
+                            <Input editable={false} value={this.state.progressValue.toString()} />
+                        </Item>
 
-                            <Button block danger 
-                                style={{backgroundColor : HEADER_COLOR , marginTop: verticalScale(20)}}
-                                onPress={() => this.onUpdateProgressTask()}>
-                                <Text>
-                                    CẬP NHẬT TIẾN ĐỘ CÔNG VIỆC
+                        <Item stackedLabel>
+                            <Label>Nội dung</Label>
+                            <Input value={this.state.comment} onChangeText={(comment) => this.setState({ comment })} />
+                        </Item>
+
+                        <Button block danger
+                            style={{ backgroundColor: Colors.RED_PANTONE_186C, marginTop: verticalScale(20) }}
+                            onPress={() => this.onUpdateProgressTask()}>
+                            <Text>
+                                CẬP NHẬT TIẾN ĐỘ CÔNG VIỆC
                                 </Text>
-                            </Button>
-                        </Form>
+                        </Button>
+                    </Form>
                 </Content>
 
                 {

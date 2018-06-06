@@ -34,7 +34,7 @@ import {
 import {
     API_URL, DEFAULT_PAGE_INDEX,
     EMPTY_STRING, LOADMORE_COLOR,
-    LOADER_COLOR, HEADER_COLOR, DEFAULT_PAGE_SIZE
+    LOADER_COLOR, HEADER_COLOR, DEFAULT_PAGE_SIZE, Colors
 } from '../../../common/SystemConstant';
 import { scale, verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
@@ -113,12 +113,12 @@ class GroupSubTask extends Component {
 
     handleRefresh = () => {
         this.setState({
-          refreshing: true,
-          pageIndex: DEFAULT_PAGE_INDEX,
+            refreshing: true,
+            pageIndex: DEFAULT_PAGE_INDEX,
         }, () => {
-          this.fetchData()
+            this.fetchData()
         })
-      }
+    }
 
     onNavigateToAssignTask(id) {
         this.props.navigation.navigate('AssignTaskScreen', {
@@ -134,7 +134,7 @@ class GroupSubTask extends Component {
             'Bạn có chắc chắn đã hoàn thành công việc này?',
             [
                 { 'text': 'Đồng ý', onPress: () => this.onCompleteSubTask(id) },
-                { 'text': 'Hủy bỏ', onPress: () => console.log('clicked cancel') }
+                { 'text': 'Hủy bỏ', onPress: () => { } }
             ]
         )
     }
@@ -167,8 +167,8 @@ class GroupSubTask extends Component {
             text: 'Hoàn thành công việc ' + (resultJson.Status ? ' thành công' : ' không thành công'),
             type: resultJson.Status ? 'success' : 'danger',
             buttonText: "OK",
-            buttonStyle: { backgroundColor: '#fff' },
-            buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
+            buttonStyle: { backgroundColor: Colors.WHITE },
+            buttonTextStyle: { color: resultJson.Status ? Colors.GREEN_PANTONE_364C : Colors.RED_PANTONE_186C },
             duration: 3000,
             onClose: () => {
                 if (resultJson.Status) {
@@ -187,7 +187,7 @@ class GroupSubTask extends Component {
                 disableLeftSwipe={item.TRANGTHAI_ID > 0}
                 left={
                     <Button style={{ backgroundColor: '#d1d2d3' }} onPress={() => this.onShowSubTaskInfo(item)}>
-                        <RneIcon name='info' type='foundation' size={verticalScale(30)} color={'#fff'} />
+                        <RneIcon name='info' type='foundation' size={verticalScale(30)} color={Colors.WHITE} />
                     </Button>
                 }
 
@@ -219,7 +219,7 @@ class GroupSubTask extends Component {
                 }
 
                 right={
-                    <Button style={{ backgroundColor: LOADER_COLOR }} onPress={() => this.onEditSubTask(item)}>
+                    <Button style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.onEditSubTask(item)}>
                         <RneIcon name='pencil' type='foundation' size={verticalScale(30)} color={'#fff'} />
                     </Button>
                 }
@@ -229,18 +229,18 @@ class GroupSubTask extends Component {
 
     navigateBackToDetail() {
         this.props.navigation.navigate('DetailTaskScreen', {
-            docId: this.state.docId,
-            docType: this.state.docType
+            taskId: this.state.taskId,
+            taskType: this.state.taskType
         });
     }
 
     render() {
         return (
             <Container>
-                <Header searchBar style={{ backgroundColor: HEADER_COLOR }}>
+                <Header searchBar style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
                     <Left>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
@@ -249,6 +249,9 @@ class GroupSubTask extends Component {
                             CÔNG VIỆC CON
                         </Title>
                     </Body>
+                    <Right>
+
+                    </Right>
                 </Header>
 
                 <Content contentContainerStyle={{ flex: 1 }}>
@@ -265,7 +268,7 @@ class GroupSubTask extends Component {
                     {
                         renderIf(this.state.searching)(
                             <RnView style={{ flex: 1, justifyContent: 'center' }}>
-                                <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+                                <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
                             </RnView>
                         )
                     }
@@ -281,18 +284,18 @@ class GroupSubTask extends Component {
                                         refreshing={this.state.refreshing}
                                         onRefresh={this.handleRefresh}
                                         title='Kéo để làm mới'
-                                        colors={[LOADER_COLOR]}
-                                        tintColor={[LOADER_COLOR]}
+                                        colors={[Colors.BLUE_PANTONE_640C]}
+                                        tintColor={[Colors.BLUE_PANTONE_640C]}
                                         titleColor='red'
                                     />
                                 }
                                 ListEmptyComponent={() => emptyDataPage()}
                                 ListFooterComponent={
                                     this.state.loadingMore ?
-                                        <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
+                                        <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
                                         (
                                             this.state.data.length >= DEFAULT_PAGE_SIZE ?
-                                                <Button full style={{ backgroundColor: LOADMORE_COLOR }} onPress={() => this.loadMoreData()}>
+                                                <Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadMoreData()}>
                                                     <Text>
                                                         TẢI THÊM
                                                     </Text>

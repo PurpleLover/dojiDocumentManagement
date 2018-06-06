@@ -17,7 +17,7 @@ import { DetailSignDocStyle } from '../../../assets/styles/SignDocStyle';
 
 //utilities
 import renderIf from 'render-if';
-import { API_URL, WEB_URL, EMPTY_STRING, LOADER_COLOR } from '../../../common/SystemConstant';
+import { API_URL, WEB_URL, EMPTY_STRING, LOADER_COLOR, Colors } from '../../../common/SystemConstant';
 import { asyncDelay, isImage, emptyDataPage } from '../../../common/Utilities';
 import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
@@ -34,29 +34,29 @@ export default class AttachSignDoc extends Component {
         }
     }
 
-    async onAttachFilter() {
+    async onFilter() {
         this.setState({
             searching: true
         });
 
         const url = `${API_URL}/api/VanBanDi/SearchAttachment?id=${this.state.VanBanDi.ID}&attQuery=${this.state.filterValue}`;
+        const headers = new Headers({
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8'
+        });
 
         const result = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json; charset=utf-8'
-            }
-        }).then(response => response.json())
-            .then(responseJson => {
-                return responseJson;
-            })
+            headers
+        });
+
+        const resultJson = await result.json();
 
         await asyncDelay(1000);
 
         this.setState({
             searching: false,
-            ListTaiLieu: result
+            ListTaiLieu: resultJson
         });
     }
 
@@ -100,7 +100,7 @@ export default class AttachSignDoc extends Component {
                         [
                             {
                                 text: 'OK',
-                                onPress: () => { console.log('Lỗi', err) }
+                                onPress: () => { }
                             }
                         ]
                     )
@@ -112,7 +112,7 @@ export default class AttachSignDoc extends Component {
                 buttons: [
                     {
                         text: 'OK',
-                        onPress: () => { console.log('close alert') }
+                        onPress: () => { }
                     }
                 ]
             })
@@ -123,30 +123,33 @@ export default class AttachSignDoc extends Component {
         <ListItem
             rightIcon={
                 <TouchableOpacity onPress={() => this.onDownloadFile(item.TENTAILIEU, item.DUONGDAN_FILE, item.DINHDANG_FILE)}>
-                    <RneIcon name='download' color={'#4FA800'} size={verticalScale(25)} type='entypo' />
+                    <RneIcon name='download' color={Colors.GREEN_PANTON_396C} size={verticalScale(25)} type='entypo' />
                 </TouchableOpacity>
             }
             title={item.TENTAILIEU}
-            titleStyle={{ color: 'black', fontWeight: 'bold' }} />
+            titleStyle={{
+                color: Colors.BLACK,
+                fontWeight: 'bold'
+            }} />
     )
 
     render() {
         return (
             <Container>
-                <Header searchBar style={{ backgroundColor: '#fff' }}>
+                <Header searchBar style={{ backgroundColor: Colors.WHITE }}>
                     <Item>
                         <Icon name='ios-search' />
                         <Input placeholder='Tên tài liệu'
                             value={this.state.filterValue}
                             onChangeText={(filterValue) => this.setState({ filterValue })}
-                            onSubmitEditing={() => this.onAttachFilter()} />
+                            onSubmitEditing={() => this.onFilter()} />
                     </Item>
                 </Header>
 
                 <Content contentContainerStyle={{ flex: 1, justifyContent: (this.state.searching) ? 'center' : 'flex-start' }}>
                     {
                         renderIf(this.state.searching)(
-                            <ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} />
+                            <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} />
                         )
                     }
 

@@ -27,7 +27,7 @@ import PopupDialog, { DialogTitle, DialogButton } from 'react-native-popup-dialo
 import { connect } from 'react-redux';
 
 //utilities
-import { API_URL, HEADER_COLOR, LOADER_COLOR, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '../../../common/SystemConstant';
+import { API_URL, HEADER_COLOR, LOADER_COLOR, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE, Colors } from '../../../common/SystemConstant';
 import { asyncDelay, emptyDataPage, formatLongText, convertDateToString } from '../../../common/Utilities';
 import { dataLoading, executeLoading } from '../../../common/Effect';
 import { scale, verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
@@ -87,8 +87,7 @@ class HistoryRescheduleTask extends Component {
 	handleRefresh = () => {
 		this.setState({
 			refreshing: true,
-			pageIndex: DEFAULT_PAGE_INDEX,
-			pageSize: DEFAULT_PAGE_SIZE
+			pageIndex: DEFAULT_PAGE_INDEX
 		}, () => {
 			this.fetchData()
 		})
@@ -115,7 +114,7 @@ class HistoryRescheduleTask extends Component {
 					}, {
 						'text': 'KHÔNG ĐỒNG Ý', onPress: () => { this.onApproveReschedule(false, item.ID) }
 					}, {
-						'text': 'THOÁT', onPress: () => console.log('pressed cancel')
+						'text': 'THOÁT', onPress: () => {}
 					}
 				]
 			)
@@ -167,8 +166,8 @@ class HistoryRescheduleTask extends Component {
 			text: resultJson.Status ? 'Phản hồi yêu cầu lùi hạn thành công' : 'Phản hồi yêu cầu lùi hạn không thành công',
 			type: resultJson.Status ? 'success' : 'danger',
 			buttonText: "OK",
-			buttonStyle: { backgroundColor: '#fff' },
-			buttonTextStyle: { color: resultJson.Status ? '#337321' : '#FF0033' },
+			buttonStyle: { backgroundColor: Colors.WHITE },
+			buttonTextStyle: { color: resultJson.Status ? Colors.GREEN_PANTONE_364C : Colors.RED_PANTONE_186C },
 			duration: 3000,
 			onClose: () => {
 				if (resultJson.Status) {
@@ -190,7 +189,7 @@ class HistoryRescheduleTask extends Component {
 				disableLeftSwipe={!util.isNull(item.IS_APPROVED) && this.state.canApprove != true}
 				left={
 					<Button style={{ backgroundColor: '#d1d2d3' }} onPress={() => this.onShowRescheduleInfo(item)}>
-						<RneIcon name='info' type='foundation' size={verticalScale(30)} color={'#fff'} />
+						<RneIcon name='info' type='foundation' size={verticalScale(30)} color={Colors.WHITE} />
 					</Button>
 				}
 				body={
@@ -227,8 +226,8 @@ class HistoryRescheduleTask extends Component {
 				}
 
 				right={
-					<Button style={{ backgroundColor: LOADER_COLOR }} onPress={() => this.onConfirmApproveReschedule(item)}>
-						<RneIcon name='pencil' type='foundation' size={verticalScale(30)} color={'#fff'} />
+					<Button style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.onConfirmApproveReschedule(item)}>
+						<RneIcon name='pencil' type='foundation' size={verticalScale(30)} color={Colors.WHITE} />
 					</Button>
 				}
 			/>
@@ -245,10 +244,10 @@ class HistoryRescheduleTask extends Component {
 	render() {
 		return (
 			<Container>
-				<Header style={{ backgroundColor: HEADER_COLOR }}>
+				<Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
 					<Left>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
-							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Left>
 
@@ -277,21 +276,21 @@ class HistoryRescheduleTask extends Component {
 										refreshing={this.state.refreshing}
 										onRefresh={this.handleRefresh}
 										title='Kéo để làm mới'
-										colors={[LOADER_COLOR]}
-										tintColor={[LOADER_COLOR]}
+										colors={[Colors.BLUE_PANTONE_640C]}
+										tintColor={[Colors.BLUE_PANTONE_640C]}
 										titleColor='red'
 									/>
 								}
 								ListEmptyComponent={() => emptyDataPage()}
 
 								ListFooterComponent={() => this.state.loadingMore ?
-									<ActivityIndicator size={indicatorResponsive} animating color={LOADER_COLOR} /> :
+									<ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
 									(
 										this.state.data.length >= DEFAULT_PAGE_SIZE ?
-											<Button full style={{ backgroundColor: '#0082ba' }} onPress={() => this.loadMore()}>
+											<Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.loadMore()}>
 												<Text>
 													TẢI THÊM
-										  </Text>
+										  		</Text>
 											</Button>
 											: null
 									)

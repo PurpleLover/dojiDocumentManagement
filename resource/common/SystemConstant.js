@@ -57,7 +57,7 @@ export const VANBAN_CONSTANT = {
 	CHUA_XULY: 1,
 	DA_XULY: 2,
 	CAN_REVIEW: 3,
-	DA_REVIEW: 4
+	DA_REVIEW: 4,
 }
 
 export const CONGVIEC_CONSTANT = {
@@ -65,4 +65,18 @@ export const CONGVIEC_CONSTANT = {
 	DUOC_GIAO: 2,
 	PHOIHOP_XULY: 3,
 	DAGIAO_XULY: 4
+}
+
+
+//colors
+export const Colors = {
+	WHITE: '#fff',
+	BLACK: '#000',
+	RED: '#f00',
+	GRAY: '#bdc6cf',
+	GREEN_PANTON_396C: '#4FA800',
+	GREEN_PANTONE_364C: '#337321',
+	BLUE_PANTONE_640C: '#0082ba',
+	RED_PANTONE_186C: '#FF0033',
+	RED_PANTONE_021C: '#FF6600'
 }

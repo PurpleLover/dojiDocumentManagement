@@ -1,95 +1,117 @@
 /**
- * @description: lịch sử xử lý văn bản đã phát hành
+ * @description: lịch sử xử lý văn bản trình ký
  * @author: duynn
- * @since: 09/05/2018
+ * @since: 04/05/2018
  */
 'use strict'
-import React, { Component } from 'react'
-import { Image, View, Text, ScrollView, RefreshControl, ActivityIndicator } from 'react-native'
+import React, { Component } from 'react';
+
+import { View, Text, RefreshControl } from 'react-native';
 
 //lib
-import Timeline from 'react-native-timeline-listview';
+import { Container, Header, Content, Icon } from 'native-base';
+import TimeLine from 'react-native-timeline-theme';
 import * as util from 'lodash';
 import renderIf from 'render-if';
-//styles
-import { DetailSignDocStyle, ListSignDocStyle } from '../../../assets/styles/SignDocStyle';
 
-import { EMPTY_DATA_ICON_URI, EMTPY_DATA_MESSAGE } from '../../../common/SystemConstant';
-
-import { convertDateToString } from '../../../common/Utilities';
+//utilities
+import { convertDateTimeToString, emptyDataPage, convertTimeToString, convertDateToString } from '../../../common/Utilities';
+import { LOADER_COLOR, Colors } from '../../../common/SystemConstant';
+import { verticalScale, moderateScale, scale } from '../../../assets/styles/ScaleIndicator';
 
 export default class TimelinePublishDoc extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: []
-    }
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            VanBanDen: props.info.VanBanDen,
+            lstLog: props.info.lstLog,
+            data: [],
 
-  componentWillMount = () => {
-    if (!util.isNull(this.props.info) && !util.isEmpty(this.props.info)) {
-      let data = [];
-      this.props.info.forEach((item, index) => {
-        data.push(
-          {
-            time: convertDateToString(item.create_at),
-            title: item.IS_RETURN ? 'Trả về' : (item.step ? item.step.name : 'N/A'),
-            description: `Người xử lý: ${item.TenNguoiXuLy}`
-          },
+            refreshingData: false,
+        }
+    }
+
+    handleRefresh = () => {
+
+    }
+
+    componentWillMount = () => {
+        if (!util.isNull(this.state.lstLog) && !util.isEmpty(this.state.lstLog)) {
+            let data = [];
+            this.state.lstLog.forEach((item, index) => {
+                data.push(
+                    {
+                        time: convertDateToString(item.create_at),
+                        title: item.IS_RETURN ? 'Trả về' : 'Bước xử lý: ' + (item.step ? item.step.NAME : 'N/A'),
+                        titleStyle: { color: 'rgba(0,0,0,95)', fontWeight: 'bold' },
+                        description: `Người xử lý: ${item.TenNguoiXuLy}`,
+                        renderIcon: () => <Icon name='ios-time-outline' />,
+                        renderTimeBottom: () => (
+                            <View style={{alignItems: (index % 2 == 0) ? 'flex-end': 'flex-start', backgroundColor: Colors.WHITE, borderRadius: 6, padding: 3}}>
+                                <Text>
+                                    <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold' }}>
+                                        Thời gian:
+                                    </Text>
+
+                                    <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold', color: '#b40000' }}>
+                                        {' ' + convertTimeToString(item.create_at)}
+                                    </Text>
+                                </Text>
+
+                                <Text>
+                                    <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold' }}>
+                                        Người nhận:
+                                    </Text>
+                                    <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold', color: '#b40000' }}>
+                                        {' ' + item.TenNguoiNhan}
+                                    </Text>
+                                </Text>
+
+                                <Text>
+                                    <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold' }}>
+                                        Người tham gia:
+                                    </Text>
+                                    <Text style={{ fontSize: verticalScale(11), fontWeight: 'bold', color: '#b40000' }}>
+                                        {' ' + (item.LstThamGia || []).toString()}
+                                    </Text>
+                                </Text>
+                            </View>
+                        ),
+                    },
+                );
+            });
+
+            this.setState({
+                data
+            });
+        }
+    }
+
+    render() {
+        return (
+            <Container>
+                <Content>
+                    <TimeLine
+                        timeStyle={{
+                            fontWeight: 'normal',
+                            color: Colors.BLACK
+                        }}
+                        detailContainerStyle={{
+                            borderWidth: 2,
+                            borderRadius: 5,
+                            padding: moderateScale(5),
+                            marginHorizontal: scale(5),
+                            borderColor: '#909090'
+                        }}
+                        lineWidth={1}
+                        dashLine={true}
+                        styleContainer={{ marginTop: verticalScale(10) }}
+                        data={this.state.data}
+                        isRenderSeperator
+                        columnFormat={'two-column'}
+                    />
+                </Content>
+            </Container>
         );
-      });
-
-      this.setState({
-        data
-      });
     }
-  }
-
-  render() {
-    return (
-      <View style={DetailSignDocStyle.container}>
-        {
-                    renderIf(this.state.data.length <= 0)(
-                        <View style={ListSignDocStyle.emtpyContainer}>
-                            <Image source={EMPTY_DATA_ICON_URI} style={ListSignDocStyle.emptyIcon} />
-                            <Text style={ListSignDocStyle.emptyMessage}>
-                                {EMTPY_DATA_MESSAGE}
-                            </Text>
-                        </View>
-                    )
-                }
-                
-                {
-                    renderIf(this.state.data.length > 0)(
-                        <Timeline
-                            circleSize={22}
-                            circleColor={'#da2032'}
-                            lineColor={'#da2032'}
-                            timeContainerStyle={{ minWidth: 50, marginLeft: 20, marginRight: 5 }}
-                            timeStyle={{
-                                textAlign: 'center',
-                                backgroundColor: '#da2032',
-                                color: '#fff',
-                                borderRadius: 15,
-                                fontSize:11,
-                                paddingHorizontal: 5
-                            }}
-                            descriptionStyle={{
-                                color: 'gray'
-                            }}
-                            titleStyle={{
-                                color: '#000',
-                                fontSize: 20,
-                                fontWeight: 'bold',
-                                marginTop: -15
-                            }}
-                            innerCircle={'dot'}
-                            style={DetailSignDocStyle.timelineContainer}
-                            data={this.state.data}
-                        />
-                    )
-                }
-      </View>
-    );
-  }
 }
