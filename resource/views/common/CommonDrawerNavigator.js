@@ -153,7 +153,7 @@ const appRoutes = {
 const appConfig = {
     headerMode: 'none',
     initialRouteName: 'ListPersonalTaskScreen',
-    // initialRouteName: 'EvaluationTaskScreen',
+    //initialRouteName: 'RescheduleTaskScreen',
     drawerWidth: width * 0.8,
     contentComponent: props => <SideBar {...props} />
 }

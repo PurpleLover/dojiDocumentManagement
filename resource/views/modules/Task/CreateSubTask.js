@@ -6,7 +6,7 @@
 
 'use strict'
 import React, { Component } from 'react';
-import { DatePickerAndroid, DatePickerIOS, Platform } from 'react-native';
+import { Platform } from 'react-native';
 //lib
 import {
 	Container, Header, Left, Body, Content,
@@ -20,7 +20,7 @@ import DatePicker from 'react-native-datepicker';
 import { API_URL, HEADER_COLOR, EMPTY_STRING } from '../../../common/SystemConstant';
 import { verticalScale } from '../../../assets/styles/ScaleIndicator';
 import { executeLoading } from '../../../common/Effect';
-import { asyncDelay } from '../../../common/Utilities';
+import { asyncDelay, convertDateToString } from '../../../common/Utilities';
 import * as util from 'lodash';
 
 //redux
@@ -58,7 +58,7 @@ class CreateSubTask extends Component {
 	onPriorityValueChange(value) {
 		this.setState({
 			priorityValue: value
-		});
+		})
 	}
 
 	onUrgencyValueChange(value) {
@@ -186,6 +186,7 @@ class CreateSubTask extends Component {
 	}
 
 	render() {
+		const pickerStyle = Platform.OS === 'ios' ? {justifyContent:'center'} : {width:'100%'};
 		return (
 			<Container>
 				<Header style={{ backgroundColor: HEADER_COLOR }}>
@@ -215,18 +216,14 @@ class CreateSubTask extends Component {
 						</Item>
 
 						<Item stackedLabel>
-							<Label>
-								Độ ưu tiên
-							</Label>
-
+							<Label>Độ ưu tiên</Label>
 							<Picker
 								iosHeader='Chọn độ ưu tiên'
 								mode='dropdown'
 								iosIcon={<Icon name='ios-arrow-down-outline' />}
-								style={{ width: '100%' }}
-								seletedValue={this.state.priorityValue}
-								onValueChange={this.onPriorityValueChange.bind(this)}
-							>
+								style={pickerStyle}
+								selectedValue={this.state.priorityValue} //sai chinh ta @@
+								onValueChange={this.onPriorityValueChange.bind(this)}>
 								<Picker.Item value="101" label="Cao" />
 								<Picker.Item value="102" label="Thấp" />
 								<Picker.Item value="103" label="Trung bình" />
@@ -236,10 +233,10 @@ class CreateSubTask extends Component {
 						<Item stackedLabel>
 							<Label>Độ khẩn</Label>
 							<Picker
-								iosHeader="Chọn độ khẩn"
-								mode="dropdown"
+								iosHeader='Chọn độ khẩn'
+								mode='dropdown'
 								iosIcon={<Icon name='ios-arrow-down-outline' />}
-								style={{ width: '100%' }}
+								style={pickerStyle}
 								selectedValue={this.state.urgencyValue}
 								onValueChange={this.onUrgencyValueChange.bind(this)}>
 								<Picker.Item value="98" label="Khẩn" />
@@ -248,13 +245,14 @@ class CreateSubTask extends Component {
 							</Picker>
 						</Item>
 
-						<Item>
+						<Item stackedLabel style={{height: verticalScale(100)}}>
+							<Label>Hạn hoàn thành</Label>
 							<DatePicker
-								style={{ width: moderateScale(200) }}
+								style={{ width: scale(300), alignSelf:'center', marginTop: verticalScale(30) }}
 								date={this.state.chosenDate}
 								mode="date"
 								placeholder='Hạn hoàn thành'
-								format='DD-MM-YYYY'
+								format='YYYY-MM-DD'
 								minDate={new Date()}
 								confirmBtnText='CHỌN'
 								cancelBtnText='BỎ'
@@ -266,7 +264,7 @@ class CreateSubTask extends Component {
 										marginLeft: 0
 									},
 									dateInput: {
-										marginLeft: scale(36)
+										marginLeft: scale(36),
 									}
 								}}
 								onDateChange={this.setDate}
@@ -276,7 +274,7 @@ class CreateSubTask extends Component {
 						</Item>
 
 						<Button block danger
-							style={{ backgroundColor: HEADER_COLOR, marginTop: verticalScale(20) }}
+							style={{ backgroundColor: HEADER_COLOR, marginTop: verticalScale(10) }}
 							onPress={() => this.onCreateSubTask()}>
 							<Text>
 								TẠO CÔNG VIỆC CON

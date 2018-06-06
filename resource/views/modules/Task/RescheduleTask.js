@@ -25,7 +25,7 @@ import DatePicker from 'react-native-datepicker';
 import { API_URL, EMPTY_STRING, HEADER_COLOR } from '../../../common/SystemConstant';
 import { asyncDelay, convertDateToString } from '../../../common/Utilities';
 import { executeLoading } from '../../../common/Effect';
-import { verticalScale } from '../../../assets/styles/ScaleIndicator';
+import { scale, verticalScale, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 //firebase
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
@@ -184,11 +184,11 @@ class RescheduleTask extends Component {
                     <Form>
                         <Item>
                             <DatePicker
-                                style={{ width: moderateScale(200) }}
+                                style={{ width: scale(300), alignSelf:'center', marginTop: verticalScale(30) }}
                                 date={this.state.chosenDate}
                                 mode="date"
                                 placeholder='Hạn hoàn thành'
-                                format='DD-MM-YYYY'
+                                format='YYYY-MM-DD'
                                 minDate={new Date()}
                                 confirmBtnText='CHỌN'
 								cancelBtnText='BỎ'
