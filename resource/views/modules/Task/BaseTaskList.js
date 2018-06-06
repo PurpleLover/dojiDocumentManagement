@@ -185,7 +185,7 @@ class BaseTaskList extends Component {
         return (
             <Container>
                 <Header searchBar rounded style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Item>
+                    <Item style={{ backgroundColor: Colors.WHITE }}>
                         <Icon name='ios-search' />
                         <Input placeholder='Tên công việc'
                             value={this.state.filterValue}

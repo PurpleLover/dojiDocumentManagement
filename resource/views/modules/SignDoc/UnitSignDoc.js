@@ -62,7 +62,7 @@ export default class UnitSignDoc extends Component {
 		return (
 			<Container>
 				<Header searchBar style={{ backgroundColor: Colors.WHITE }}>
-					<Item>
+					<Item style={{ backgroundColor: Colors.WHITE }}>
 						<Icon name='ios-search' />
 						<Input placeholder='Tên phòng ban, đơn vị'
 							onChangeText={(filterValue) => this.setState({ filterValue })}

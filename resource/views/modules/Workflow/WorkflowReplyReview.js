@@ -42,7 +42,7 @@ import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-
 import * as workflowAction from '../../../redux/modules/workflow/WorkflowAction';
 
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
-import { verticalScale } from '../../../assets/styles/ScaleIndicator';
+import { verticalScale, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 class WorkflowReplyReview extends Component {
     constructor(props) {
@@ -169,19 +169,19 @@ class WorkflowReplyReview extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left style={{flex:1}}>
+                    <Left style={{ flex: 1 }}>
                         <Button transparent onPress={() => this.navigateBack()}>
-                            <Icon name='ios-arrow-round-back' size={30} color={Colors.WHITE} type="ionicon" />
+                            <Icon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type="ionicon" />
                         </Button>
                     </Left>
 
-                    <Body style={{flex:3}}>
-                        <Title style={{color:'#fff', fontWeight:'bold'}}>
+                    <Body style={{ flex: 3 }}>
+                        <Title style={{ color: '#fff', fontWeight: 'bold' }}>
                             REVIEW VĂN BẢN TRÌNH KÝ
                         </Title>
                     </Body>
 
-                    <Right style={{flex:1}}>
+                    <Right style={{ flex: 1 }}>
                         <Button transparent>
                         </Button>
                     </Right>
@@ -207,7 +207,7 @@ class WorkflowReplyReview extends Component {
                             </Picker>
                         </Item>
 
-                        <Button block style={{ backgroundColor: Colors.RED_PANTONE_186C , marginTop: verticalScale(20) }} onPress={() => this.onConfirmReplyReview()}>
+                        <Button block style={{ backgroundColor: Colors.RED_PANTONE_186C, marginTop: verticalScale(20) }} onPress={() => this.onConfirmReplyReview()}>
                             <NBText>
                                 PHẢN HỒI YÊU CẦU
                             </NBText>

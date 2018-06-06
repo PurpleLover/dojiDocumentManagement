@@ -19,7 +19,7 @@ import {
 	LOADMORE_COLOR, DEFAULT_PAGE_INDEX, WORKFLOW_PROCESS_TYPE
 } from '../../../common/SystemConstant';
 import { dataLoading, executeLoading } from '../../../common/Effect';
-import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 //lib
 import renderIf from 'render-if';
@@ -207,19 +207,19 @@ class WorkflowRequestReview extends Component {
 		return (
 			<Container>
 				<Header hasTabs style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-					<Left style={{flex:1}}>
+					<Left style={{ flex: 1 }}>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
-							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+							<RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Left>
 
-					<Body style={{flex:3}}>
-						<Title style={{color:'#fff', fontWeight:'bold'}}>
+					<Body style={{ flex: 3 }}>
+						<Title style={{ color: '#fff', fontWeight: 'bold' }}>
 							{this.state.stepName}
 						</Title>
 					</Body>
 
-					<Right style={{flex:1}}>
+					<Right style={{ flex: 1 }}>
 						<Button transparent onPress={() => this.saveRequestReview()}>
 							<RneIcon name='md-send' size={verticalScale(30)} color={Colors.WHITE} type='ionicon' />
 						</Button>

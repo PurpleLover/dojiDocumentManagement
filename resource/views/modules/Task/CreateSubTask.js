@@ -185,23 +185,23 @@ class CreateSubTask extends Component {
 	}
 
 	render() {
-		const pickerStyle = Platform.OS === 'ios' ? {justifyContent:'center'} : {width:'100%'};
+		const pickerStyle = Platform.OS === 'ios' ? { justifyContent: 'center' } : { width: '100%' };
 		return (
 			<Container>
 				<Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-					<Left>
+					<Left style={{ flex: 1 }}>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
-							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+							<RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Left>
 
-					<Body style={{flex:3}}>
-						<Title style={{color:'#fff', fontWeight:'bold'}}>
+					<Body style={{ flex: 3 }}>
+						<Title style={{ color: '#fff', fontWeight: 'bold' }}>
 							TẠO CÔNG VIỆC CON
 						</Title>
 					</Body>
 
-					<Right style={{flex:1}}/>
+					<Right style={{ flex: 1 }} />
 				</Header>
 
 				<Content>
@@ -244,10 +244,10 @@ class CreateSubTask extends Component {
 							</Picker>
 						</Item>
 
-						<Item stackedLabel style={{height: verticalScale(100)}}>
+						<Item stackedLabel style={{ height: verticalScale(100) }}>
 							<Label>Hạn hoàn thành</Label>
 							<DatePicker
-								style={{ width: scale(300), alignSelf:'center', marginTop: verticalScale(30) }}
+								style={{ width: scale(300), alignSelf: 'center', marginTop: verticalScale(30) }}
 								date={this.state.chosenDate}
 								mode="date"
 								placeholder='Hạn hoàn thành'

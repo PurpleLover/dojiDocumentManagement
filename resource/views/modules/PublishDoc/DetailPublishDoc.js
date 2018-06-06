@@ -25,7 +25,7 @@ import * as util from 'lodash';
 import { dataLoading } from '../../../common/Effect';
 import { asyncDelay, unAuthorizePage } from '../../../common/Utilities';
 import { API_URL, Colors } from '../../../common/SystemConstant';
-import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 //styles
 import { TabStyle } from '../../../assets/styles/TabStyle';
@@ -88,9 +88,9 @@ class DetailPubslishDoc extends Component {
         return (
             <Container>
                 <Header hasTabs style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left>
+                    <Left style={{ flex: 1 }}>
                         <Button transparent onPress={this.navigateBackToList}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+                            <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 

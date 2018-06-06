@@ -238,18 +238,18 @@ class GroupSubTask extends Component {
         return (
             <Container>
                 <Header searchBar style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left style={{flex:1}}>
+                    <Left style={{ flex: 1 }}>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+                            <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
-                    <Body style={{flex:3}}>
-                        <Title style={{color:'#fff', fontWeight:'bold'}}>
+                    <Body style={{ flex: 3 }}>
+                        <Title style={{ color: '#fff', fontWeight: 'bold' }}>
                             CÔNG VIỆC CON
                         </Title>
                     </Body>
-                    <Right style={{flex:1}}></Right>
+                    <Right style={{ flex: 1 }}></Right>
                 </Header>
 
                 <Content contentContainerStyle={{ flex: 1 }}>
@@ -320,17 +320,17 @@ class GroupSubTask extends Component {
                         <DialogButton
                             align={'center'}
                             buttonStyle={{
-								justifyContent: 'flex-end',
-								backgroundColor: '#4FA800',
+                                justifyContent: 'flex-end',
+                                backgroundColor: '#4FA800',
                                 alignSelf: 'stretch',
                                 borderBottomLeftRadius: 8,
-								borderBottomRightRadius: 8,
+                                borderBottomRightRadius: 8,
                             }}
                             text="ĐÓNG"
                             textStyle={{
-								fontSize: moderateScale(18, 1.5),
-								color: '#fff'
-							}}
+                                fontSize: moderateScale(18, 1.5),
+                                color: '#fff'
+                            }}
                             onPress={() => {
                                 this.popupDialog.dismiss();
                             }}
@@ -338,57 +338,57 @@ class GroupSubTask extends Component {
                         />,
                     ]}>
 
-                        <Form>
-                            <Item stackedLabel>
-                                <Label style={styles.dialogLabel}>
-                                    {'Người thực hiện: '}
-                                </Label>
+                    <Form>
+                        <Item stackedLabel>
+                            <Label style={styles.dialogLabel}>
+                                {'Người thực hiện: '}
+                            </Label>
 
-                                <Label style={styles.dialogText}>
-                                    {this.state.dataItem.NGUOITHUCHIEN}
-                                </Label>
-                            </Item>
+                            <Label style={styles.dialogText}>
+                                {this.state.dataItem.NGUOITHUCHIEN}
+                            </Label>
+                        </Item>
 
-                            <Item stackedLabel>
-                                <Label style={styles.dialogLabel}>
-                                    {'Độ khẩn: '}
-                                </Label>
+                        <Item stackedLabel>
+                            <Label style={styles.dialogLabel}>
+                                {'Độ khẩn: '}
+                            </Label>
 
-                                <Label style={styles.dialogText}>
-                                    {this.state.dataItem.DOKHAN_TEXT}
-                                </Label>
-                            </Item>
+                            <Label style={styles.dialogText}>
+                                {this.state.dataItem.DOKHAN_TEXT}
+                            </Label>
+                        </Item>
 
-                            <Item stackedLabel>
-                                <Label style={styles.dialogLabel}>
-                                    {'Độ ưu tiên: '}
-                                </Label>
+                        <Item stackedLabel>
+                            <Label style={styles.dialogLabel}>
+                                {'Độ ưu tiên: '}
+                            </Label>
 
-                                <Label style={styles.dialogText}>
-                                    {this.state.dataItem.DOUUTIEN_TEXT}
-                                </Label>
-                            </Item>
+                            <Label style={styles.dialogText}>
+                                {this.state.dataItem.DOUUTIEN_TEXT}
+                            </Label>
+                        </Item>
 
-                            <Item stackedLabel>
-                                <Label style={styles.dialogLabel}>
-                                    {'Nội dung: '}
-                                </Label>
+                        <Item stackedLabel>
+                            <Label style={styles.dialogLabel}>
+                                {'Nội dung: '}
+                            </Label>
 
-                                <Label style={styles.dialogText}>
-                                    {'#' + this.state.dataItem.NOIDUNG}
-                                </Label>
-                            </Item>
+                            <Label style={styles.dialogText}>
+                                {'#' + this.state.dataItem.NOIDUNG}
+                            </Label>
+                        </Item>
 
-                            <Item stackedLabel>
-                                <Label style={styles.dialogLabel}>
-                                    {'Ngày tạo - Ngày hoàn thành: '}
-                                </Label>
+                        <Item stackedLabel>
+                            <Label style={styles.dialogLabel}>
+                                {'Ngày tạo - Ngày hoàn thành: '}
+                            </Label>
 
-                                <Label style={styles.dialogText}>
-                                    {convertDateToString(this.state.dataItem.NGAYTAO) + ' - ' + convertDateToString(this.state.dataItem.NGAYHOANTHANH)}
-                                </Label>
-                            </Item>
-                        </Form>
+                            <Label style={styles.dialogText}>
+                                {convertDateToString(this.state.dataItem.NGAYTAO) + ' - ' + convertDateToString(this.state.dataItem.NGAYHOANTHANH)}
+                            </Label>
+                        </Item>
+                    </Form>
                 </PopupDialog>
             </Container>
         );
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     }, dialogLabel: {
         fontWeight: 'bold',
         color: '#000',
-        fontSize: moderateScale(14,1.4)
+        fontSize: moderateScale(14, 1.4)
     }
 })
 

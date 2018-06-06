@@ -15,7 +15,8 @@ import {
     API_URL, DEFAULT_PAGE_INDEX,
     DEFAULT_PAGE_SIZE, EMPTY_DATA_ICON_URI,
     EMPTY_STRING, EMTPY_DATA_MESSAGE,
-    HEADER_COLOR, LOADER_COLOR
+    HEADER_COLOR, LOADER_COLOR,
+    Colors
 } from '../../../common/SystemConstant';
 
 //native-base
@@ -221,7 +222,7 @@ class ListFilterTask extends Component {
         return (
             <Container>
                 <Header searchBar rounded style={{ backgroundColor: HEADER_COLOR }}>
-                    <Item>
+                    <Item style={{ backgroundColor: Colors.WHITE }}>
                         <Icon name="ios-arrow-round-back" onPress={() => this.navigateToList()} />
                         <Input placeholder="Tên công việc"
                                     value={this.state.filterValue}

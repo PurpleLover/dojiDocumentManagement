@@ -39,7 +39,7 @@ export default class SideBar extends Component {
             userInfo: {
 
             },
-            onFocusNow: '6',
+            onFocusNow: '1',
         }
     }
 

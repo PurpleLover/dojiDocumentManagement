@@ -14,7 +14,7 @@ import { API_URL, VANBAN_CONSTANT, HEADER_COLOR, Colors } from '../../../common/
 import { asyncDelay, unAuthorizePage } from '../../../common/Utilities';
 import { dataLoading } from '../../../common/Effect';
 import * as util from 'lodash';
-import { verticalScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 //styles
 import { TabStyle } from '../../../assets/styles/TabStyle';
@@ -177,7 +177,7 @@ class DetailSignDoc extends Component {
                     <Header hasTabs style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
                         <Left style={{flex: 1}}>
                             <Button transparent onPress={() => this.navigateBackToList()}>
-                                <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+                                <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                             </Button>
                         </Left>
 

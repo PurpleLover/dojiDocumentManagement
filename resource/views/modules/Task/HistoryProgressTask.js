@@ -142,21 +142,21 @@ class HistoryProgressTask extends Component {
 	}
 
 	render() {
-		
+
 		return (
 			<Container>
 				<Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-					<Left>
+					<Left style={{ flex: 1 }}>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
 							<RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Left>
-					<Body style={{flex:3}}>
-						<Title style={{color:'#fff', fontWeight:'bold'}}>
+					<Body style={{ flex: 3 }}>
+						<Title style={{ color: '#fff', fontWeight: 'bold' }}>
 							LỊCH SỬ CẬP NHẬT TIẾN ĐỘ
 						</Title>
 					</Body>
-					<Right style={{flex:1}}/>
+					<Right style={{ flex: 1 }} />
 				</Header>
 
 				<Content contentContainerStyle={{ flex: 1 }}>
@@ -222,7 +222,7 @@ class HistoryProgressTask extends Component {
 							}}
 							text="ĐÓNG"
 							textStyle={{
-								fontSize: moderateScale(18,1.5),
+								fontSize: moderateScale(18, 1.5),
 								color: '#fff'
 							}}
 							onPress={() => {

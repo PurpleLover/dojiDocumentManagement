@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import { API_URL, EMPTY_STRING, Colors } from '../../../common/SystemConstant';
 import { asyncDelay } from '../../../common/Utilities';
 import { executeLoading } from '../../../common/Effect';
-import { verticalScale } from '../../../assets/styles/ScaleIndicator';
+import { verticalScale, moderateScale } from '../../../assets/styles/ScaleIndicator';
 import * as util from 'lodash';
 
 //firebase
@@ -150,14 +150,14 @@ class ApproveProgressTask extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left>
+                    <Left style={{ flex: 1 }}>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+                            <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
                     <Body>
-                        <Title>
+                        <Title style={{ flex: 3}}>
                             PHẢN HỒI TIẾN ĐỘ CÔNG VIỆC
                         </Title>
                     </Body>

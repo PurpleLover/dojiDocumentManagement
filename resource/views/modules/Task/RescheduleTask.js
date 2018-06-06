@@ -46,10 +46,10 @@ class RescheduleTask extends Component {
     }
 
     setDate = (newDate) => {
-		this.setState({
-			chosenDate: newDate,
-		})
-	}
+        this.setState({
+            chosenDate: newDate,
+        })
+    }
 
     navigateBackToDetail() {
         this.props.navigation.navigate('DetailTaskScreen', {
@@ -166,32 +166,32 @@ class RescheduleTask extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }} hasTabs>
-                    <Left style={{flex:1}}>
+                    <Left style={{ flex: 1 }}>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+                            <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
-                    <Body style={{flex:3}}>
-                        <Title style={{color:'#fff', fontWeight:'bold'}}>
+                    <Body style={{ flex: 3 }}>
+                        <Title style={{ color: '#fff', fontWeight: 'bold' }}>
                             XIN LÙI HẠN
                         </Title>
                     </Body>
-                    <Right style={{flex:1}}/>
+                    <Right style={{ flex: 1 }} />
                 </Header>
 
                 <Content>
                     <Form>
                         <Item>
                             <DatePicker
-                                style={{ width: scale(300), alignSelf:'center', marginTop: verticalScale(30) }}
+                                style={{ width: scale(300), alignSelf: 'center', marginTop: verticalScale(30) }}
                                 date={this.state.chosenDate}
                                 mode="date"
                                 placeholder='Hạn hoàn thành'
                                 format='YYYY-MM-DD'
                                 minDate={new Date()}
                                 confirmBtnText='CHỌN'
-								cancelBtnText='BỎ'
+                                cancelBtnText='BỎ'
                                 customStyles={{
                                     dateIcon: {
                                         position: 'absolute',

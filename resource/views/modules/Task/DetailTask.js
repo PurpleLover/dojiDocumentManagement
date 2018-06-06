@@ -27,7 +27,7 @@ import {
     CONGVIEC_CONSTANT, PLANJOB_CONSTANT, EMPTY_DATA_ICON_URI, EMPTY_STRING, DEFAULT_PAGE_INDEX
 } from '../../../common/SystemConstant';
 import { asyncDelay, convertDateToString, formatLongText } from '../../../common/Utilities';
-import { verticalScale, indicatorResponsive, scale } from '../../../assets/styles/ScaleIndicator';
+import { verticalScale, indicatorResponsive, scale, moderateScale } from '../../../assets/styles/ScaleIndicator';
 import { executeLoading, dataLoading } from '../../../common/Effect';
 
 //styles
@@ -448,19 +448,19 @@ class DetailTask extends Component {
             <MenuProvider>
                 <Container>
                     <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                        <Left style={{flex:1}}>
+                        <Left style={{ flex: 1 }}>
                             <Button transparent onPress={() => this.navigateBackToList()}>
-                                <Icon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+                                <Icon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                             </Button>
                         </Left>
 
-                        <Body style={{flex:3}}>
-                            <Title style={{color:'#fff', fontWeight:'bold'}}>
+                        <Body style={{ flex: 3 }}>
+                            <Title style={{ color: '#fff', fontWeight: 'bold' }}>
                                 THÔNG TIN CÔNG VIỆC
                             </Title>
                         </Body>
 
-                        <Right style={{flex:1}}>
+                        <Right style={{ flex: 1 }}>
                             {
                                 renderIf(menuActions.length > 0)(
                                     <Menu style={{ marginHorizontal: scale(5) }}>

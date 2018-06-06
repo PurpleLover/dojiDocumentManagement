@@ -114,7 +114,7 @@ class HistoryRescheduleTask extends Component {
 					}, {
 						'text': 'KHÔNG ĐỒNG Ý', onPress: () => { this.onApproveReschedule(false, item.ID) }
 					}, {
-						'text': 'THOÁT', onPress: () => {}
+						'text': 'THOÁT', onPress: () => { }
 					}
 				]
 			)
@@ -247,18 +247,18 @@ class HistoryRescheduleTask extends Component {
 		return (
 			<Container>
 				<Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-					<Left style={{flex:1}}>
+					<Left style={{ flex: 1 }}>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
-							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+							<RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Left>
 
-					<Body style={{flex:3}}>
-						<Title style={{color:'#fff', fontWeight:'bold'}}>
+					<Body style={{ flex: 3 }}>
+						<Title style={{ color: '#fff', fontWeight: 'bold' }}>
 							LỊCH SỬ LÙI HẠN
 						</Title>
 					</Body>
-					<Right style={{flex:1}}></Right>
+					<Right style={{ flex: 1 }}></Right>
 				</Header>
 
 				<Content contentContainerStyle={{ flex: 1 }}>

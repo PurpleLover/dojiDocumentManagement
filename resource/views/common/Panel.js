@@ -27,9 +27,9 @@ export default class Panel extends Component {
 
         this.state = {
             title: props.title,
-            expanded: true,
+            expanded: props.title === 'VĂN BẢN TRÌNH KÝ' ? true : false,
             rotateAnimation: new Animated.Value(0),
-            heightAnimation: new Animated.Value(verticalScale(60 * (this.props.children.length + 1))), //used to 60
+            heightAnimation: new Animated.Value(props.title === 'VĂN BẢN TRÌNH KÝ' ? verticalScale(60 * (this.props.children.length + 1)) : verticalScale(60)), //used to 60
         };
         this.setMaxHeight = this.setMaxHeight.bind(this);
         this.setMinHeight = this.setMinHeight.bind(this);
@@ -54,7 +54,7 @@ export default class Panel extends Component {
 
         const initRotateValue = this.state.expanded ? 0 : 1;
         const finalRotateValue = this.state.expanded ? 1 : 0;
-        this.state.rotateAnimation.setValue(initRotateValue)
+        this.state.rotateAnimation.setValue(initRotateValue);
 
         this.setState({
             expanded: !this.state.expanded

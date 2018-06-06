@@ -24,7 +24,7 @@ import {
 } from '../../../common/SystemConstant';
 import { asyncDelay } from '../../../common/Utilities';
 import { executeLoading } from '../../../common/Effect';
-import { verticalScale, scale } from '../../../assets/styles/ScaleIndicator';
+import { verticalScale, scale, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 //firebase
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
@@ -131,19 +131,19 @@ class UpdateProgressTask extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left style={{flex:1}}>
+                    <Left style={{ flex: 1 }}>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+                            <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
-                    <Body style={{flex:3}}>
-                        <Title style={{color:'#fff', fontWeight:'bold'}}>
+                    <Body style={{ flex: 3 }}>
+                        <Title style={{ color: '#fff', fontWeight: 'bold' }}>
                             CẬP NHẬT TIẾN ĐỘ CÔNG VIỆC
                         </Title>
                     </Body>
 
-                    <Right style={{flex:1}}>
+                    <Right style={{ flex: 1 }}>
                     </Right>
                 </Header>
 

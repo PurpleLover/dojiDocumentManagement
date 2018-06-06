@@ -93,7 +93,7 @@ class HistoryEvaluateTask extends Component {
 
 
     renderItem = ({ item }) => {
-        const statusResponsive = (deviceWidth<340) ? 'Trạng thái: ' : ' - Trạng thái: ';
+        const statusResponsive = (deviceWidth < 340) ? 'Trạng thái: ' : ' - Trạng thái: ';
         return (
             <SwipeRow
                 leftOpenValue={75}
@@ -155,17 +155,17 @@ class HistoryEvaluateTask extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left style={{flex:1}}>
+                    <Left style={{ flex: 1 }}>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+                            <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
-                    <Body style={{flex:3}}>
-                        <Title style={{color:'#fff', fontWeight:'bold'}}>
+                    <Body style={{ flex: 3 }}>
+                        <Title style={{ color: '#fff', fontWeight: 'bold' }}>
                             LỊCH SỬ PHÊ DUYỆT TIẾN ĐỘ
 						</Title>
                     </Body>
-                    <Right style={{flex:1}}/>
+                    <Right style={{ flex: 1 }} />
                 </Header>
 
                 <Content contentContainerStyle={{ flex: 1 }}>
@@ -293,8 +293,8 @@ const styles = StyleSheet.create({
     rowContainer: {
         width: '100%',
         paddingLeft: scale(10),
-        flexDirection: (deviceWidth>=340) ? 'row' : 'column',
-        alignItems: (deviceWidth>=340) ? 'center': 'flex-start',
+        flexDirection: (deviceWidth >= 340) ? 'row' : 'column',
+        alignItems: (deviceWidth >= 340) ? 'center' : 'flex-start',
     },
     rowLabel: {
         color: '#000',

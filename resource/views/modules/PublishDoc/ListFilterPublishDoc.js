@@ -15,7 +15,8 @@ import {
     API_URL, DEFAULT_PAGE_INDEX,
     DEFAULT_PAGE_SIZE, EMPTY_DATA_ICON_URI,
     EMPTY_STRING, EMTPY_DATA_MESSAGE,
-    HEADER_COLOR, LOADER_COLOR, DOKHAN_CONSTANT
+    HEADER_COLOR, LOADER_COLOR, DOKHAN_CONSTANT,
+    Colors
 } from '../../../common/SystemConstant';
 
 //native-base
@@ -215,7 +216,7 @@ class ListFilterPublishDoc extends Component {
         return (
             <Container>
                 <Header searchBar rounded style={{ backgroundColor: HEADER_COLOR }}>
-                        <Item>
+                        <Item  style={{ backgroundColor: Colors.WHITE }}>
                             <Icon name="ios-arrow-round-back" onPress={() => this.navigateToList()} />
                             <Input placeholder="Mã hiệu hoặc trích yếu"
                                     value={this.state.filterValue}

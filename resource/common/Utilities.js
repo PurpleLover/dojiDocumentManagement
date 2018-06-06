@@ -30,19 +30,7 @@ export function convertDateToString(date) {
     let deadline = new Date();
     if (date !== null && date !== '') {
         deadline = new Date(date);
-        let dateStr = deadline.getDate().toString();
-        if (deadline.getDate() < 10) {
-            dateStr = '0' + deadline.getDate();
-        }
-        let month = (deadline.getMonth() + 1);
-        let monthStr = '';
-        if (month < 10) {
-            monthStr = '0' + month;
-        } else {
-            monthStr = month.toString();
-        }
-        let deadlineStr = (dateStr + '/' + (monthStr) + '/' + deadline.getFullYear());
-
+        let deadlineStr = (_readableFormat(deadline.getDate()) + '/' + _readableFormat(deadline.getMonth() + 1) + '/' + deadline.getFullYear());
         return deadlineStr;
     }
     return 'N/A';
@@ -61,17 +49,22 @@ export function convertTimeToString(date) {
 
 //chuyển sang định dạng ngày/tháng/năm
 export function convertDateTimeToString(date) {
-    
+
     if (date !== null && date !== '') {
         let deadline = new Date(date);
-        const pad = val => val < 10 ? '0' + val : val; // Append '0' before alone dateTime
+        //const pad = val => val < 10 ? '0' + val : val; // Append '0' before alone dateTime
 
-        let deadlineStr = pad(deadline.getDate()) + '/' + pad(deadline.getMonth()) + '/' + deadline.getFullYear();
-        
-        deadlineStr += ' ' + pad(deadline.getHours()) + ':' + pad(deadline.getMinutes()) + ':' + pad(deadline.getSeconds());
+        let deadlineStr = _readableFormat(deadline.getDate()) + '/' + _readableFormat(deadline.getMonth()) + '/' + deadline.getFullYear();
+
+        deadlineStr += ' ' + _readableFormat(deadline.getHours()) + ':' + _readableFormat(deadline.getMinutes()) + ':' + _readableFormat(deadline.getSeconds());
         return deadlineStr;
     }
     return 'N/A';
+}
+
+//Thêm '0' vào trước ngày tháng nếu chỉ có một chữ số
+function _readableFormat(value) {
+    return (value < 10) ? '0' + value : value;
 }
 
 export const asyncDelay = (ms) => {

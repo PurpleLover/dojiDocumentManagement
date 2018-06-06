@@ -165,7 +165,7 @@ export default class TaskAttachment extends Component {
         return (
             <Container>
                 <Header searchBar style={{ backgroundColor: Colors.WHITE }}>
-                    <Item>
+                    <Item style={{ backgroundColor: Colors.WHITE }}>
                         <Icon name='ios-search' />
                         <Input placeholder='Tên tài liệu'
                             value={this.state.filterValue}

@@ -23,7 +23,7 @@ import { connect } from 'react-redux';
 //utilities
 import { API_URL, EMPTY_STRING, HEADER_COLOR, Colors } from '../../../common/SystemConstant';
 import { asyncDelay } from '../../../common/Utilities'
-import { scale, verticalScale } from '../../../assets/styles/ScaleIndicator';
+import { scale, verticalScale, moderateScale } from '../../../assets/styles/ScaleIndicator';
 import { executeLoading } from '../../../common/Effect';
 import * as util from 'lodash';
 
@@ -166,19 +166,19 @@ class EvaluationTask extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left style={{flex:1}}>
+                    <Left style={{ flex: 1 }}>
                         <Button transparent onPress={() => this.navigateToDetail()}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+                            <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
-                    <Body style={{flex:3}}>
-                        <Title style={{color:'#fff', fontWeight:'bold'}}>
+                    <Body style={{ flex: 3 }}>
+                        <Title style={{ color: '#fff', fontWeight: 'bold' }}>
                             ĐÁNH GIÁ CÔNG VIỆC
                         </Title>
                     </Body>
 
-                    <Right style={{flex:1}}/>
+                    <Right style={{ flex: 1 }} />
                 </Header>
 
                 <Content>

@@ -21,7 +21,9 @@ import renderIf from 'render-if';
 //utilities
 import { formatLongText, openSideBar } from '../../../common/Utilities';
 import { API_URL, HEADER_COLOR, LOADER_COLOR, DOKHAN_CONSTANT,
-  VANBAN_CONSTANT, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '../../../common/SystemConstant';
+  VANBAN_CONSTANT, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE,
+  Colors
+} from '../../../common/SystemConstant';
 import { indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
 //style
@@ -156,7 +158,7 @@ class ListFilterSignDoc extends Component {
         return(
             <Container>
                 <Header searchBar rounded style={{backgroundColor: HEADER_COLOR}}>
-                    <Item>
+                    <Item style={{ backgroundColor: Colors.WHITE }}>
                         <Icon name='ios-arrow-round-back' onPress={() => this.navigateBackToList()}/>
                         <Input placeholder='Mã hiệu, trích yếu' 
                             value={this.state.filterValue}

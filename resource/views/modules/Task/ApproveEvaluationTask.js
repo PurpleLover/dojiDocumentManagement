@@ -25,7 +25,7 @@ import * as util from 'lodash';
 import { API_URL, EMPTY_STRING, HEADER_COLOR, Colors } from '../../../common/SystemConstant';
 import { executeLoading } from '../../../common/Effect';
 import { asyncDelay } from '../../../common/Utilities';
-import { scale, verticalScale } from '../../../assets/styles/ScaleIndicator';
+import { scale, verticalScale, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
 //firebase
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
@@ -187,9 +187,9 @@ class ApproveEvaluationTask extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left>
+                    <Left style={{ flex: 1 }}>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
-                            <RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+                            <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
