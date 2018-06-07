@@ -31,7 +31,10 @@ import {
 } from '../../../common/SystemConstant';
 import { dataLoading } from '../../../common/Effect';
 import { emptyDataPage, formatLongText, convertDateToString, convertDateTimeToString } from '../../../common/Utilities';
+
+//styles
 import { scale, verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
+import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
 
 class HistoryProgressTask extends Component {
 	constructor(props) {
@@ -146,17 +149,17 @@ class HistoryProgressTask extends Component {
 		return (
 			<Container>
 				<Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-					<Left style={{ flex: 1 }}>
+					<Left style={NativeBaseStyle.left}>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
 							<RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Left>
-					<Body style={{ flex: 3 }}>
-						<Title style={{ color: '#fff', fontWeight: 'bold' }}>
+					<Body style={NativeBaseStyle.body}>
+						<Title style={NativeBaseStyle.bodyTitle}>
 							LỊCH SỬ CẬP NHẬT TIẾN ĐỘ
 						</Title>
 					</Body>
-					<Right style={{ flex: 1 }} />
+					<Right style={NativeBaseStyle.right} />
 				</Header>
 
 				<Content contentContainerStyle={{ flex: 1 }}>

@@ -28,6 +28,9 @@ import * as util from 'lodash';
 //firebase
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
+//styles
+import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
+
 class ApproveProgressTask extends Component {
     constructor(props) {
         super(props);
@@ -150,19 +153,19 @@ class ApproveProgressTask extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left style={{ flex: 1 }}>
+                    <Left style={NativeBaseStyle.left}>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
                             <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
-                    <Body>
-                        <Title style={{ flex: 3}}>
+                    <Body style={NativeBaseStyle.body}>
+                        <Title style={NativeBaseStyle.bodyTitle}>
                             PHẢN HỒI TIẾN ĐỘ CÔNG VIỆC
                         </Title>
                     </Body>
 
-                    <Right style={{flex:1}}/>
+                    <Right style={NativeBaseStyle.right}/>
                 </Header>
 
                 <Content>

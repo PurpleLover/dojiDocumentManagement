@@ -18,7 +18,8 @@ import { verticalScale, indicatorResponsive, moderateScale } from '../../../asse
 
 //styles
 import { TabStyle } from '../../../assets/styles/TabStyle';
-import { MenuStyle, MenuOptionStyle } from '../../../assets/styles/MenuPopUpStyle';
+import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
+import { MenuStyle, MenuOptionStyle, MenuOptionsCustomStyle, MenuOptionCustomStyle } from '../../../assets/styles/MenuPopUpStyle';
 
 //lib
 import {
@@ -152,12 +153,12 @@ class DetailSignDoc extends Component {
                                 <RneIcon name='dots-three-horizontal' color={Colors.WHITE} type='entypo' size={verticalScale(25)} />
                             </MenuTrigger>
 
-                            <MenuOptions>
+                            <MenuOptions customStyles={MenuOptionsCustomStyle}>
                                 {
                                     this.state.docInfo.VanBanDi.LstStep.map((item, index) => (
                                         <MenuOption key={index} onSelect={() => this.onSelectWorkFlowStep(item)}>
                                             <RnText style={MenuOptionStyle.text}>
-                                                {util.toUpper(item.NAME)}
+                                                {util.capitalize(item.NAME)}
                                             </RnText>
                                         </MenuOption>
                                     ))
@@ -175,19 +176,19 @@ class DetailSignDoc extends Component {
             <MenuProvider>
                 <Container>
                     <Header hasTabs style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                        <Left style={{flex: 1}}>
+                        <Left style={NativeBaseStyle.left}>
                             <Button transparent onPress={() => this.navigateBackToList()}>
                                 <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                             </Button>
                         </Left>
 
-                        <Body style={{flex:3}}>
-                            <Title style={{color:'#fff', fontWeight:'bold'}} >
+                        <Body style={NativeBaseStyle.body}>
+                            <Title style={NativeBaseStyle.bodyTitle} >
                                 THÔNG TIN VĂN BẢN
                             </Title>
                         </Body>
 
-                        <Right style={{flex:1}}>
+                        <Right style={NativeBaseStyle.right}>
                             {
                                 workflowMenu
                             }

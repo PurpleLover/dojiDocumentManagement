@@ -14,6 +14,9 @@ import {
 import { connect } from 'react-redux';
 import * as taskAction from '../../../redux/modules/task/TaskAction'
 
+//utilities
+import { Colors } from '../../../common/SystemConstant';
+
 //lib
 import {
     Container, Content, List as NbList, ListItem as NbListItem,
@@ -127,7 +130,7 @@ class AssignTaskMainProcessUsrs extends Component {
                                 </Body>
 
                                 <Right>
-                                    <Radio color={'#FF0033'}
+                                    <Radio color={Colors.RED_PANTONE_186C}
                                         selected={this.props.mainProcessUser == item.ID}
                                         onPress={() => this.onSelectUser(item.ID)} />
                                 </Right>

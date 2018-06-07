@@ -37,6 +37,7 @@ import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
 //styles
 import { TabStyle } from '../../../assets/styles/TabStyle';
+import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
 
 //views
 import AssignTaskJoinProcessUsers from './AssignTaskJoinProcessUsers';
@@ -315,8 +316,7 @@ class AssignTask extends Component {
 					<Tab heading={
 						<TabHeading style={(this.state.selectedTabIndex == 0 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
 							<Icon name='ios-person-outline' style={(this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText)} />
-							<Text style={[TabStyle.tabText,
-								(this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText)]}>
+							<Text style={[(this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText)]}>
 								XỬ LÝ CHÍNH
 							</Text>
 						</TabHeading>
@@ -366,8 +366,7 @@ class AssignTask extends Component {
 					<Tab heading={
 						<TabHeading style={(this.state.selectedTabIndex == 1 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
 							<Icon name='ios-people-outline' style={(this.state.selectedTabIndex == 1 ? TabStyle.activeText : TabStyle.inActiveText)} />
-							<Text style={[TabStyle.tabText,
-							(this.state.selectedTabIndex == 1 ? TabStyle.activeText : TabStyle.inActiveText)]}>
+							<Text style={[(this.state.selectedTabIndex == 1 ? TabStyle.activeText : TabStyle.inActiveText)]}>
 								THAM GIA XỬ LÝ
 							</Text>
 						</TabHeading>
@@ -420,21 +419,21 @@ class AssignTask extends Component {
 		return (
 			<Container>
 				<Header style={{ backgroundColor: HEADER_COLOR }}>
-					<Left style={{flex:1}}>
+					<Left style={NativeBaseStyle.left}>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
-							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={'#fff'} type='ionicon' />
+							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Left>
 
-					<Body style={{flex:3}}>
-						<Title style={{color:'#fff', fontWeight:'bold'}}>
+					<Body style={NativeBaseStyle.body}>
+						<Title style={NativeBaseStyle.bodyTitle}>
 							GIAO VIỆC
 						</Title>
 					</Body>
 
-					<Right style={{flex:1}}>
+					<Right style={NativeBaseStyle.right}>
 						<Button transparent onPress={() => this.onAssginTask()}>
-							<RneIcon name='md-send' size={verticalScale(30)} color={'#fff'} type='ionicon' />
+							<RneIcon name='md-send' size={verticalScale(30)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Right>
 				</Header>

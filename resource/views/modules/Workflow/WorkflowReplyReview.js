@@ -42,7 +42,10 @@ import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-
 import * as workflowAction from '../../../redux/modules/workflow/WorkflowAction';
 
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
+
+//styles
 import { verticalScale, moderateScale } from '../../../assets/styles/ScaleIndicator';
+import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
 
 class WorkflowReplyReview extends Component {
     constructor(props) {
@@ -169,19 +172,19 @@ class WorkflowReplyReview extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left style={{ flex: 1 }}>
+                    <Left style={NativeBaseStyle.left}>
                         <Button transparent onPress={() => this.navigateBack()}>
                             <Icon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type="ionicon" />
                         </Button>
                     </Left>
 
-                    <Body style={{ flex: 3 }}>
-                        <Title style={{ color: '#fff', fontWeight: 'bold' }}>
+                    <Body style={NativeBaseStyle.body}>
+                        <Title style={NativeBaseStyle.bodyTitle}>
                             REVIEW VĂN BẢN TRÌNH KÝ
                         </Title>
                     </Body>
 
-                    <Right style={{ flex: 1 }}>
+                    <Right style={NativeBaseStyle.right}>
                         <Button transparent>
                         </Button>
                     </Right>

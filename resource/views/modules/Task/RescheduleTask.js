@@ -30,6 +30,9 @@ import { scale, verticalScale, moderateScale } from '../../../assets/styles/Scal
 //firebase
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
+//styles
+import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
+
 class RescheduleTask extends Component {
     constructor(props) {
         super(props);
@@ -166,18 +169,18 @@ class RescheduleTask extends Component {
         return (
             <Container>
                 <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }} hasTabs>
-                    <Left style={{ flex: 1 }}>
+                    <Left style={NativeBaseStyle.left}>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
                             <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
-                    <Body style={{ flex: 3 }}>
-                        <Title style={{ color: '#fff', fontWeight: 'bold' }}>
+                    <Body style={NativeBaseStyle.body}>
+                        <Title style={NativeBaseStyle.bodyTitle}>
                             XIN LÙI HẠN
                         </Title>
                     </Body>
-                    <Right style={{ flex: 1 }} />
+                    <Right style={NativeBaseStyle.right} />
                 </Header>
 
                 <Content>

@@ -33,6 +33,9 @@ import { dataLoading, executeLoading } from '../../../common/Effect';
 import { scale, verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
+//styles
+import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
+
 class HistoryRescheduleTask extends Component {
 	constructor(props) {
 		super(props);
@@ -66,6 +69,7 @@ class HistoryRescheduleTask extends Component {
 
 	fetchData = async () => {
 		const url = `${API_URL}/api/HscvCongViec/GetListRescheduleTask/${this.state.taskId}/${this.state.pageIndex}/${this.state.pageSize}?query=`;
+
 		const result = await fetch(url);
 		const resultJson = await result.json();
 
@@ -247,18 +251,18 @@ class HistoryRescheduleTask extends Component {
 		return (
 			<Container>
 				<Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-					<Left style={{ flex: 1 }}>
+					<Left style={NativeBaseStyle.left}>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
 							<RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Left>
 
-					<Body style={{ flex: 3 }}>
-						<Title style={{ color: '#fff', fontWeight: 'bold' }}>
+					<Body style={NativeBaseStyle.body}>
+						<Title style={NativeBaseStyle.bodyTitle}>
 							LỊCH SỬ LÙI HẠN
 						</Title>
 					</Body>
-					<Right style={{ flex: 1 }}></Right>
+					<Right style={NativeBaseStyle.right}></Right>
 				</Header>
 
 				<Content contentContainerStyle={{ flex: 1 }}>

@@ -29,6 +29,7 @@ import { verticalScale, indicatorResponsive, moderateScale } from '../../../asse
 
 //styles
 import { TabStyle } from '../../../assets/styles/TabStyle';
+import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle'
 import { DetailPublishDocStyle } from '../../../assets/styles/PublishDocStyle';
 
 //views
@@ -88,18 +89,18 @@ class DetailPubslishDoc extends Component {
         return (
             <Container>
                 <Header hasTabs style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left style={{ flex: 1 }}>
+                    <Left style={NativeBaseStyle.left}>
                         <Button transparent onPress={this.navigateBackToList}>
                             <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
-                    <Body style={{ flex: 3, color: '#fff' }}>
-                        <Title>
+                    <Body style={NativeBaseStyle.body}>
+                        <Title style={NativeBaseStyle.bodyTitle}>
                             THÔNG TIN VĂN BẢN
                         </Title>
                     </Body>
-                    <Right style={{ flex: 1 }}></Right>
+                    <Right style={NativeBaseStyle.right}></Right>
                 </Header>
 
                 {
@@ -129,9 +130,8 @@ class PublishDocContent extends Component {
                     tabBarUnderlineStyle={TabStyle.underLineStyle}>
                     <Tab heading={
                         <TabHeading style={(this.state.selectedTabIndex == 0 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
-                            <NBIcon name='information-circle' style={TabStyle.activeText} />
-                            <NBText style={[TabStyle.tabText,
-                            (this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText)]}>
+                            <NBIcon name='ios-information-circle-outline' style={TabStyle.activeText} />
+                            <NBText style={[(this.state.selectedTabIndex == 0 ? TabStyle.activeText : TabStyle.inActiveText)]}>
                                 THÔNG TIN CHÍNH
                             </NBText>
                         </TabHeading>
@@ -141,9 +141,8 @@ class PublishDocContent extends Component {
 
                     <Tab heading={
                         <TabHeading style={(this.state.selectedTabIndex == 1 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
-                            <NBIcon name='attach' style={TabStyle.activeText} />
-                            <NBText style={[TabStyle.tabText,
-                            (this.state.selectedTabIndex == 1 ? TabStyle.activeText : TabStyle.inActiveText)]}>
+                            <NBIcon name='ios-attach-outline' style={TabStyle.activeText} />
+                            <NBText style={[(this.state.selectedTabIndex == 1 ? TabStyle.activeText : TabStyle.inActiveText)]}>
                                 ĐÍNH KÈM
                             </NBText>
                         </TabHeading>
@@ -153,9 +152,8 @@ class PublishDocContent extends Component {
 
                     <Tab heading={
                         <TabHeading style={(this.state.selectedTabIndex == 2 ? TabStyle.activeTab : TabStyle.inActiveTab)}>
-                            <NBIcon name='time' style={TabStyle.activeText} />
-                            <NBText style={[TabStyle.tabText,
-                            (this.state.selectedTabIndex == 2 ? TabStyle.activeText : TabStyle.inActiveText)]}>
+                            <NBIcon name='ios-time-outline' style={TabStyle.activeText} />
+                            <NBText style={[(this.state.selectedTabIndex == 2 ? TabStyle.activeText : TabStyle.inActiveText)]}>
                                 LỊCH SỬ XỬ LÝ
                                 </NBText>
                         </TabHeading>

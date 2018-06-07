@@ -25,6 +25,9 @@ import {
 } from 'react-native-elements';
 import * as util from 'lodash';
 
+//utilities
+import { Colors } from '../../../common/SystemConstant'
+
 //style
 import {verticalScale} from '../../../assets/styles/ScaleIndicator';
 
@@ -136,7 +139,7 @@ class AssignTaskJoinProcessUsers extends Component {
                                 </Body>
 
                                 <Right>
-                                    <CheckBox color={'#FF0033'}
+                                    <CheckBox color={Colors.RED_PANTONE_186C}
                                         checked={this.state.joinProcessUsers.indexOf(item.ID) > -1}
                                         onPress={() => this.onSelectUser(item.ID)} />
                                 </Right>

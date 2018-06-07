@@ -28,15 +28,16 @@ import {
     emptyDataPage, formatLongText,
     convertDateToString, asyncDelay,
 } from '../../../common/Utilities'
-import {
-    executeLoading
-} from '../../../common/Effect'
+import { executeLoading } from '../../../common/Effect'
 import {
     API_URL, DEFAULT_PAGE_INDEX,
     EMPTY_STRING, LOADMORE_COLOR,
     LOADER_COLOR, HEADER_COLOR, DEFAULT_PAGE_SIZE, Colors
 } from '../../../common/SystemConstant';
+
+//styles
 import { scale, verticalScale, indicatorResponsive, moderateScale } from '../../../assets/styles/ScaleIndicator';
+import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
 
 class GroupSubTask extends Component {
     constructor(props) {
@@ -238,18 +239,18 @@ class GroupSubTask extends Component {
         return (
             <Container>
                 <Header searchBar style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                    <Left style={{ flex: 1 }}>
+                    <Left style={NativeBaseStyle.left}>
                         <Button transparent onPress={() => this.navigateBackToDetail()}>
                             <RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                         </Button>
                     </Left>
 
-                    <Body style={{ flex: 3 }}>
-                        <Title style={{ color: '#fff', fontWeight: 'bold' }}>
+                    <Body style={NativeBaseStyle.body}>
+                        <Title style={NativeBaseStyle.bodyTitle}>
                             CÔNG VIỆC CON
                         </Title>
                     </Body>
-                    <Right style={{ flex: 1 }}></Right>
+                    <Right style={NativeBaseStyle.right}></Right>
                 </Header>
 
                 <Content contentContainerStyle={{ flex: 1 }}>

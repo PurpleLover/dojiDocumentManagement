@@ -31,13 +31,15 @@ import { verticalScale, indicatorResponsive, scale, moderateScale } from '../../
 import { executeLoading, dataLoading } from '../../../common/Effect';
 
 //styles
-import { MenuStyle, MenuOptionStyle } from '../../../assets/styles/MenuPopUpStyle';
+import { MenuStyle, MenuOptionStyle, MenuOptionsCustomStyle } from '../../../assets/styles/MenuPopUpStyle';
 import { TabStyle } from '../../../assets/styles/TabStyle';
+import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
 
 //comps
 import TaskDescription from './TaskDescription';
 import TaskAttachment from './TaskAttachment';
 import GroupSubTask from './GroupSubTask';
+import ResultEvaluationTask from './ResultEvaluationTask'
 
 class DetailTask extends Component {
     constructor(props) {
@@ -171,7 +173,7 @@ class DetailTask extends Component {
                         }}
                             style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                             <Text style={MenuOptionStyle.text}>
-                                CẬP NHẬT TIẾN ĐỘ
+                                Cập nhật tiến độ
                             </Text>
                         </MenuOption>
                     )
@@ -186,7 +188,7 @@ class DetailTask extends Component {
                             }}
                                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                                 <Text style={MenuOptionStyle.text}>
-                                    XIN LÙI HẠN CÔNG VIỆC
+                                    Lùi hạn công việc
                                 </Text>
                             </MenuOption>
                         )
@@ -203,8 +205,8 @@ class DetailTask extends Component {
                         }}
                             style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                             <Text style={MenuOptionStyle.text}>
-                                PHẢN HỒI CÔNG VIỆC
-                                </Text>
+                                Phản hồi công việc
+                            </Text>
                         </MenuOption>
                     )
                 }
@@ -218,7 +220,7 @@ class DetailTask extends Component {
                         })}
                             style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                             <Text style={MenuOptionStyle.text}>
-                                TẠO CÔNG VIỆC CON
+                                Tạo công việc con
                             </Text>
                         </MenuOption>
                     )
@@ -234,7 +236,7 @@ class DetailTask extends Component {
                             key={1}
                             style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                             <Text style={MenuOptionStyle.text}>
-                                GIAO VIỆC
+                                Giao việc
                             </Text>
                         </MenuOption>
                     )
@@ -264,7 +266,7 @@ class DetailTask extends Component {
                                 key={3}
                                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                                 <Text style={MenuOptionStyle.text}>
-                                    DUYỆT ĐÁNH GIÁ CÔNG VIỆC
+                                    Duyệt đánh giá công việc
                                 </Text>
                             </MenuOption>
                         )
@@ -279,7 +281,7 @@ class DetailTask extends Component {
                                 key={4}
                                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                                 <Text style={MenuOptionStyle.text}>
-                                    ĐÁNH GIÁ CÔNG VIỆC
+                                    Tự đánh giá công việc
                                 </Text>
                             </MenuOption>
                         )
@@ -301,7 +303,7 @@ class DetailTask extends Component {
                                 key={5}
                                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                                 <Text style={MenuOptionStyle.text}>
-                                    GIAO VIỆC
+                                    Giao việc
                                 </Text>
                             </MenuOption>
                         )
@@ -310,7 +312,7 @@ class DetailTask extends Component {
                             <MenuOption key={6} onSelect={() => this.onConfirmToStartTask()}
                                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                                 <Text style={MenuOptionStyle.text}>
-                                    BẮT ĐẦU XỬ LÝ
+                                    Bắt đầu xử lý
                                 </Text>
                             </MenuOption>
                         )
@@ -364,8 +366,8 @@ class DetailTask extends Component {
                                         onSelect={() => this.onConfirmToStartTask()}
                                         style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                                         <Text style={MenuOptionStyle.text}>
-                                            BẮT ĐẦU XỬ LÝ
-                                            </Text>
+                                            Bắt đầu xử lý
+                                        </Text>
                                     </MenuOption>
                                 )
                             }
@@ -377,7 +379,7 @@ class DetailTask extends Component {
                                 onSelect={() => this.onConfirmToStartTask()}
                                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                                 <Text style={MenuOptionStyle.text}>
-                                    BẮT ĐẦU XỬ LÝ
+                                    Bắt đầu xử lý
                                 </Text>
                             </MenuOption>
                         )
@@ -397,7 +399,7 @@ class DetailTask extends Component {
                 })}
                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                 <Text style={MenuOptionStyle.text}>
-                    D/S CÔNG VIỆC CON
+                    Các công việc con
                 </Text>
             </MenuOption>
         );
@@ -411,8 +413,8 @@ class DetailTask extends Component {
                 })}
                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                 <Text style={MenuOptionStyle.text}>
-                    THEO DÕI TIẾN ĐỘ
-                    </Text>
+                    Theo dõi tiến độ
+                </Text>
             </MenuOption>
         );
 
@@ -426,7 +428,7 @@ class DetailTask extends Component {
                 })}
                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                 <Text style={MenuOptionStyle.text}>
-                    LỊCH SỬ LÙI HẠN
+                    Lịch sử lùi hạn
                 </Text>
             </MenuOption>
         );
@@ -440,7 +442,7 @@ class DetailTask extends Component {
                 })}
                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                 <Text style={MenuOptionStyle.text}>
-                    LỊCH SỬ PHẢN HỒI
+                    Lịch sử phản hồi
                 </Text>
             </MenuOption>
         );
@@ -448,19 +450,19 @@ class DetailTask extends Component {
             <MenuProvider>
                 <Container>
                     <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
-                        <Left style={{ flex: 1 }}>
+                        <Left style={NativeBaseStyle.left}>
                             <Button transparent onPress={() => this.navigateBackToList()}>
                                 <Icon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
                             </Button>
                         </Left>
 
-                        <Body style={{ flex: 3 }}>
-                            <Title style={{ color: '#fff', fontWeight: 'bold' }}>
+                        <Body style={NativeBaseStyle.body}>
+                            <Title style={NativeBaseStyle.bodyTitle}>
                                 THÔNG TIN CÔNG VIỆC
                             </Title>
                         </Body>
 
-                        <Right style={{ flex: 1 }}>
+                        <Right style={NativeBaseStyle.right}>
                             {
                                 renderIf(menuActions.length > 0)(
                                     <Menu style={{ marginHorizontal: scale(5) }}>
@@ -468,7 +470,7 @@ class DetailTask extends Component {
                                             <Icon name='dots-three-horizontal' color={Colors.WHITE} type='entypo' size={verticalScale(25)} />
                                         </MenuTrigger>
 
-                                        <MenuOptions>
+                                        <MenuOptions customStyles={MenuOptionsCustomStyle}>
                                             {
                                                 menuActions
                                             }
@@ -507,15 +509,16 @@ class TaskContent extends Component {
     }
 
     render() {
-        return (
-            <RnView style={{ flex: 1 }}>
+        let bodyContent = null;
+        if (this.state.info.PhieuDanhGia != null) {
+            bodyContent = (
                 <Tabs
                     initialPage={0}
                     tabBarUnderlineStyle={TabStyle.underLineStyle}
                     onChangeTab={(selectedTabIndex) => this.setState({ selectedTabIndex })}>
                     <Tab heading={
                         <TabHeading style={(this.state.selectedTabIndex == 0) ? TabStyle.activeTab : TabStyle.inActiveTab}>
-                            <NbIcon name='ios-information-circle' style={TabStyle.activeText} />
+                            <NbIcon name='ios-information-circle-outline' style={TabStyle.activeText} />
                             <Text style={(this.state.selectedTabIndex == 0) ? TabStyle.activeText : TabStyle.inActiveText}>
                                 MÔ TẢ
                             </Text>
@@ -525,9 +528,50 @@ class TaskContent extends Component {
                     </Tab>
 
                     <Tab heading={
-                        <TabHeading style={(this.state.selectedTabIndex == 2) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                        <TabHeading style={(this.state.selectedTabIndex == 1) ? TabStyle.activeTab : TabStyle.inActiveTab}>
                             <NbIcon name='ios-attach' style={TabStyle.activeText} />
+                            <Text style={(this.state.selectedTabIndex == 1) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                ĐÍNH KÈM
+                            </Text>
+                        </TabHeading>
+                    }>
+                        <TaskAttachment info={this.props.info} />
+                    </Tab>
+
+                    <Tab heading={
+                        <TabHeading style={(this.state.selectedTabIndex == 2) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                            <NbIcon name='ios-create-outline' style={TabStyle.activeText} />
                             <Text style={(this.state.selectedTabIndex == 2) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                ĐÁNH GIÁ
+                            </Text>
+                        </TabHeading>
+                    }>
+
+                        <ResultEvaluationTask data={this.state.info} />
+                    </Tab>
+                </Tabs>
+            )
+        } else {
+            bodyContent = (
+                <Tabs
+                    initialPage={0}
+                    tabBarUnderlineStyle={TabStyle.underLineStyle}
+                    onChangeTab={(selectedTabIndex) => this.setState({ selectedTabIndex })}>
+                    <Tab heading={
+                        <TabHeading style={(this.state.selectedTabIndex == 0) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                            <NbIcon name='ios-information-circle-outline' style={TabStyle.activeText} />
+                            <Text style={(this.state.selectedTabIndex == 0) ? TabStyle.activeText : TabStyle.inActiveText}>
+                                MÔ TẢ
+                            </Text>
+                        </TabHeading>
+                    }>
+                        <TaskDescription info={this.props.info} />
+                    </Tab>
+
+                    <Tab heading={
+                        <TabHeading style={(this.state.selectedTabIndex == 1) ? TabStyle.activeTab : TabStyle.inActiveTab}>
+                            <NbIcon name='ios-attach' style={TabStyle.activeText} />
+                            <Text style={(this.state.selectedTabIndex == 1) ? TabStyle.activeText : TabStyle.inActiveText}>
                                 ĐÍNH KÈM
                             </Text>
                         </TabHeading>
@@ -535,6 +579,13 @@ class TaskContent extends Component {
                         <TaskAttachment info={this.props.info} />
                     </Tab>
                 </Tabs>
+            )
+        }
+        return (
+            <RnView style={{ flex: 1 }}>
+                {
+                    bodyContent
+                }
             </RnView>
         );
     }

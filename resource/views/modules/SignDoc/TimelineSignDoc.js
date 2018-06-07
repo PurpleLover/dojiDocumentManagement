@@ -47,7 +47,7 @@ export default class TimelineSignDoc extends Component {
                         description: `Người xử lý: ${item.TenNguoiXuLy}`,
                         renderIcon: () => <Icon name='ios-time-outline' />,
                         renderTimeBottom: () => (
-                            <View style={{alignItems: (index % 2 == 0) ? 'flex-end': 'flex-start', backgroundColor: Colors.WHITE, borderRadius: 6, padding: 3}}>
+                            <View style={{ alignItems: (index % 2 == 0) ? 'flex-end' : 'flex-start', backgroundColor: Colors.WHITE, borderRadius: 6, padding: 3 }}>
                                 <Text>
                                     <Text style={{ fontSize: moderateScale(11, 1.1), fontWeight: 'bold' }}>
                                         Thời gian:
@@ -91,25 +91,35 @@ export default class TimelineSignDoc extends Component {
         return (
             <Container>
                 <Content>
-                    <TimeLine
-                        timeStyle={{
-                            fontWeight: 'normal',
-                            color: Colors.BLACK
-                        }}
-                        detailContainerStyle={{
-                            borderWidth: moderateScale(2),
-                            borderRadius: 5,
-                            padding: moderateScale(5),
-                            marginHorizontal: scale(5),
-                            borderColor: '#909090'
-                        }}
-                        lineWidth={1}
-                        dashLine={true}
-                        styleContainer={{ marginTop: verticalScale(10) }}
-                        data={this.state.data}
-                        isRenderSeperator
-                        columnFormat={'two-column'}
-                    />
+                    {
+                        renderIf(util.isNull(this.state.lstLog) || util.isEmpty(this.state.lstLog))(
+                            emptyDataPage()
+                        )
+                    }
+
+                    {
+                        renderIf(!util.isNull(this.state.lstLog) && !util.isEmpty(this.state.lstLog))(
+                            <TimeLine
+                                timeStyle={{
+                                    fontWeight: 'normal',
+                                    color: Colors.BLACK
+                                }}
+                                detailContainerStyle={{
+                                    borderWidth: 2,
+                                    borderRadius: 5,
+                                    padding: moderateScale(5),
+                                    marginHorizontal: scale(5),
+                                    borderColor: '#909090'
+                                }}
+                                lineWidth={1}
+                                dashLine={true}
+                                styleContainer={{ marginTop: verticalScale(10) }}
+                                data={this.state.data}
+                                isRenderSeperator
+                                columnFormat={'two-column'}
+                            />
+                        )
+                    }
                 </Content>
             </Container>
         );
