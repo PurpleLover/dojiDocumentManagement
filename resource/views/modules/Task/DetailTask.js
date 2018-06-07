@@ -15,7 +15,7 @@ import {
     Container, Header, Left, Button, Body,
     Title, Right, Toast, Tabs, Tab, TabHeading, ScrollableTab,
     Icon as NbIcon, Text, SwipeRow, Item, Input,
-    Content
+    Content, Form,
 } from 'native-base';
 import { Icon } from 'react-native-elements';
 import renderIf from 'render-if';
@@ -40,6 +40,7 @@ import TaskDescription from './TaskDescription';
 import TaskAttachment from './TaskAttachment';
 import GroupSubTask from './GroupSubTask';
 import ResultEvaluationTask from './ResultEvaluationTask'
+import { DetailTaskStyle } from '../../../assets/styles/TaskStyle';
 
 class DetailTask extends Component {
     constructor(props) {
@@ -154,6 +155,13 @@ class DetailTask extends Component {
         }
 
         this.props.navigation.navigate(screenName);
+    }
+
+    onOpenComment = () => {
+        this.props.navigation.navigate('ListCommentScreen', {
+            taskId: this.state.taskId,
+            taskType: this.state.taskType
+        });
     }
 
     render() {
@@ -463,6 +471,21 @@ class DetailTask extends Component {
                         </Body>
 
                         <Right style={NativeBaseStyle.right}>
+                            <Button transparent onPress={this.onOpenComment}>
+                                <Form style={DetailTaskStyle.commentButtonContainer}>
+                                    <NbIcon name='ios-chatbubbles-outline' style={{ color: Colors.WHITE }} />
+                                    {
+                                        renderIf(this.state.taskInfo.COMMENT_COUNT > 0)(
+                                            <Form style={DetailTaskStyle.commentCircleContainer}>
+                                                <Text style={DetailTaskStyle.commentCountText}>
+                                                    {this.state.taskInfo.COMMENT_COUNT}
+                                                </Text>
+                                            </Form>
+                                        )
+                                    }
+                                </Form>
+                            </Button>
+
                             {
                                 renderIf(menuActions.length > 0)(
                                     <Menu style={{ marginHorizontal: scale(5) }}>

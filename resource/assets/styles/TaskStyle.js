@@ -6,18 +6,19 @@
 'use strict'
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
-import {scale, verticalScale, moderateScale} from './ScaleIndicator'
+import { Colors } from '../../common/SystemConstant'
+import { scale, verticalScale, moderateScale } from './ScaleIndicator'
 
 export const DetailTaskStyle = StyleSheet.create({
     container: {
         flex: 1,
-    }, 
+    },
     listContainer: {
         marginTop: 0,
         borderTopWidth: 0,
         borderBottomWidth: 0,
         borderBottomColor: '#cbd2d9'
-    }, 
+    },
     listItemContainer: {
         paddingTop: verticalScale(10),
         paddingRight: scale(10),
@@ -27,9 +28,9 @@ export const DetailTaskStyle = StyleSheet.create({
     }, listItemTitleContainer: {
         fontWeight: 'bold',
         color: 'black',
-        fontSize: moderateScale(14,1.3)
+        fontSize: moderateScale(14, 1.3)
     }, listItemSubTitleContainer: {
-        fontSize: moderateScale(13,1.4),
+        fontSize: moderateScale(13, 1.4),
         color: '#777',
         fontWeight: 'normal'
     }, timelineContainer: {
@@ -38,7 +39,22 @@ export const DetailTaskStyle = StyleSheet.create({
     }, timeContainer: {
 
     }, time: {
-        
+
+    }, commentButtonContainer: {
+        justifyContent: 'center',
+        flexDirection: 'row'
+    }, commentCircleContainer: {
+        width: 20,
+        height: 20,
+        marginLeft: -15,
+        backgroundColor: Colors.BLUE_PANTONE_640C,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10
+    }, commentCountText: {
+        fontSize: 10,
+        color: Colors.WHITE,
+        fontWeight: 'bold'
     }
 });
 
@@ -55,7 +71,7 @@ export const ListTaskStyle = StyleSheet.create({
     },
     emptyMessage: {
         color: '#ccc',
-        fontSize: moderateScale(16,1.5),
+        fontSize: moderateScale(16, 1.5),
         fontWeight: 'bold',
         textAlign: 'center'
     },
@@ -66,10 +82,10 @@ export const ListTaskStyle = StyleSheet.create({
         width: scale(30)
     },
     leftIcon: {
-        
+
     },
     abridgment: {
-        fontSize: moderateScale(12,1.2),
+        fontSize: moderateScale(12, 1.2),
         flexWrap: 'wrap'
     },
     textNormal: {
@@ -79,8 +95,8 @@ export const ListTaskStyle = StyleSheet.create({
         color: '#888'
     },
     loadMoreButton: {
-        flex: 1, 
-        flexDirection: 'row', 
+        flex: 1,
+        flexDirection: 'row',
         justifyContent: 'center',
         padding: moderateScale(10),
         backgroundColor: 'red',

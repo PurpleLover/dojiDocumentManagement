@@ -5362,7 +5362,7 @@ promzard@^0.3.0:
   dependencies:
     read "1"
 
-prop-types@^15.5.10, prop-types@^15.5.6, prop-types@^15.5.8, prop-types@^15.6.0:
+prop-types@^15.5.10, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.6.0:
   version "15.6.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.1.tgz#36644453564255ddda391191fb3a125cbdf654ca"
   dependencies:
@@ -5630,6 +5630,12 @@ react-native-vector-icons@~4.5.0:
     lodash "^4.0.0"
     prop-types "^15.5.10"
     yargs "^8.0.2"
+
+react-native-view-more-text@^1.4.4:
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/react-native-view-more-text/-/react-native-view-more-text-1.4.4.tgz#5e644095400bc85060ce7f9e3a80b51ee672cf78"
+  dependencies:
+    prop-types "^15.5.7"
 
 react-native@0.55.3:
   version "0.55.3"
