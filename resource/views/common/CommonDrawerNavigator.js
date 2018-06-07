@@ -162,8 +162,8 @@ const appRoutes = {
 }
 const appConfig = {
     headerMode: 'none',
-    initialRouteName: 'ListIsNotProcessedScreen',
-    //initialRouteName: 'ListCommentScreen',
+    //initialRouteName: 'ListIsNotProcessedScreen',
+    initialRouteName: 'ListCommentScreen',
     drawerWidth: width * 0.8,
     contentComponent: props => <SideBar {...props} />
 }

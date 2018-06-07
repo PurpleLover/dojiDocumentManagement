@@ -16,7 +16,8 @@ import {
 } from 'native-base';
 import { Icon } from 'react-native-elements';
 import renderIf from 'render-if';
-import * as util from 'lodash'
+import * as util from 'lodash';
+import ViewMoreText from 'react-native-view-more-text';
 
 //utilities
 import {
@@ -31,6 +32,7 @@ import { executeLoading, dataLoading } from '../../../common/Effect';
 //styles
 import { MenuStyle, MenuOptionStyle } from '../../../assets/styles/MenuPopUpStyle';
 import { TabStyle } from '../../../assets/styles/TabStyle';
+import { ListCommentStyle } from '../../../assets/styles/CommentStyle';
 
 export default class ReplyComment extends Component {
   constructor(props) {
@@ -100,7 +102,7 @@ export default class ReplyComment extends Component {
             id: this.state.data.length + 1,
             name: this.state.userInfo.name,
             content: this.state.replyValue,
-            time: new Date(),
+            time: convertDateTimeToString(new Date()),
             hasFile: false,
           }
         ]
@@ -109,24 +111,43 @@ export default class ReplyComment extends Component {
     })
   }
 
+  renderViewMore(onPress) {
+    return (
+      <Text onPress={onPress} style={ListCommentStyle.boldText}>Xem thêm</Text>
+    )
+  }
+
+  renderViewLess(onPress) {
+    return (
+      <Text onPress={onPress} style={ListCommentStyle.boldText}>Ẩn bớt</Text>
+    )
+  }
+
   renderItem = ({ item }) => {
     return (
       <View>
-        <View style={{ flexDirection: 'column', padding: 10, marginLeft: 20 }}>
+        <View style={ListCommentStyle.commentContainer}>
           <View style={{ flexDirection: 'row' }}>
             <View style={{ flex: 1 }}>
               <Image
-                style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'grey' }}
+                style={ListCommentStyle.userAvatar}
               />
             </View>
-            <View style={{ flex: 4, borderRadius: 3, backgroundColor: 'lightgrey', flexDirection: 'column' }}>
-              <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{item.name}</Text>
-              <Text style={{ fontSize: 14 }}>{item.content}</Text>
+            <View style={[{ flex: 4 }, ListCommentStyle.userContent]}>
+              <Text style={ListCommentStyle.userFullname}>{item.name}</Text>
+              <ViewMoreText
+                numberOfLines={3}
+                renderViewMore={this.renderViewMore}
+                renderViewLess={this.renderViewLess}
+              >
+                <Text style={ListCommentStyle.normalText}>{item.content}</Text>
+              </ViewMoreText>
+
             </View>
           </View>
-          <Text style={{alignSelf:'flex-end', fontSize:12}}>{item.time}</Text>
+          <Text style={ListCommentStyle.userTimeCheck}>{item.time}</Text>
         </View>
-        <View style={{ borderBottomWidth: 1, borderBottomColor: 'lightgrey', marginTop: 10 }}></View>
+        <View style={ListCommentStyle.separator}></View>
       </View>
     )
   }
@@ -155,17 +176,17 @@ export default class ReplyComment extends Component {
               <View style={{ flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
                   <Image
-                    style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'grey' }}
+                    style={ListCommentStyle.userAvatar}
                   />
                 </View>
-                <View style={{ flex: 4, borderRadius: 3, backgroundColor: 'lightgrey', flexDirection: 'column' }}>
-                  <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{this.state.userName}</Text>
-                  <Text style={{ fontSize: 14 }}>{this.state.userContent}</Text>
+                <View style={[{ flex: 4 }, ListCommentStyle.userContent]}>
+                  <Text style={ListCommentStyle.userAvatar}>{this.state.userName}</Text>
+                  <Text style={ListCommentStyle.normalText}>{this.state.userContent}</Text>
                 </View>
               </View>
-      <Text style={{fontSize:12, alignSelf:'flex-end'}}>{this.state.userTimeComment}</Text>
+              <Text style={ListCommentStyle.userTimeCheck}>{this.state.userTimeComment}</Text>
             </View>
-            <View style={{ borderBottomWidth: 1, borderBottomColor: 'lightgrey', marginTop: 10 }}></View>
+            <View style={ListCommentStyle.separator}></View>
           </View>
           <FlatList
             data={this.state.data}

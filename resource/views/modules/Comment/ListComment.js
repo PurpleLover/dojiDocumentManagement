@@ -17,6 +17,7 @@ import {
 import { Icon } from 'react-native-elements';
 import renderIf from 'render-if';
 import * as util from 'lodash'
+import ViewMoreText from 'react-native-view-more-text';
 
 //utilities
 import {
@@ -31,6 +32,7 @@ import { executeLoading, dataLoading } from '../../../common/Effect';
 //styles
 import { MenuStyle, MenuOptionStyle } from '../../../assets/styles/MenuPopUpStyle';
 import { TabStyle } from '../../../assets/styles/TabStyle';
+import { ListCommentStyle } from '../../../assets/styles/CommentStyle';
 
 export default class ListComment extends Component {
   constructor(props) {
@@ -40,8 +42,8 @@ export default class ListComment extends Component {
       footerView: 0, //comment input
 
       data: [
-        { id: '1', name: 'acccccc', content: 'And yes', time: '03-07-2018', numberReplies: 3, hasFile: false },
-        { id: '2', name: 'a', content: 'And yes', time: '03-07-2018', numberReplies: 3, hasFile: false },
+        { id: '1', name: 'acccccc', content: 'Tối qua tôi thử đặt một cốc nước chứa xà phòng gần bức tường mà tụi nó hay chui ra. Thiệt tình tôi cũng chẳng hy vọng gì nhiều... nhưng mà sáng nay thì có vẻ tụi kiến đó đã tự nguyện chết chìm hộ cả lũ.', time: '03-07-2018', numberReplies: 3, hasFile: false },
+        { id: '2', name: 'a', content: 'Tối qua tôi thử đặt một cốc nước chứa xà phòng gần bức tường mà tụi nó hay chui ra. Thiệt tình tôi cũng chẳng hy vọng gì nhiều... nhưng mà sáng nay thì có vẻ tụi kiến đó đã tự nguyện ', time: '03-07-2018', numberReplies: 3, hasFile: false },
         { id: '3', name: 'a', content: 'And yes', time: '03-07-2018', numberReplies: 3, hasFile: false },
         { id: '4', name: 'a', content: 'And yes', time: '03-07-2018', numberReplies: 3, hasFile: false },
         // { id: '5', name: 'a', content: 'And yes', time: new Date(), numberReplies: 3, hasFile: false },
@@ -59,6 +61,7 @@ export default class ListComment extends Component {
         name: 'b', content: '', time: new Date(), numberReplies: 0, hasFile: false
       },
       commented: false,
+      commentContent: EMPTY_STRING
       // userId: this.props.userInfo.ID,
       // taskId: this.props.navigation.state.params.taskId,
       // taskType: this.props.navigation.state.params.taskType,
@@ -94,39 +97,66 @@ export default class ListComment extends Component {
     });
   }
 
+  renderViewMore(onPress) {
+    return (
+      <Text onPress={onPress} style={ListCommentStyle.boldText}>Xem thêm</Text>
+    )
+  }
+
+  renderViewLess(onPress) {
+    return (
+      <Text onPress={onPress} style={ListCommentStyle.boldText}>Ẩn bớt</Text>
+    )
+  }
+
   renderItem = ({ item }) => {
-    const numberOfReplies = item.numberReplies > 0 ? `(${item.numberReplies})` : null;
+    const numberOfReplies = item.numberReplies > 0
+      ? <Text style={{ color: Colors.BLUE_PANTONE_640C, fontWeight: 'bold' }}>Trả lời({item.numberReplies})</Text>
+      : <Text style={{ color: Colors.BLUE_PANTONE_640C }}>Trả lời</Text>;
     return (
       <View>
-        <View style={{ flexDirection: 'column', padding: 10 }}>
+        <View style={ListCommentStyle.commentContainer}>
           <View style={{ flexDirection: 'row' }}>
             <View style={{ flex: 1 }}>
               <Image
-                style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'grey' }}
+                style={ListCommentStyle.userAvatar}
               />
             </View>
-            <View style={{ flex: 4, borderRadius: 3, backgroundColor: 'lightgrey', flexDirection: 'column' }}>
-              <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{item.name}</Text>
-              <Text style={{ fontSize: 14 }}>{item.content}</Text>
+            <View style={[{ flex: 4 }, ListCommentStyle.userContent]}>
+              <Text style={ListCommentStyle.userFullname}>{item.name}</Text>
+              <ViewMoreText
+                numberOfLines={3}
+                renderViewMore={this.renderViewMore}
+                renderViewLess={this.renderViewLess}
+              >
+                <Text style={ListCommentStyle.normalText}>{item.content}</Text>
+              </ViewMoreText>
             </View>
           </View>
           <View style={{ flexDirection: 'column' }}>
-            <Text style={{ alignSelf: 'flex-end', fontSize: 12 }}>{convertDateTimeToString(item.time)}</Text>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('ReplyCommentScreen', { userName: item.name, userContent: item.content, userTimeComment: item.time })} style={{ alignSelf: 'center' }}>
-              <Text style={{ color: 'blue' }}>Reply{numberOfReplies}</Text>
+            <Text style={ListCommentStyle.userTimeCheck}>{convertDateTimeToString(item.time)}</Text>
+            <TouchableOpacity 
+              onPress={() => this.props.navigation.navigate('ReplyCommentScreen', 
+              { userName: item.name, userContent: item.content, userTimeComment: item.time })} 
+              style={{ alignSelf: 'center' }}
+            >
+              {numberOfReplies}
             </TouchableOpacity>
           </View>
         </View>
-        <View style={{ borderBottomWidth: 1, borderBottomColor: 'lightgrey', marginTop: 10 }}></View>
+        <View style={ListCommentStyle.separator}></View>
       </View>
     )
   }
 
-  // onOpenReply = () => {
-  //   this.props.navigation.navigate('ReplyCommentScreen', {
-  //     userName: item.item.name,
-  //   });
-  // }
+  onLoadingMore() {
+    this.setState({
+      loadingMoreData: true,
+      pageIndex: this.state.pageIndex + 1
+    }, () => {
+      this.fetchData();
+    })
+  }
 
   sendComment = () => {
 
@@ -138,7 +168,7 @@ export default class ListComment extends Component {
             id: this.state.data.length + 1,
             name: this.state.userInfo.name,
             content: this.state.commentValue,
-            time: new Date(),
+            time: convertDateTimeToString(new Date()),
             numberReplies: 0,
             hasFile: false,
           }
@@ -172,6 +202,31 @@ export default class ListComment extends Component {
             data={this.state.data}
             renderItem={this.renderItem}
             keyExtractor={(item, index) => index.toString()}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshingData}
+                onRefresh={this.handleRefresh}
+                title='Kéo để làm mới'
+                colors={[Colors.BLUE_PANTONE_640C]}
+                tintColor={[Colors.BLUE_PANTONE_640C]}
+                titleColor={Colors.RED}
+              />
+            }
+            ListFooterComponent={
+              this.state.loadingMoreData ?
+                <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
+                (
+                  this.state.data.length >= DEFAULT_PAGE_SIZE ?
+                    <Button full style={{ backgroundColor: Colors.BLUE_PANTONE_640C }} onPress={() => this.onLoadingMore()}>
+                      <Text>
+                        TẢI THÊM
+                      </Text>
+                    </Button>
+                    : null
+                )
+            }
+
+            ListEmptyComponent={() => emptyDataPage()}
           />
         </Content>
 
