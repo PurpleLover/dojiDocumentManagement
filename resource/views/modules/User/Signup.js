@@ -94,6 +94,16 @@ class Signup extends Component {
     })
   }
 
+  onChangeFullNameText(fullName) {
+    this.setState({
+      fullName
+    }, () => {
+      this.setState({
+        isDisabledLoginButton: (fullName.length <= 0 || this.state.password.length <= 0)
+      });
+    });
+  }
+
   onChangeEmailText(email) {
     this.setState({
       email
@@ -146,13 +156,28 @@ class Signup extends Component {
     });
   }
 
-  async onLogin() {
+  async onSignup() {
 
     this.setState({
       loading: true
     });
 
-    if (this.state.userName.length<6 || this.state.userName.length>16) {
+    if (this.state.fullName.length < 0) {
+      this.setState({
+        loading: false
+      }, () => {
+        Toast.show({
+          text: 'Bạn phải nhập họ và tên của mình',
+          textStyle: { fontSize: moderateScale(12, 1.5) },
+          buttonText: "OK",
+          buttonStyle: { backgroundColor: "#acb7b1" },
+          duration: 3000
+        });
+      });
+      return;
+    }
+
+    if (this.state.userName.length < 6 || this.state.userName.length > 16) {
       this.setState({
         loading: false
       }, () => {
@@ -164,6 +189,7 @@ class Signup extends Component {
           duration: 3000
         });
       });
+      return;
     }
 
     if (!this.state.email.match(/\S+@\S+\.\S+/)) {
@@ -178,6 +204,7 @@ class Signup extends Component {
           duration: 3000
         });
       });
+      return;
     }
 
     if (!this.state.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[!@#$%^&*])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{8,}$/)) {
@@ -192,91 +219,57 @@ class Signup extends Component {
           duration: 3000
         });
       });
+      return;
     }
 
-    
-
-    const url = `${API_URL}/api/Account/Login`;
+    const url = `${API_URL}/api/Account/SignUp`;
     const headers = new Headers({
       'Accept': 'application/json',
       'Content-Type': 'application/json; charset=utf-8',
     });
 
     const body = JSON.stringify({
-      UserName: this.state.userName,
-      Password: this.state.password
+      EMAIL: this.state.email,
+      HOTEN: this.state.fullName,
+      MATKHAU: this.state.password,
+      TENDANGNHAP: this.state.userName,
     });
+
+    await asyncDelay(2000);
 
     const result = await fetch(url, {
       method: 'POST',
       headers,
       body
-    });
-
-    const resultJson = await result.json();
-
-    await asyncDelay(2000);
-
-    if (!util.isNull(resultJson)) {
-      //tạo token cho thiết bị nếu lần đầu đăng nhập
-      await FCM.getFCMToken().then(token => {
-        resultJson.Token = token;
-      });
-
-
-      //trường hợp lần đầu cài đặt thiết bị token có thể bị null;
-      if (util.isNull(resultJson.Token) || util.isEmpty(resultJson.Token)) {
-        await FCM.on(FCMEvent.RefreshToken, token => {
-          resultJson.Token = token;
-        });
-      }
-
-      //cập nhật token vào csdl qua api
-
-      const activeTokenResult = await fetch(`${API_URL}/api/Account/ActiveUserToken`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        body: JSON.stringify({
-          userId: resultJson.ID,
-          token: resultJson.Token
-        })
-      }).then(response => response.json()).then(responseJson => {
-        return responseJson;
-      });
-
-      if (activeTokenResult) {
-        AsyncStorage.setItem('userInfo', JSON.stringify(resultJson)).then(() => {
-          this.props.setUserInfo(resultJson);
-          this.props.navigation.navigate('App');
-        });
-      } else {
+    })
+      .then(response => response.json())
+      .then(responseJson => {
         this.setState({
           loading: false
-        }, () => {
-          Toast.show({
-            text: 'Hệ thống đang cập nhật! Vui lòng trở lại sau!',
-            textStyle: { fontSize: moderateScale(12, 1.5) },
-            buttonText: "OK",
-            buttonStyle: { backgroundColor: "#acb7b1" },
-            duration: 3000
-          });
         });
-      }
-    } else {
-      this.setState({
-        loading: false
-      }, () => {
-        Toast.show({
-          text: 'Thông tin đăng nhập không chính xác!',
-          textStyle: { fontSize: moderateScale(12, 1.5) },
-          buttonText: "OK",
-          buttonStyle: { backgroundColor: "#acb7b1" },
-          duration: 3000
-        });
+        console.log(responseJson);
+        return responseJson;
       });
+    if (result.Status) {
+      Toast.show({
+        text: result.Message,
+        textStyle: { fontSize: moderateScale(12, 1.5), color:'white' },
+        buttonText: "OK",
+        buttonStyle: { backgroundColor: "#337321" },
+        duration: 3000,
+        onClose: () => {
+          this.props.navigation.navigate('LoginScreen');
+        }
+      })
+    }
+    else {
+      Toast.show({
+        text: 'Đăng ký tài khoản thành công',
+        textStyle: { fontSize: moderateScale(12, 1.5) },
+        buttonText: "OK",
+        buttonStyle: { backgroundColor: "#ff0033", color: 'white' },
+        duration: 3000
+      })
     }
   }
 
@@ -285,9 +278,9 @@ class Signup extends Component {
   }
 
   render() {
-    const { fullName, email, password } = this.state;
-    const toggleLoginStyleButton = (fullName !== EMPTY_STRING && email !== EMPTY_STRING && password !== EMPTY_STRING) ? { backgroundColor: '#da2032' } : { backgroundColor: 'lightgrey' };
-    const toggleLoginStyleText = (fullName !== EMPTY_STRING && email !== EMPTY_STRING && password !== EMPTY_STRING) ? { color: 'white' } : { color: 'grey' };
+    const { fullName, userName, email, password } = this.state;
+    const toggleLoginStyleButton = (userName !== EMPTY_STRING && fullName !== EMPTY_STRING && email !== EMPTY_STRING && password !== EMPTY_STRING) ? { backgroundColor: '#da2032' } : { backgroundColor: 'lightgrey' };
+    const toggleLoginStyleText = (userName !== EMPTY_STRING && fullName !== EMPTY_STRING && email !== EMPTY_STRING && password !== EMPTY_STRING) ? { color: 'white' } : { color: 'grey' };
     return (
       <Container>
         <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
@@ -307,9 +300,17 @@ class Signup extends Component {
         <ImageBackground source={uriBackground} style={{ flex: 1 }}>
           <Content>
             <Form>
-              <View style={{justifyContent:'center', flexDirection:'row', marginTop:verticalScale(this.state.logoMargin)}}>
+              <View style={{ justifyContent: 'center', flexDirection: 'row', marginTop: verticalScale(this.state.logoMargin) }}>
                 <Image source={dojiBigIcon} />
               </View>
+              <Item stackedLabel>
+                <Label>Họ và tên</Label>
+                <Input
+                  onChangeText={(fullName) => this.onChangeFullNameText(fullName)}
+                  value={this.state.fullName}
+                  autoCorrect={false}
+                />
+              </Item>
               <Item stackedLabel>
                 <Label>Tên đăng nhập</Label>
                 <Input
@@ -339,7 +340,7 @@ class Signup extends Component {
               <View style={[LoginStyle.formInputs, LoginStyle.formButton]}>
                 <TouchableOpacity
                   disabled={this.state.isDisabledLoginButton}
-                  onPress={() => this.onLogin()}
+                  onPress={() => this.onSignup()}
                   style={[LoginStyle.formButtonLogin, toggleLoginStyleButton]}
                 >
                   <Text style={[LoginStyle.formButtonText, toggleLoginStyleText]}>ĐĂNG KÝ</Text>
