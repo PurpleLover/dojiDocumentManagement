@@ -39,11 +39,7 @@ import FCM, { FCMEvent } from 'react-native-fcm';
 
 //images
 const uriBackground = require('../../../assets/images/background.png');
-const uriRibbonBackground = require('../../../assets/images/ribbon-background.png');
-const dojiBigIcon = require('../../../assets/images/doji-big-icon.png')
-const dojiIcon = require('../../../assets/images/doji-icon.png');
-const vietnameIcon = require('../../../assets/images/vietnam-icon.png');
-const vnrIcon = require('../../../assets/images/vnr-icon.png');
+const dojiBigIcon = require('../../../assets/images/doji-big-icon.png');
 const showPasswordIcon = require('../../../assets/images/visible-eye.png');
 const hidePasswordIcon = require('../../../assets/images/hidden-eye.png');
 
@@ -168,9 +164,10 @@ class Signup extends Component {
       }, () => {
         Toast.show({
           text: 'Bạn phải nhập họ và tên của mình',
-          textStyle: { fontSize: moderateScale(12, 1.5) },
+          textStyle: { fontSize: moderateScale(12, 1.5), color: Colors.WHITE },
           buttonText: "OK",
-          buttonStyle: { backgroundColor: "#acb7b1" },
+          buttonStyle: { backgroundColor: Colors.WHITE },
+          buttonTextStyle: { color: Colors.RED_PANTONE_186C },
           duration: 3000
         });
       });
@@ -183,9 +180,11 @@ class Signup extends Component {
       }, () => {
         Toast.show({
           text: 'Tên đăng nhập phải có 6 - 16 kí tự',
-          textStyle: { fontSize: moderateScale(12, 1.5) },
+          type: 'danger',
+          textStyle: { fontSize: moderateScale(12, 1.5), color: Colors.WHITE },
           buttonText: "OK",
-          buttonStyle: { backgroundColor: "#acb7b1" },
+          buttonStyle: { backgroundColor: Colors.WHITE },
+          buttonTextStyle: { color: Colors.RED_PANTONE_186C },
           duration: 3000
         });
       });
@@ -198,9 +197,11 @@ class Signup extends Component {
       }, () => {
         Toast.show({
           text: 'Hãy nhập đúng Email',
-          textStyle: { fontSize: moderateScale(12, 1.5) },
+          type: 'danger',
+          textStyle: { fontSize: moderateScale(12, 1.5), color: Colors.WHITE },
           buttonText: "OK",
-          buttonStyle: { backgroundColor: "#acb7b1" },
+          buttonStyle: { backgroundColor: Colors.WHITE },
+          buttonTextStyle: { color: Colors.RED_PANTONE_186C },
           duration: 3000
         });
       });
@@ -213,9 +214,11 @@ class Signup extends Component {
       }, () => {
         Toast.show({
           text: 'Mật khẩu phải có ít nhất 8 kí tự, 1 kí tự số,\n1 kí tự viết hoa và 1 kí tự đặc biệt',
-          textStyle: { fontSize: moderateScale(12, 1.5) },
+          type: 'danger',
+          textStyle: { fontSize: moderateScale(12, 1.5), color: Colors.WHITE },
           buttonText: "OK",
-          buttonStyle: { backgroundColor: "#acb7b1" },
+          buttonStyle: { backgroundColor: Colors.WHITE },
+          buttonTextStyle: { color: Colors.RED_PANTONE_186C },
           duration: 3000
         });
       });
@@ -252,10 +255,12 @@ class Signup extends Component {
       });
     if (result.Status) {
       Toast.show({
-        text: result.Message,
-        textStyle: { fontSize: moderateScale(12, 1.5), color:'white' },
+        text: 'Đăng ký tài khoản thành công',
+        type: 'success',
+        textStyle: { fontSize: moderateScale(12, 1.5), color: Colors.WHITE },
         buttonText: "OK",
-        buttonStyle: { backgroundColor: "#337321" },
+        buttonStyle: { backgroundColor: Colors.WHITE },
+        buttonTextStyle: { color: Colors.GREEN_PANTONE_364C },
         duration: 3000,
         onClose: () => {
           this.props.navigation.navigate('LoginScreen');
@@ -264,10 +269,12 @@ class Signup extends Component {
     }
     else {
       Toast.show({
-        text: 'Đăng ký tài khoản thành công',
-        textStyle: { fontSize: moderateScale(12, 1.5) },
+        text: result.Message,
+        type: 'danger',
+        textStyle: { fontSize: moderateScale(12, 1.5), color: Colors.WHITE },
         buttonText: "OK",
-        buttonStyle: { backgroundColor: "#ff0033", color: 'white' },
+        buttonStyle: { backgroundColor: Colors.WHITE },
+        buttonTextStyle: { color: Colors.RED_PANTONE_186C },
         duration: 3000
       })
     }

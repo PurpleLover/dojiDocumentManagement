@@ -85,8 +85,7 @@ export const LoginStyle = StyleSheet.create({
 
     formNotes: {
         alignItems: 'center',
-        paddingTop: verticalScale(20),
-        paddingBottom: verticalScale(10)
+        paddingVertical: verticalScale(10)
     }, formRemember: {
         flexDirection: 'row',
         flex: 1

@@ -16,7 +16,7 @@ import { Container, Content, CheckBox, Form, Item, Input, Label, Toast } from 'n
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as util from 'lodash';
 //constants
-import { EMPTY_STRING, API_URL } from '../../../common/SystemConstant';
+import { EMPTY_STRING, API_URL, Colors } from '../../../common/SystemConstant';
 
 //styles
 import { LoginStyle } from '../../../assets/styles/LoginStyle';
@@ -306,11 +306,7 @@ class Login extends Component {
 
                                 </View>
                             </View>
-                            <View style={LoginStyle.formNotes}>
-                                <TouchableOpacity onPress={this.onSignupPress}>
-                                    <Text style={LoginStyle.formText}>Chưa có tài khoản?</Text>
-                                </TouchableOpacity>
-                            </View>
+                            <View style={LoginStyle.formNotes}></View>
                             <View style={[LoginStyle.formInputs, LoginStyle.formButton]}>
                                 <TouchableOpacity
                                     disabled={this.state.isDisabledLoginButton}
@@ -318,6 +314,14 @@ class Login extends Component {
                                     style={[LoginStyle.formButtonLogin, toggleLoginStyleButton]}
                                 >
                                     <Text style={[LoginStyle.formButtonText, toggleLoginStyleText]}>ĐĂNG NHẬP</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={[LoginStyle.formInputs, LoginStyle.formButton]}>
+                                <TouchableOpacity
+                                    onPress={this.onSignupPress}
+                                    style={[LoginStyle.formButtonLogin, {backgroundColor: Colors.BLUE_PANTONE_640C}]}
+                                >
+                                    <Text style={[LoginStyle.formButtonText, {color: Colors.WHITE}]}>ĐĂNG KÝ</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
