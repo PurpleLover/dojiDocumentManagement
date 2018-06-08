@@ -17,7 +17,8 @@ export const ListCommentStyle = StyleSheet.create({
     backgroundColor: Colors.BLUE_PANTONE_640C,
     borderRadius: 5,
     height: verticalScale(60),
-    width: '100%'
+    width: '100%',
+    justifyContent: 'center'
   },
   commentContentContainer: {
     flex: 4,
@@ -28,6 +29,7 @@ export const ListCommentStyle = StyleSheet.create({
   commentUserName: {
     fontSize: moderateScale(15, 1.5),
     fontWeight: 'bold',
+    flexWrap: 'wrap',
     color: Colors.BLACK
   },
   commentContent: {
@@ -85,7 +87,8 @@ export const ReplyCommentStyle = StyleSheet.create({
     backgroundColor: Colors.BLUE_PANTONE_640C,
     borderRadius: 5,
     height: verticalScale(60),
-    width: '100%'
+    width: '100%',
+    justifyContent: 'center'
   },
   replyObjectUserContainer: {
     flex: 4,
@@ -118,5 +121,48 @@ export const ReplyCommentStyle = StyleSheet.create({
     paddingTop: moderateScale(10),
     borderTopColor: Colors.GRAY,
     borderTopWidth: 1
+  }
+});
+
+export const FooterCommentStyle = StyleSheet.create({
+  footerComment: {
+    justifyContent: 'space-around',
+    flexDirection: 'row',
+    backgroundColor: Colors.WHITE,
+    borderTopWidth: 1,
+    borderColor: '#e5e5e5'
+  }
+});
+
+export const AttachCommentStyle = StyleSheet.create({
+  commentAttachInfo: {
+    flexDirection:'row'
+  },
+  commentAttachContainer: {
+    width: '100%',
+    marginTop: moderateScale(10),
+    padding: moderateScale(5),
+    // borderColor: Colors.GRAY,
+    // borderWidth: 1,
+    backgroundColor: Colors.CLOUDS,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  commentAttachText: {
+    color: Colors.BLUE_PANTONE_640C,
+    fontWeight: 'bold',
+    flexWrap: 'wrap',
+    fontSize: moderateScale(12, 1.1),
+    marginLeft: 5
+  },
+  commetnAttachButton: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 3,
+    borderColor: Colors.GRAY,
+    borderWidth: 1
   }
 });

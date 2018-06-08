@@ -11,17 +11,20 @@ import { connect } from 'react-redux';
 
 //utilities
 import {
-  API_URL, Colors, DEFAULT_PAGE_INDEX,
+  API_URL, WEB_URL, Colors, DEFAULT_PAGE_INDEX,
   DEFAULT_PAGE_SIZE, EMPTY_STRING
 } from '../../../common/SystemConstant';
-import { emptyDataPage, convertDateTimeToString, asyncDelay } from '../../../common/Utilities';
+import {
+  emptyDataPage, convertDateTimeToString,
+  asyncDelay, formatLongText, isImage
+} from '../../../common/Utilities';
 import { dataLoading, executeLoading } from '../../../common/Effect';
 
 //lib
 import renderIf from 'render-if';
 import {
-  ActivityIndicator, FlatList, View, Text,
-  TouchableOpacity, Image, Keyboard
+  Alert, ActivityIndicator, FlatList, View, Text,
+  TouchableOpacity, Image, Keyboard, Platform
 } from 'react-native';
 import {
   Container, Header, Left, Right, Body, Title, Input,
@@ -29,14 +32,17 @@ import {
 } from 'native-base';
 import { Icon as RneIcon } from 'react-native-elements';
 import * as util from 'lodash';
+import RNFetchBlob from 'react-native-fetch-blob';
 
 //styles
 import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
-import { ListCommentStyle } from '../../../assets/styles/CommentStyle';
+import { ListCommentStyle, FooterCommentStyle, AttachCommentStyle } from '../../../assets/styles/CommentStyle';
 import { scale, verticalScale, moderateScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 
 //firebase
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
+
+const android = RNFetchBlob.android;
 
 class ListComment extends Component {
   constructor(props) {
@@ -72,7 +78,6 @@ class ListComment extends Component {
 
   fetchData = async () => {
     const url = `${API_URL}/api/HscvCongViec/GetRootCommentsOfTask/${this.state.taskId}/${this.state.pageIndex}/${this.state.pageSize}`;
-
     const result = await fetch(url);
     const resultJson = await result.json();
     this.setState({
@@ -176,51 +181,128 @@ class ListComment extends Component {
     }, () => this.fetchData());
   }
 
-  onDownloadFile = () => { }
+  onDownloadFile(fileName, fileLink, fileExtension) {
+    try {
+      fileLink = WEB_URL + fileLink;
+      fileLink = fileLink.replace('////', '/');
+      if (Platform.OS == 'ios') {
+        config = {
+          fileCache: true
+        };
+        fileLink = encodeURI(fileLink);
+      } else {
+        fileLink = fileLink.replace(/ /g, "%20");
+      }
+
+      const config = {
+        fileCache: true,
+        // android only options, these options be a no-op on IOS
+        addAndroidDownloads: {
+          notification: true, // Show notification when response data transmitted
+          title: fileName, // Title of download notification
+          description: 'An image file.', // File description (not notification description)
+          mime: fileExtension,
+          mediaScannable: true, // Make the file scannable  by media scanner
+        }
+      }
+
+      RNFetchBlob.config(config)
+        .fetch('GET', fileLink)
+        .then((response) => {
+          //kiểm tra platform nếu là android và file là ảnh
+          if (Platform.OS == 'android' && isImage(fileExtension)) {
+            android.actionViewIntent(response.path(), fileExtension);
+          }
+          response.path();
+        }).catch((err) => {
+          Alert.alert(
+            'THÔNG BÁO',
+            'KHÔNG THỂ TẢI ĐƯỢC FILE',
+            [
+              {
+                text: 'OK',
+                onPress: () => { }
+              }
+            ]
+          )
+        });
+    } catch (err) {
+      Alert.alert({
+        'title': 'THÔNG BÁO',
+        'message': `Lỗi: ${err.toString()}`,
+        buttons: [
+          {
+            text: 'OK',
+            onPress: () => { }
+          }
+        ]
+      })
+    }
+  }
 
   renderItem = ({ item }) => {
+    let attachmentContent = null;
+    if (item.ATTACH != null) {
+      attachmentContent = (
+        <View style={AttachCommentStyle.commentAttachContainer}>
+          <View style={AttachCommentStyle.commentAttachInfo}>
+            <RneIcon name='ios-attach-outline' color={Colors.BLUE_PANTONE_640C} size={verticalScale(20)} type='ionicon' />
+            <Text style={AttachCommentStyle.commentAttachText}>
+              {formatLongText(item.ATTACH.TENTAILIEU, 30)}
+            </Text>
+          </View>
+
+          <TouchableOpacity style={AttachCommentStyle.commetnAttachButton} onPress={() => this.onDownloadFile(item.ATTACH.TENTAILIEU, item.ATTACH.DUONGDAN_FILE, item.ATTACH.DINHDANG_FILE)}>
+            <RneIcon name='download' color={Colors.BLUE_PANTONE_640C} size={verticalScale(15)} type='entypo' />
+          </TouchableOpacity>
+        </View>
+      )
+    }
     return (
-      <View>
-        <View style={ListCommentStyle.commentContainer}>
-          <View style={{ flexDirection: 'row' }}>
-            <View style={ListCommentStyle.commentAvatarContainer}>
-              <View style={ListCommentStyle.commentAvatar}>
-                <RneIcon size={moderateScale(50)} type='ionicon' name='ios-people' color={Colors.WHITE} />
-              </View>
-            </View>
-            <View style={ListCommentStyle.commentContentContainer}>
-              <Text style={ListCommentStyle.commentUserName}>
-                {item.FullName}
-              </Text>
-              <Text style={ListCommentStyle.commentContent}>
-                {item.NOIDUNG}
-              </Text>
-              <View style={ListCommentStyle.subInfoContainer}>
-                <TouchableOpacity style={ListCommentStyle.replyButtonContainer} onPress={() => this.onReplyComment(item)}>
-                  <RneIcon type='entypo' name='reply' size={moderateScale(30)} color={Colors.BLUE_PANTONE_640C} />
-                  <Text style={ListCommentStyle.replyButtonText}>
-                    Trả lời
-                  </Text>
-                </TouchableOpacity>
-
-                <Text style={ListCommentStyle.commentTime}>
-                  {convertDateTimeToString(item.NGAYTAO)}
-                </Text>
-              </View>
-
-              {
-                renderIf(item.NUMBER_REPLY > 0)(
-                  <TouchableOpacity style={ListCommentStyle.replyCommentContainer} onPress={() => this.onReplyComment(item)}>
-                    <Text style={ListCommentStyle.replyCommentText}>
-                      {'Đã có ' + item.NUMBER_REPLY + ' phản hồi'}
-                    </Text>
-                  </TouchableOpacity>
-                )
-              }
+      <View style={ListCommentStyle.commentContainer}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={ListCommentStyle.commentAvatarContainer}>
+            <View style={ListCommentStyle.commentAvatar}>
+              <RneIcon size={moderateScale(50)} type='ionicon' name='ios-people' color={Colors.WHITE} />
             </View>
           </View>
+          <View style={ListCommentStyle.commentContentContainer}>
+            <Text style={ListCommentStyle.commentUserName}>
+              {item.FullName}
+            </Text>
+            <Text style={ListCommentStyle.commentContent}>
+              {item.NOIDUNG}
+            </Text>
+
+            {
+              attachmentContent
+            }
+
+            <View style={ListCommentStyle.subInfoContainer}>
+              <TouchableOpacity style={ListCommentStyle.replyButtonContainer} onPress={() => this.onReplyComment(item)}>
+                <RneIcon type='entypo' name='reply' size={moderateScale(30)} color={Colors.BLUE_PANTONE_640C} />
+                <Text style={ListCommentStyle.replyButtonText}>
+                  Trả lời
+              </Text>
+              </TouchableOpacity>
+
+              <Text style={ListCommentStyle.commentTime}>
+                {convertDateTimeToString(item.NGAYTAO)}
+              </Text>
+            </View>
+
+            {
+              renderIf(item.NUMBER_REPLY > 0)(
+                <TouchableOpacity style={ListCommentStyle.replyCommentContainer} onPress={() => this.onReplyComment(item)}>
+                  <Text style={ListCommentStyle.replyCommentText}>
+                    {'Đã có ' + item.NUMBER_REPLY + ' phản hồi'}
+                  </Text>
+                </TouchableOpacity>
+              )
+            }
+          </View>
         </View>
-      </View >
+      </View>
     )
   }
 
@@ -256,7 +338,6 @@ class ListComment extends Component {
                 renderItem={this.renderItem}
                 data={this.state.data}
                 keyExtractor={(item, index) => index.toString()}
-                ListEmptyComponent={() => emptyDataPage()}
                 ListFooterComponent={() => this.state.loadingMore ?
                   <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
                   (
@@ -274,14 +355,7 @@ class ListComment extends Component {
           }
         </Content>
 
-        <Footer style={{
-          flex: this.state.footerFlex,
-          justifyContent: 'space-around',
-          flexDirection: 'row',
-          backgroundColor: Colors.WHITE,
-          borderTopWidth: 1,
-          borderColor: '#e5e5e5'
-        }}>
+        <Footer style={[{ flex: this.state.footerFlex }, FooterCommentStyle.footerComment]}>
           <Input style={{ paddingLeft: moderateScale(10) }}
             placeholder='Nhập nội dung trao đổi'
             value={this.state.commentContent}

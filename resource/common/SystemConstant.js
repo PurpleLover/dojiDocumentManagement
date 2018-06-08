@@ -76,6 +76,7 @@ export const Colors = {
 	BLACK: '#000',
 	RED: '#f00',
 	GRAY: '#bdc6cf',
+	CLOUDS: '#ecf0f1',
 	GREEN_PANTON_396C: '#4FA800',
 	GREEN_PANTONE_364C: '#337321',
 	BLUE_PANTONE_640C: '#0082ba',
