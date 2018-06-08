@@ -49,6 +49,7 @@ class Signup extends Component {
 
     this.state = {
       userName: EMPTY_STRING,
+      fullName: EMPTY_STRING,
       email: EMPTY_STRING,
       password: EMPTY_STRING,
 

@@ -160,14 +160,11 @@ const appRoutes = {
     ReplyCommentScreen: {
         screen: ReplyComment
     },
-    SignupScreen: {
-        screen: Signup
-    }
 }
 const appConfig = {
     headerMode: 'none',
-    //initialRouteName: 'ListIsNotProcessedScreen',
-    initialRouteName: 'SignupScreen',
+    initialRouteName: 'ListIsNotProcessedScreen',
+    //initialRouteName: 'SignupScreen',
     
     drawerWidth: width * 0.8,
     contentComponent: props => <SideBar {...props} />
@@ -177,6 +174,9 @@ const AppStack = DrawerNavigator(appRoutes, appConfig);
 const authRoutes = {
     LoginScreen: {
         screen: Login
+    },
+    SignupScreen: {
+        screen: Signup
     }
 }
 const authConfig = {

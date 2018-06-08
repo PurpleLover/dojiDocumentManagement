@@ -319,9 +319,8 @@ class Login extends Component {
                             <View style={[LoginStyle.formInputs, LoginStyle.formButton]}>
                                 <TouchableOpacity
                                     onPress={this.onSignupPress}
-                                    style={[LoginStyle.formButtonLogin, {backgroundColor: Colors.BLUE_PANTONE_640C}]}
                                 >
-                                    <Text style={[LoginStyle.formButtonText, {color: Colors.WHITE}]}>ĐĂNG KÝ</Text>
+                                    <Text style={[LoginStyle.formButtonText, {color: Colors.GRAY, fontSize: moderateScale(16,1.2)}]}>Chưa có tài khoản?</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

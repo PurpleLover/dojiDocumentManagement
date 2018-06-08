@@ -107,7 +107,7 @@ export const LoginStyle = StyleSheet.create({
         fontSize: moderateScale(16)
     }, formButton: {
         marginTop: verticalScale(5),
-        marginBottom: verticalScale(25)
+        marginBottom: verticalScale(10)
     }, formButtonLogin: {
         position: 'relative',
         alignSelf: 'stretch',
