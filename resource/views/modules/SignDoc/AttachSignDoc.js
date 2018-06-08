@@ -65,6 +65,13 @@ export default class AttachSignDoc extends Component {
         try {
             fileLink = WEB_URL + fileLink;
             fileLink = fileLink.replace('////', '/');
+            if (Platform.OS == 'ios') {
+                config = {
+                    fileCache: true
+                };
+    
+                fileLink = encodeURI(fileLink);
+            } else
             fileLink = fileLink.replace(/ /g, "%20");
 
             const config = {
@@ -78,11 +85,15 @@ export default class AttachSignDoc extends Component {
                     mediaScannable: true, // Make the file scannable  by media scanner
                 }
             }
-            if (Platform.OS == 'ios') {
-                config = {
-                    fileCache: true
-                }
-            }
+
+            // if (Platform.OS == 'ios') {
+            //     config = {
+            //         fileCache: true
+            //     };
+    
+            //     fileLink = encodeURI(fileLink);
+            // }
+
             RNFetchBlob.config(config)
                 .fetch('GET', fileLink)
                 .then((response) => {
@@ -91,6 +102,7 @@ export default class AttachSignDoc extends Component {
                         android.actionViewIntent(response.path(), fileExtension);
                     }
                     response.path();
+                    console.log('thanh cong ', fileLink);
                 }).catch((err) => {
                     Alert.alert(
                         'THÔNG BÁO',

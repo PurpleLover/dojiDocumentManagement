@@ -11,13 +11,17 @@ import { connect } from 'react-redux';
 
 //utilities
 import {
-  API_URL, Colors, DEFAULT_PAGE_INDEX,
+  API_URL, WEB_URL, Colors, DEFAULT_PAGE_INDEX,
   DEFAULT_PAGE_SIZE, EMPTY_STRING,
 } from '../../../common/SystemConstant';
+import {
+  emptyDataPage, convertDateTimeToString,
+  asyncDelay, formatLongText, isImage
+} from '../../../common/Utilities';
 
 //lib
 import {
-  View, Text, FlatList,
+  Alert, View, Text, FlatList, Platform,
   TouchableOpacity, ScrollView
 } from 'react-native';
 import {
@@ -27,13 +31,19 @@ import {
 import renderIf from 'render-if';
 import { Icon as RneIcon } from 'react-native-elements';
 import * as util from 'lodash';
+import RNFetchBlob from 'react-native-fetch-blob';
 
 //styles
 import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
-import { ListCommentStyle, ReplyCommentStyle } from '../../../assets/styles/CommentStyle';
-import { emptyDataPage, convertDateTimeToString, asyncDelay } from '../../../common/Utilities';
+import {
+  ListCommentStyle, ReplyCommentStyle,
+  AttachCommentStyle, FooterCommentStyle
+} from '../../../assets/styles/CommentStyle';
+
 import { scale, verticalScale, moderateScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 import { dataLoading, executeLoading } from '../../../common/Effect';
+
+const android = RNFetchBlob.android;
 
 class ReplyComment extends Component {
   constructor(props) {
@@ -146,6 +156,65 @@ class ReplyComment extends Component {
     }, () => this.fetchData());
   }
 
+  onDownloadFile(fileName, fileLink, fileExtension) {
+    try {
+      fileLink = WEB_URL + fileLink;
+      fileLink = fileLink.replace('////', '/');
+      if (Platform.OS == 'ios') {
+        config = {
+          fileCache: true
+        };
+        fileLink = encodeURI(fileLink);
+      } else {
+        fileLink = fileLink.replace(/ /g, "%20");
+      }
+
+      const config = {
+        fileCache: true,
+        // android only options, these options be a no-op on IOS
+        addAndroidDownloads: {
+          notification: true, // Show notification when response data transmitted
+          title: fileName, // Title of download notification
+          description: 'An image file.', // File description (not notification description)
+          mime: fileExtension,
+          mediaScannable: true, // Make the file scannable  by media scanner
+        }
+      }
+
+      RNFetchBlob.config(config)
+        .fetch('GET', fileLink)
+        .then((response) => {
+          //kiểm tra platform nếu là android và file là ảnh
+          if (Platform.OS == 'android' && isImage(fileExtension)) {
+            android.actionViewIntent(response.path(), fileExtension);
+          }
+          response.path();
+        }).catch((err) => {
+          Alert.alert(
+            'THÔNG BÁO',
+            'KHÔNG THỂ TẢI ĐƯỢC FILE',
+            [
+              {
+                text: 'OK',
+                onPress: () => { }
+              }
+            ]
+          )
+        });
+    } catch (err) {
+      Alert.alert({
+        'title': 'THÔNG BÁO',
+        'message': `Lỗi: ${err.toString()}`,
+        buttons: [
+          {
+            text: 'OK',
+            onPress: () => { }
+          }
+        ]
+      })
+    }
+  }
+
   renderItem = ({ item }) => {
     return (
       <View>
@@ -184,6 +253,24 @@ class ReplyComment extends Component {
   }
 
   render() {
+    let attachmentContent = null;
+    let attach = this.state.comment.ATTACH;
+    if (attach != null) {
+      attachmentContent = (
+        <View style={AttachCommentStyle.commentAttachContainer}>
+          <View style={AttachCommentStyle.commentAttachInfo}>
+            <RneIcon name='ios-attach-outline' color={Colors.BLUE_PANTONE_640C} size={verticalScale(20)} type='ionicon' />
+            <Text style={AttachCommentStyle.commentAttachText}>
+              {formatLongText(this.state.comment.ATTACH.TENTAILIEU, 30)}
+            </Text>
+          </View>
+
+          <TouchableOpacity style={AttachCommentStyle.commetnAttachButton} onPress={() => this.onDownloadFile(attach.TENTAILIEU, attach.DUONGDAN_FILE, attach.DINHDANG_FILE)}>
+            <RneIcon name='download' color={Colors.BLUE_PANTONE_640C} size={verticalScale(15)} type='entypo' />
+          </TouchableOpacity>
+        </View>
+      )
+    }
     return (
       <Container>
         <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
@@ -227,6 +314,10 @@ class ReplyComment extends Component {
                   </Text>
                 </View>
 
+                {
+                  attachmentContent
+                }
+
                 <View style={ReplyCommentStyle.replyObjectTime}>
                   <Text style={ReplyCommentStyle.replyObjectTimeText}>
                     {convertDateTimeToString(this.state.comment.NGAYTAO)}
@@ -247,7 +338,6 @@ class ReplyComment extends Component {
                     renderItem={this.renderItem}
                     data={this.state.data}
                     keyExtractor={(item, index) => index.toString()}
-                    ListEmptyComponent={() => emptyDataPage()}
                     ListFooterComponent={() => this.state.loadingMore ?
                       <ActivityIndicator size={indicatorResponsive} animating color={Colors.BLUE_PANTONE_640C} /> :
                       (
@@ -267,14 +357,7 @@ class ReplyComment extends Component {
           </ScrollView>
         </Content>
 
-        <Footer style={{
-          flex: this.state.footerFlex,
-          justifyContent: 'space-around',
-          flexDirection: 'row',
-          backgroundColor: Colors.WHITE,
-          borderTopWidth: 1,
-          borderColor: '#e5e5e5'
-        }}>
+        <Footer style={[{ flex: this.state.footerFlex }, FooterCommentStyle.footerComment]}>
           <Input style={{ paddingLeft: moderateScale(10) }}
             placeholder='Nhập nội dung trao đổi'
             value={this.state.commentContent}
