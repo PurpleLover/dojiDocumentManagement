@@ -42,6 +42,7 @@ import GroupSubTask from '../modules/Task/GroupSubTask';
 
 //đăng nhập
 import Login from '../modules/User/Login';
+import Signup from '../modules/User/Signup';
 
 import Loading from '../common/Loading';
 //sidebar
@@ -158,12 +159,15 @@ const appRoutes = {
     },
     ReplyCommentScreen: {
         screen: ReplyComment
+    },
+    SignupScreen: {
+        screen: Signup
     }
 }
 const appConfig = {
     headerMode: 'none',
-    initialRouteName: 'ListIsNotProcessedScreen',
-    // initialRouteName: 'ListCommentScreen',
+    //initialRouteName: 'ListIsNotProcessedScreen',
+    initialRouteName: 'SignupScreen',
     
     drawerWidth: width * 0.8,
     contentComponent: props => <SideBar {...props} />

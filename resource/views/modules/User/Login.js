@@ -231,6 +231,10 @@ class Login extends Component {
         }
     }
 
+    onSignupPress = () => {
+        this.props.navigation.navigate('SignupScreen');
+    }
+
     render() {
         const { userName, password } = this.state;
         const toggleLoginStyleButton = (userName !== EMPTY_STRING && password !== EMPTY_STRING) ? { backgroundColor: '#da2032' } : { backgroundColor: 'lightgrey' };
@@ -302,7 +306,11 @@ class Login extends Component {
 
                                 </View>
                             </View>
-                            <View style={LoginStyle.formNotes}></View>
+                            <View style={LoginStyle.formNotes}>
+                                <TouchableOpacity onPress={this.onSignupPress}>
+                                    <Text style={LoginStyle.formText}>Chưa có tài khoản?</Text>
+                                </TouchableOpacity>
+                            </View>
                             <View style={[LoginStyle.formInputs, LoginStyle.formButton]}>
                                 <TouchableOpacity
                                     disabled={this.state.isDisabledLoginButton}
