@@ -22,7 +22,7 @@ export const LoginStyle = StyleSheet.create({
     }, formHeaderIcon: {
         height: moderateScale(36, 1.3),
         resizeMode: 'contain',
-        marginTop: verticalScale(10)
+        marginTop: verticalScale(30)
     }, formHeaderCompanyTitle: {
         fontWeight: 'bold',
         color: '#221f1f'

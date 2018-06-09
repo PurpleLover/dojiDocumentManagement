@@ -249,10 +249,10 @@ class Login extends Component {
                         LoginStyle.formHeader
                     ]}>
                         <Image source={dojiBigIcon} style={[{ display: this.state.headerComponentsDisplayStatus }, LoginStyle.formHeaderIcon]} />
-                        <Text style={[LoginStyle.formHeaderCompanyTitle,
+                        {/* <Text style={[LoginStyle.formHeaderCompanyTitle,
                         { display: this.state.headerComponentsDisplayStatus }]}>
                             TẬP ĐOÀN VÀNG BẠC ĐÁ QUÝ DOJI
-                        </Text>
+                        </Text> */}
 
                         <Text style={[LoginStyle.formHeaderSoftwareTitle,
                         { display: this.state.headerComponentsDisplayStatus }]}>
