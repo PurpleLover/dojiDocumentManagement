@@ -308,9 +308,9 @@ class Signup extends Component {
         <ImageBackground source={uriBackground} style={{ flex: 1 }}>
           <Content>
             <Form>
-              <View style={{ justifyContent: 'center', flexDirection: 'row', marginTop: verticalScale(this.state.logoMargin) }}>
+              {/* <View style={{ justifyContent: 'center', flexDirection: 'row', marginTop: verticalScale(this.state.logoMargin) }}>
                 <Image source={dojiBigIcon} />
-              </View>
+              </View> */}
               <Item stackedLabel>
                 <Label>Họ và tên</Label>
                 <Input

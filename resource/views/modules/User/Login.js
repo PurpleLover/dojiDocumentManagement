@@ -248,12 +248,12 @@ class Login extends Component {
                         },
                         LoginStyle.formHeader
                     ]}>
-                        <Image source={dojiBigIcon} style={[{ display: this.state.headerComponentsDisplayStatus }, LoginStyle.formHeaderIcon]} />
+                        {/* <Image source={dojiBigIcon} style={[{ display: this.state.headerComponentsDisplayStatus }, LoginStyle.formHeaderIcon]} /> */}
                         {/* <Text style={[LoginStyle.formHeaderCompanyTitle,
                         { display: this.state.headerComponentsDisplayStatus }]}>
                             TẬP ĐOÀN VÀNG BẠC ĐÁ QUÝ DOJI
                         </Text> */}
-
+                        
                         <Text style={[LoginStyle.formHeaderSoftwareTitle,
                         { display: this.state.headerComponentsDisplayStatus }]}>
                             PHẦN MỀM QUẢN LÝ ĐIỀU HÀNH VĂN BẢN
@@ -326,7 +326,7 @@ class Login extends Component {
                         </View>
                     </ImageBackground>
                     <Animated.View style={[LoginStyle.formFooter, { display: this.state.footerAnimation }]}>
-                        <View style={LoginStyle.formIconContainer}>
+                        {/* <View style={LoginStyle.formIconContainer}>
                             <Image source={vietnameIcon} />
                         </View>
 
@@ -336,7 +336,7 @@ class Login extends Component {
 
                         <View style={LoginStyle.formIconContainer}>
                             <Image source={vnrIcon} />
-                        </View>
+                        </View> */}
                     </Animated.View>
 
                     {

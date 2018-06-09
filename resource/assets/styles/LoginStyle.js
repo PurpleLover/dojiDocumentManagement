@@ -18,7 +18,8 @@ export const LoginStyle = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'stretch',
     }, formHeader: {
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center'
     }, formHeaderIcon: {
         height: moderateScale(36, 1.3),
         resizeMode: 'contain',
@@ -33,6 +34,8 @@ export const LoginStyle = StyleSheet.create({
         color: '#bf0114',
         fontWeight: 'bold',
         fontSize: moderateScale(25,1.5)
+    }, formHeaderNothing: {
+        marginTop: verticalScale(30)
     },
     formFooter: {
         flex: 1,
