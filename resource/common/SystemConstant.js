@@ -20,7 +20,6 @@ export const SAD_FACE_ICON_URI = require('../assets/images/error.png');
 
 export const { width, height } = Dimensions.get('window');
 
-// export const HEADER_COLOR = '#FF993B'
 export const HEADER_COLOR = '#FF0033'
 export const SUB_HEADER_COLOR = '#F7A30A';
 export const SEARCHBAR_COLOR = '#FCC954';
