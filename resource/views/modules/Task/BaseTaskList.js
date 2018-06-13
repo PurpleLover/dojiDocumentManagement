@@ -18,7 +18,7 @@ import {
     Container, Header, Left, Input,
     Item, Icon, Button, Text, Content
 } from 'native-base';
-import { List, ListItem } from 'react-native-elements';
+import { List, ListItem, Icon as RneIcon } from 'react-native-elements';
 import renderIf from 'render-if';
 
 //constant
@@ -31,6 +31,7 @@ import {
 
 //utilities
 import { indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
+import { executeLoading } from '../../../common/Effect';
 import { getColorCodeByProgressValue, convertDateToString, emptyDataPage } from '../../../common/Utilities';
 
 //styles
@@ -49,10 +50,11 @@ class BaseTaskList extends Component {
             pageIndex: DEFAULT_PAGE_INDEX,
             pageSize: DEFAULT_PAGE_SIZE,
 
+            executing: false,
             loadingData: false,
             refreshingData: false,
             searchingData: false,
-            loaingMoreData: false,
+            loadingMoreData: false,
             taskType: props.taskType
         }
     }
@@ -94,6 +96,8 @@ class BaseTaskList extends Component {
             loadingMoreData: false,
             data: (loadingData || refreshingData) ? resultJson.ListItem : [...this.state.data, ...resultJson.ListItem]
         });
+
+        this.navigateToDetail.bind(this);
     }
 
     onFilter() {
@@ -123,38 +127,112 @@ class BaseTaskList extends Component {
         })
     }
 
-    renderItem = ({ item }) => {
+    navigateToDetail(taskId) {
+        this.props.navigator.navigate('DetailTaskScreen', {
+            taskId,
+            taskType: this.state.taskType
+        });
+    }
+
+    async getListSubTasks(index, isExpand, taskId, parentIds) {
+        if (isExpand == false) {
+            this.setState({
+                executing: true
+            });
+
+            const taskObj = {
+                rootParentId: taskId,
+                userId: this.state.userId,
+                parentIds
+            }
+
+            const url = `${API_URL}/api/HscvCongViec/GetListSubTasks`;
+            const headers = new Headers({
+                'Accept': 'application/json',
+                'Content-Type': 'application/json;charset=utf-8'
+            });
+            const body = JSON.stringify(taskObj);
+
+            const result = await fetch(url, {
+                method: 'post',
+                headers,
+                body
+            });
+
+            const resultJson = await result.json();
+
+            //thêm đối tượng vào mảng
+            this.state.data.splice((index + 1), 0, ...resultJson);
+
+            //sửa hiển thị icon của công việc cha
+            this.state.data = this.state.data.map((item) => {
+                if (item.ID == taskId) {
+                    return { ...item, isExpand: true };
+                }
+                return item;
+            })
+
+            this.setState({
+                executing: false,
+                data: this.state.data
+            })
+        } else {
+            this.state.data = this.state.data.filter(item => (item.parentIds == null || item.parentIds.indexOf(taskId) < 0));
+            //sửa hiển thị icon của công việc con
+            this.state.data = this.state.data.map((item) => {
+                if (item.ID == taskId) {
+                    return { ...item, isExpand: false }
+                }
+                return item;
+            })
+
+            this.setState({
+                data: this.state.data
+            })
+        }
+    }
+
+    renderItem = ({ item, index }) => {
         return (
             <View>
-                <TouchableOpacity onPress={() => this.props.navigator.navigate('DetailTaskScreen', {
-                    taskId: item.ID,
-                    taskType: this.state.taskType
-                })}>
-                    <ListItem
-                        hideChevron={true}
-                        badge={{
-                            value: (item.PHANTRAMHOANTHANH || 0) + '%',
-                            textStyle: {
-                                color: Colors.WHITE,
-                                fontWeight: 'bold'
-                            },
-                            containerStyle: {
-                                backgroundColor: getColorCodeByProgressValue(item.PHANTRAMHOANTHANH),
-                                borderRadius: 3
-                            }
-                        }}
-
-                        leftIcon={
-                            <View style={ListTaskStyle.leftSide}>
-                                {
-                                    renderIf(item.HAS_FILE)(
-                                        <Icon name='ios-attach' />
-                                    )
-                                }
-                            </View>
+                <ListItem
+                    hideChevron={true}
+                    badge={{
+                        value: (item.PHANTRAMHOANTHANH || 0) + '%',
+                        textStyle: {
+                            color: Colors.WHITE,
+                            fontWeight: 'bold'
+                        },
+                        containerStyle: {
+                            backgroundColor: getColorCodeByProgressValue(item.PHANTRAMHOANTHANH),
+                            borderRadius: 3
                         }
+                    }}
 
-                        title={
+                    leftIcon={
+                        <View style={ListTaskStyle.leftSide}>
+                            {
+                                renderIf(item.HasChild && item.isExpand == true)(
+                                    <TouchableOpacity onPress={
+                                        (idx, isExpand, taskId, parentIds) => this.getListSubTasks.bind(this)(index, item.isExpand, item.ID, item.parentIds)}>
+                                        <RneIcon name='folder-open-o' type='font-awesome'/>
+                                    </TouchableOpacity>
+                                )
+                            }
+
+                            {
+                                renderIf(item.HasChild && item.isExpand == false)(
+                                    <TouchableOpacity onPress={
+                                        (idx, isExpand, taskId, parentIds) => this.getListSubTasks.bind(this)(index, item.isExpand, item.ID, item.parentIds)}>
+                                        <RneIcon name='folder-o' type='font-awesome'/>
+                                    </TouchableOpacity>
+                                )
+                            }
+                        </View>
+                    }
+
+                    title={
+                        <TouchableOpacity onPress={() => this.navigateToDetail(item.ID)}>
                             <RnText style={item.IS_READ === true ? ListTaskStyle.textRead : ListTaskStyle.textNormal}>
                                 <RnText style={{ fontWeight: 'bold' }}>
                                     Tên công việc:
@@ -163,9 +241,11 @@ class BaseTaskList extends Component {
                                     {' ' + item.TENCONGVIEC}
                                 </RnText>
                             </RnText>
-                        }
+                        </TouchableOpacity>
+                    }
 
-                        subtitle={
+                    subtitle={
+                        <TouchableOpacity onPress={() => this.navigateToDetail(item.ID)}>
                             <RnText style={[item.IS_READ === true ? ListTaskStyle.textRead : ListTaskStyle.textNormal, ListTaskStyle.abridgment]}>
                                 <RnText style={{ fontWeight: 'bold' }}>
                                     Hạn xử lý:
@@ -174,9 +254,10 @@ class BaseTaskList extends Component {
                                     {' ' + convertDateToString(item.NGAYHOANTHANH_THEOMONGMUON)}
                                 </RnText>
                             </RnText>
-                        }
-                    />
-                </TouchableOpacity>
+                        </TouchableOpacity>
+                    }
+                />
+
             </View>
         );
     }
@@ -203,12 +284,12 @@ class BaseTaskList extends Component {
                             </View>
                         )
                     }
-                    
+
                     {
                         renderIf(!this.state.loadingData)(
                             <FlatList
                                 data={this.state.data}
-                                keyExtractor={(item, index) => index.toString()}
+                                keyExtractor={(item, index) => item.ID.toString()}
                                 renderItem={this.renderItem}
                                 refreshControl={
                                     <RefreshControl
@@ -237,6 +318,10 @@ class BaseTaskList extends Component {
                                 ListEmptyComponent={() => emptyDataPage()}
                             />
                         )
+                    }
+
+                    {
+                        executeLoading(this.state.executing)
                     }
 
                 </Content>

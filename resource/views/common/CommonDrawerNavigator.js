@@ -1,8 +1,8 @@
- /**
- * @description: thanh điều hướng của toàn ứng dụng
- * @author: duynn
- * @since: 03/05/2018
- */
+/**
+* @description: thanh điều hướng của toàn ứng dụng
+* @author: duynn
+* @since: 03/05/2018
+*/
 'use strict'
 import React, { Component } from 'react';
 import { width } from '../../common/SystemConstant';
@@ -39,6 +39,9 @@ import ApproveEvaluationTask from '../modules/Task/ApproveEvaluationTask';
 import CreateSubTask from '../modules/Task/CreateSubTask';
 import HistoryEvaluateTask from '../modules/Task/HistoryEvaluateTask';
 import GroupSubTask from '../modules/Task/GroupSubTask';
+import ApproveRescheduleTask from '../modules/Task/ApproveRescheduleTask';
+import DenyRescheduleTask from '../modules/Task/DenyRescheduleTask';
+
 
 //đăng nhập
 import Login from '../modules/User/Login';
@@ -83,7 +86,7 @@ const appRoutes = {
     },
     DetailPublishDocScreen: {
         screen: DetailPublishDoc
-    },ListFilterPublishDocScreen: {
+    }, ListFilterPublishDocScreen: {
         screen: ListFilterPublishDoc
     },
     ListAssignedTaskScreen: {
@@ -91,7 +94,7 @@ const appRoutes = {
     },
     ListCombinationTaskScreen: {
         screen: ListCombinationTask
-    }, 
+    },
     ListPersonalTaskScreen: {
         screen: ListPersonalTask
     },
@@ -106,7 +109,7 @@ const appRoutes = {
     },
     AssignTaskScreen: {
         screen: AssignTask
-    },AssignTaskUsersScreen: {
+    }, AssignTaskUsersScreen: {
         screen: AssignTaskUsers
     },
     RescheduleTaskScreen: {
@@ -121,13 +124,13 @@ const appRoutes = {
     EvaluationTaskScreen: {
         screen: EvaluationTask
     },
-    HistoryEvaluateTaskScreen:{
+    HistoryEvaluateTaskScreen: {
         screen: HistoryEvaluateTask
     },
-    ApproveEvaluationTaskScreen:{
+    ApproveEvaluationTaskScreen: {
         screen: ApproveEvaluationTask
     },
-    HistoryRescheduleTaskScreen:{
+    HistoryRescheduleTaskScreen: {
         screen: HistoryRescheduleTask
     },
     HistoryProgressTaskScreen: {
@@ -159,13 +162,16 @@ const appRoutes = {
     },
     ReplyCommentScreen: {
         screen: ReplyComment
-    },
+    }, ApproveRescheduleTaskScreen: {
+        screen: ApproveRescheduleTask
+    }, DenyRescheduleTaskScreen: {
+        screen: DenyRescheduleTask
+    }
 }
 const appConfig = {
     headerMode: 'none',
     initialRouteName: 'ListIsNotProcessedScreen',
-    //initialRouteName: 'SignupScreen',
-    
+
     drawerWidth: width * 0.8,
     contentComponent: props => <SideBar {...props} />
 }
@@ -185,12 +191,12 @@ const authConfig = {
 const AuthStack = StackNavigator(authRoutes, authConfig);
 
 export const CommonDrawerNavigator = SwitchNavigator({
-    LoadingScreen:{
+    LoadingScreen: {
         screen: Loading
     },
     Auth: AuthStack,
     App: AppStack
 
 }, {
-    initialRouteName: 'LoadingScreen'
-});
+        initialRouteName: 'LoadingScreen'
+    });

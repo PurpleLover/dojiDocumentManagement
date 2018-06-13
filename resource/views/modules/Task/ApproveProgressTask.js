@@ -10,7 +10,8 @@ import { Alert } from 'react-native'
 import {
     Container, Header, Left, Body, Right,
     Icon, Title, Text, Form, Item, Label,
-    Input, Picker, Button, Toast, Content
+    Input, Picker, Button, Toast, Content,
+    Textarea
 } from 'native-base';
 
 import { Icon as RneIcon } from 'react-native-elements';
@@ -135,7 +136,7 @@ class ApproveProgressTask extends Component {
         }
 
         Toast.show({
-            text: resultJson.Status ? 'Cập nhật tiến độ công việc thành công' : 'Cập nhật tiến độ công việc không thành công',
+            text: resultJson.Status ? 'Phản hồi tiến độ công việc thành công' : resultJson.Message,
             type: resultJson.Status ? 'success' : 'danger',
             buttonText: "OK",
             buttonStyle: { backgroundColor: Colors.WHITE },
@@ -170,9 +171,11 @@ class ApproveProgressTask extends Component {
 
                 <Content>
                     <Form>
-                        <Item stackedLabel>
+                        <Item stackedLabel style={{ height: verticalScale(200), justifyContent: 'center'}}>
                             <Label>Nội dung phản hồi</Label>
-                            <Input value={this.state.content} onChangeText={(content) => this.setState({ content })} />
+                            <Textarea rowSpan={5} style={{width: '100%'}} 
+                            value={this.state.content} bordered
+                            onChangeText={(content) => this.setState({ content })} />
                         </Item>
 
                         <Item stackedLabel>
@@ -196,7 +199,7 @@ class ApproveProgressTask extends Component {
                             style={{ backgroundColor: Colors.RED_PANTONE_186C, marginTop: verticalScale(20) }}
                             onPress={() => this.onConfirmApproveCompleteTask()}>
                             <Text>
-                                PHẢN HỒI CÔNG VIỆC
+                                PHẢN HỒI
                             </Text>
                         </Button>
                     </Form>

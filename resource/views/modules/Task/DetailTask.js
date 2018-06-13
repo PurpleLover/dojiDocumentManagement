@@ -79,7 +79,7 @@ class DetailTask extends Component {
     //xác nhận bắt đầu công việc
     onConfirmToStartTask = () => {
         Alert.alert(
-            'XÁC NHẬN BẮT ĐẦU XỬ LÝ CÔNG VIỆC',
+            'XÁC NHẬN XỬ LÝ',
             'Bạn có chắc chắn muốn bắt đầu thực hiện công việc này?',
             [
                 {
@@ -127,7 +127,7 @@ class DetailTask extends Component {
         });
 
         Toast.show({
-            text: resultJson.Status ? 'Bắt đầu công việc thành công' : 'Bắt đầu công việc không thành công',
+            text: resultJson.Status ? 'Bắt đầu công việc thành công' : resultJson.Message,
             type: resultJson.Status ? 'success' : 'danger',
             buttonText: "OK",
             buttonStyle: { backgroundColor: Colors.WHITE },
@@ -176,6 +176,7 @@ class DetailTask extends Component {
                             this.props.navigation.navigate('UpdateProgressTaskScreen', {
                                 taskId: this.state.taskId,
                                 taskType: this.state.taskType,
+                                oldProgressValue: this.state.taskInfo.CongViec.PHANTRAMHOANTHANH || 0,
                                 progressValue: this.state.taskInfo.CongViec.PHANTRAMHOANTHANH || 0
                             })
                         }}
@@ -191,7 +192,8 @@ class DetailTask extends Component {
                             <MenuOption key={-111} onSelect={() => {
                                 this.props.navigation.navigate('RescheduleTaskScreen', {
                                     taskId: this.state.taskId,
-                                    taskType: this.state.taskType
+                                    taskType: this.state.taskType,
+                                    currentDeadline: this.state.taskInfo.CongViec.NGAYHOANTHANH_THEOMONGMUON
                                 })
                             }}
                                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
@@ -219,12 +221,18 @@ class DetailTask extends Component {
                     )
                 }
 
-                if (((task.CongViec.DAGIAOVIEC != true && task.IsNguoiGiaoViec && task.CongViec.IS_SUBTASK != true) || task.IsNguoiThucHienChinh)
+                if (((task.CongViec.DAGIAOVIEC != true && task.IsNguoiGiaoViec && task.CongViec.IS_SUBTASK != true)
+                    || task.IsNguoiThucHienChinh)
                     && (task.CongViec.PHANTRAMHOANTHANH == null || task.CongViec.PHANTRAMHOANTHANH < 100)) {
                     menuActions.push(
                         <MenuOption key={0} onSelect={() => this.props.navigation.navigate('CreateSubTaskScreen', {
                             taskId: this.state.taskId,
                             taskType: this.state.taskType,
+
+                            listPriority: this.state.taskInfo.listDoKhan,
+                            listUrgency: this.state.taskInfo.listDoUuTien,
+                            priorityValue: this.state.taskInfo.listDoKhan[0].Value.toString(), //độ ưu tiên
+                            urgencyValue: this.state.taskInfo.listDoUuTien[0].Value.toString(), //đô khẩn
                         })}
                             style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                             <Text style={MenuOptionStyle.text}>
@@ -234,7 +242,9 @@ class DetailTask extends Component {
                     )
                 }
 
-                if (task.HasRoleAssignTask && (task.CongViec.PHANTRAMHOANTHANH == 0 || task.CongViec.PHANTRAMHOANTHANH == null) && task.CongViec.DAGIAOVIEC != true) {
+                if (task.HasRoleAssignTask
+                    && (task.CongViec.PHANTRAMHOANTHANH == 0 || task.CongViec.PHANTRAMHOANTHANH == null)
+                    && task.CongViec.DAGIAOVIEC != true) {
                     menuActions.push(
                         <MenuOption onSelect={() => this.props.navigation.navigate('AssignTaskScreen', {
                             taskId: this.state.taskId,
@@ -256,7 +266,7 @@ class DetailTask extends Component {
                         //     <MenuOption key={2}
                         //         style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                         //         <Text style={MenuOptionStyle.text}>
-                        //             THEO DÕI
+                        //             Theo dõi
                         //         </Text>
                         //     </MenuOption>
                         // )
@@ -264,7 +274,11 @@ class DetailTask extends Component {
                 }
 
                 if (task.CongViec.NGUOIGIAOVIECDAPHANHOI == true) {
-                    if (task.IsNguoiGiaoViec == true && task.CongViec.PHANTRAMHOANTHANH == 100 && task.CongViec.DATUDANHGIA == true && task.CongViec.NGUOIGIAOVIECDANHGIA != true) {
+                    if (task.IsNguoiGiaoViec == true
+                        && task.CongViec.PHANTRAMHOANTHANH == 100
+                        && task.CongViec.DATUDANHGIA == true
+                        && task.CongViec.NGUOIGIAOVIECDANHGIA != true) {
+
                         menuActions.push(
                             <MenuOption onSelect={() => this.props.navigation.navigate('ApproveEvaluationTaskScreen', {
                                 taskId: this.state.taskId,
@@ -301,7 +315,10 @@ class DetailTask extends Component {
                     // Truong hop chua co nguoi xu ly la cong viec chua duoc giao
                     // Chưa được giao thì ko cần lập kế hoạch, tránh vừa đánh trống vừa thôi kèn
                     // Chỉ yêu cầu lập kế hoạch khi mà người xử lý chính và người giao việc khác nhau
-                    if (task.HasRoleAssignTask && (task.CongViec.PHANTRAMHOANTHANH == 0 || task.CongViec.PHANTRAMHOANTHANH == null) && task.CongViec.DAGIAOVIEC != true) {
+                    if (task.HasRoleAssignTask
+                        && (task.CongViec.PHANTRAMHOANTHANH == 0 || task.CongViec.PHANTRAMHOANTHANH == null)
+                        && task.CongViec.DAGIAOVIEC != true) {
+
                         menuActions.push(
                             <MenuOption onSelect={() => this.props.navigation.navigate('AssignTaskScreen', {
                                 taskId: this.state.taskId,
@@ -330,7 +347,7 @@ class DetailTask extends Component {
                     // menuActions.push(
                     //     <MenuOption key={7} style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                     //         <Text style={MenuOptionStyle.text}>
-                    //             THEO DÕI
+                    //             Theo dõi
                     //         </Text>
                     //     </MenuOption>
                     // )
@@ -404,6 +421,14 @@ class DetailTask extends Component {
                 onSelect={() => this.props.navigation.navigate('GroupSubTaskScreen', {
                     taskId: this.state.taskId,
                     taskType: this.state.taskType,
+
+                    canFinishTask: (this.state.taskInfo.CongViec.DAGIAOVIEC != true
+                        && this.state.taskInfo.IsNguoiGiaoViec
+                        && this.state.taskInfo.CongViec.IS_SUBTASK != true) || this.state.taskInfo.IsNguoiThucHienChinh,
+
+                    canAssignTask: this.state.taskInfo.HasRoleAssignTask && (((this.state.taskInfo.CongViec.DAGIAOVIEC != true
+                        && this.state.taskInfo.IsNguoiGiaoViec
+                        && this.state.taskInfo.CongViec.IS_SUBTASK != true) || this.state.taskInfo.IsNguoiThucHienChinh))
                 })}
                 style={[MenuOptionStyle.wrapper, MenuOptionStyle.wrapperBorder]}>
                 <Text style={MenuOptionStyle.text}>

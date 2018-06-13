@@ -208,31 +208,36 @@ class HistoryProgressTask extends Component {
 
 
 				<PopupDialog
-					dialogTitle={<DialogTitle title='THÔNG TIN CẬP NHẬT TIẾN ĐỘ' />}
+					dialogTitle={<DialogTitle title='THÔNG TIN CẬP NHẬT TIẾN ĐỘ' titleStyle = {{
+						height: verticalScale(50),
+						justifyContent: 'center',
+					}}/>}
 					ref={(popupDialog) => { this.popupDialog = popupDialog }}
 					width={0.8}
 					height={'auto'}
 					actions={[
 						<DialogButton
-							align={'center'}
-							buttonStyle={{
-								//height: verticalScale(100),
-								justifyContent: 'flex-end',
-								backgroundColor: '#4FA800',
-								alignSelf: 'stretch',
-								borderBottomLeftRadius: 8,
-								borderBottomRightRadius: 8,
-							}}
-							text="ĐÓNG"
-							textStyle={{
-								fontSize: moderateScale(18, 1.5),
-								color: '#fff'
-							}}
-							onPress={() => {
-								this.popupDialog.dismiss();
-							}}
-							key="button-0"
-						/>,
+                                align={'center'}
+                                buttonStyle={{
+                                    height: verticalScale(50),
+                                    justifyContent: 'center',
+                                    backgroundColor: Colors.GREEN_PANTON_396C,
+                                    alignSelf: 'stretch',
+                                    alignItems: 'center',
+                                    borderBottomLeftRadius: 8,
+                                    borderBottomRightRadius: 8,
+                                }}
+                                text="ĐÓNG"
+                                textStyle={{
+                                    fontSize: moderateScale(14, 1.5),
+                                    color: '#fff',
+                                    textAlign: 'center'
+                                }}
+                                onPress={() => {
+                                    this.popupDialog.dismiss();
+                                }}
+                                key="button-0"
+                            />,
 					]}>
 					<Form>
 						<Item stackedLabel>

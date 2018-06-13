@@ -36,14 +36,15 @@ class UpdateProgressTask extends Component {
     constructor(props) {
         super(props);
 
-        this.progressInitialValue = this.props.navigation.state.params.progressValue;
         this.state = {
             userId: props.userInfo.ID,
 
             taskId: props.navigation.state.params.taskId,
             taskType: props.navigation.state.params.taskType,
 
+            oldProgressValue: this.props.navigation.state.params.oldProgressValue,
             progressValue: this.props.navigation.state.params.progressValue,
+            progressValueStr: this.props.navigation.state.params.progressValue.toString(),
             comment: EMPTY_STRING,
 
             executing: false,
@@ -51,7 +52,16 @@ class UpdateProgressTask extends Component {
     }
 
     onUpdateProgressTask = async () => {
-        if (util.isNull(this.state.comment) || util.isEmpty(this.state.comment)) {
+        if (util.isNull(this.state.progressValueStr) || util.isEmpty(this.state.progressValueStr)) {
+            Toast.show({
+                text: 'Vui lòng nhập phần trăm hoàn thành công việc',
+                type: 'danger',
+                buttonText: "OK",
+                buttonStyle: { backgroundColor: Colors.WHITE },
+                buttonTextStyle: { color: Colors.RED_PANTONE_186C },
+            });
+        }
+        else if (util.isNull(this.state.comment) || util.isEmpty(this.state.comment)) {
             Toast.show({
                 text: 'Vui lòng nhập nội dung',
                 type: 'danger',
@@ -91,7 +101,7 @@ class UpdateProgressTask extends Component {
             });
 
             if (resultJson.Status == true && !util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)) {
-                const message = this.props.userInfo.Fullname + ' đã cập nhật tiến độ một công việc';
+                const message = this.props.userInfo.Fullname + ' đã cập nhật tiến độ #Công việc ' + this.state.taskId;
                 const content = {
                     title: 'CẬP NHẬT TIẾN ĐỘ CÔNG VIỆC',
                     message,
@@ -107,7 +117,7 @@ class UpdateProgressTask extends Component {
             }
 
             Toast.show({
-                text: resultJson.Status ? 'Cập nhật tiến độ công việc thành công' : 'Cập nhật tiến độ công việc không thành công',
+                text: resultJson.Status ? 'Cập nhật tiến độ công việc thành công' : resultJson.Message,
                 type: resultJson.Status ? 'success' : 'danger',
                 buttonText: "OK",
                 buttonStyle: { backgroundColor: Colors.WHITE },
@@ -129,6 +139,37 @@ class UpdateProgressTask extends Component {
         });
     }
 
+    onSliderChange = (value) => {
+        this.setState({
+            progressValue: value,
+            progressValueStr: value.toString()
+        })
+    }
+
+    onInputChange = (value) => {
+        this.setState({
+            progressValueStr: value
+        });
+
+        if (!util.isNull(value) && !util.isEmpty(value) && !isNaN(value)) {
+            let finalValue = parseInt(value);
+            if (finalValue > 100) {
+                finalValue = 100;
+                this.setState({
+                    progressValueStr: '100'
+                });
+            }
+
+            this.setState({
+                progressValue: finalValue
+            })
+        } else {
+            this.setState({
+                progressValue: 0
+            })
+        }
+    }
+
 
     render() {
         return (
@@ -142,7 +183,7 @@ class UpdateProgressTask extends Component {
 
                     <Body style={NativeBaseStyle.body}>
                         <Title style={NativeBaseStyle.bodyTitle}>
-                            CẬP NHẬT TIẾN ĐỘ CÔNG VIỆC
+                            CẬP NHẬT TIẾN ĐỘ
                         </Title>
                     </Body>
 
@@ -157,20 +198,20 @@ class UpdateProgressTask extends Component {
                         maximumValue={100}
                         minimumTrackTintColor={Colors.RED_PANTONE_186C}
                         maximumTrackTintColor={Colors.WHITE}
-                        value={this.progressInitialValue}
-                        onValueChange={progressValue => this.setState({ progressValue })}
+                        value={this.state.progressValue}
+                        onValueChange={value => this.onSliderChange(value)}
                         thumbStyle={{
                             height: verticalScale(50),
                             width: scale(25),
                             backgroundColor: Colors.WHITE,
                             borderRadius: 4,
-                            borderColor: '#cccccc',
+                            borderColor: Colors.GRAY,
                             borderWidth: 1
                         }}
                         trackStyle={{
                             height: verticalScale(30),
                             borderWidth: 1,
-                            borderColor: '#cccccc'
+                            borderColor: Colors.GRAY
                         }}
 
                         style={{
@@ -183,8 +224,15 @@ class UpdateProgressTask extends Component {
 
                     <Form>
                         <Item stackedLabel>
-                            <Label>Phần trăm hoàn thành (%)</Label>
-                            <Input editable={false} value={this.state.progressValue.toString()} />
+                            <Label>Tiến độ hiện tại (%)</Label>
+                            <Input value={this.state.oldProgressValue.toString()}
+                                editable={false} />
+                        </Item>
+                        <Item stackedLabel>
+                            <Label>Tiến độ cập nhật (%)</Label>
+                            <Input value={this.state.progressValueStr}
+                                keyboardType='numeric' maxLength={3}
+                                onChangeText={value => this.onInputChange(value)} />
                         </Item>
 
                         <Item stackedLabel>
@@ -196,8 +244,8 @@ class UpdateProgressTask extends Component {
                             style={{ backgroundColor: Colors.RED_PANTONE_186C, marginTop: verticalScale(20) }}
                             onPress={() => this.onUpdateProgressTask()}>
                             <Text>
-                                CẬP NHẬT TIẾN ĐỘ CÔNG VIỆC
-                                </Text>
+                                CẬP NHẬT
+                            </Text>
                         </Button>
                     </Form>
                 </Content>

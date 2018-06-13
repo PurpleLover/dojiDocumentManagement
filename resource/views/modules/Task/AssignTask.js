@@ -421,7 +421,7 @@ class AssignTask extends Component {
 				<Header style={{ backgroundColor: HEADER_COLOR }}>
 					<Left style={NativeBaseStyle.left}>
 						<Button transparent onPress={() => this.navigateBackToDetail()}>
-							<RneIcon name='ios-arrow-round-back' size={verticalScale(40)} color={Colors.WHITE} type='ionicon' />
+							<RneIcon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
 						</Button>
 					</Left>
 

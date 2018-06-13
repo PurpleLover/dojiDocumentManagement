@@ -54,7 +54,7 @@ export function convertDateTimeToString(date) {
         let deadline = new Date(date);
         //const pad = val => val < 10 ? '0' + val : val; // Append '0' before alone dateTime
 
-        let deadlineStr = _readableFormat(deadline.getDate()) + '/' + _readableFormat(deadline.getMonth()) + '/' + deadline.getFullYear();
+        let deadlineStr = _readableFormat(deadline.getDate()) + '/' + _readableFormat(deadline.getMonth() + 1) + '/' + deadline.getFullYear();
 
         deadlineStr += ' ' + _readableFormat(deadline.getHours()) + ':' + _readableFormat(deadline.getMinutes()) + ':' + _readableFormat(deadline.getSeconds());
         return deadlineStr;

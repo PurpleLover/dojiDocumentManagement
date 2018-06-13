@@ -41,11 +41,14 @@ class CreateSubTask extends Component {
 
 			deadline: EMPTY_STRING,
 			content: EMPTY_STRING,
-			priorityValue: '101', //độ ưu tiên
-			urgencyValue: '98', //đô khẩn
+			listPriority: props.navigation.state.params.listPriority,
+			listUrgency: props.navigation.state.params.listUrgency,
+			priorityValue: props.navigation.state.params.priorityValue, //độ ưu tiên
+			urgencyValue: props.navigation.state.params.urgencyValue, //đô khẩn
+			planValue: '0', //lập kế hoạch 
 
 			executing: false,
-			chosenDate: new Date(),
+			chosenDate: null
 		}
 	}
 
@@ -67,6 +70,12 @@ class CreateSubTask extends Component {
 		})
 	}
 
+	onPlanValueChange(value) {
+		this.setState({
+			planValue: value
+		})
+	}
+
 	navigateBackToDetail() {
 		this.props.navigation.navigate('DetailTaskScreen', {
 			taskId: this.state.taskId,
@@ -74,50 +83,7 @@ class CreateSubTask extends Component {
 		});
 	}
 
-	// onOpenCalendar = async () => {
-	// 	if (Platform.OS === 'android') {
-	// 		try {
-	// 			const { action, year, month, day } = await DatePickerAndroid.open({
-	// 				date: new Date()
-	// 			});
-
-	// 			if (action !== DatePickerAndroid.dissmissedAction) {
-	// 				if (day && month && year) {
-	// 					if (day < 10) {
-	// 						day = '0' + day;
-	// 					}
-	// 					if (month < 10) {
-	// 						month = '0' + (month + 1);
-	// 					}
-
-	// 					const deadline = day + '/' + month + '/' + year;
-
-	// 					this.setState({
-	// 						deadline
-	// 					});
-	// 				}
-	// 			}
-	// 		} catch ({ code, message }) {
-	// 			console.warn('Open datepicker error', err);
-	// 		}
-	// 	}
-	// 	else {
-	// 		return (
-	// 			<View style={{ flex: 1, justifyContent: 'center' }}>
-	// 				<DatePickerIOS
-	// 					date={this.state.chosenDate}
-	// 					onDateChange={this.setDate}
-	// 					mode={'date'}
-	// 					minimumDate={new Date()}
-	// 				/>
-	// 			</View>
-	// 		)
-	// 	}
-	// }
 	onCreateSubTask = async () => {
-		this.setState({
-			deadline: convertDateToString(this.state.chosenDate),
-		});
 		if (util.isNull(this.state.content) || util.isEmpty(this.state.content)) {
 			Toast.show({
 				text: 'Vui lòng nhập nội dung',
@@ -126,7 +92,7 @@ class CreateSubTask extends Component {
 				buttonStyle: { backgroundColor: Colors.WHITE },
 				buttonTextStyle: { color: Colors.RED_PANTONE_186C },
 			});
-		} else if (util.isNull(this.state.deadline) || util.isEmpty(this.state.deadline)) {
+		} else if (util.isNull(this.state.chosenDate) || util.isEmpty(this.state.chosenDate)) {
 			Toast.show({
 				text: 'Vui lòng nhập thời hạn xử lý',
 				type: 'danger',
@@ -151,7 +117,8 @@ class CreateSubTask extends Component {
 				taskContent: this.state.content,
 				priority: this.state.priorityValue,
 				urgency: this.state.urgencyValue,
-				deadline: this.state.deadline
+				deadline: this.state.chosenDate,
+				isHasPlan: this.state.planValue == '1'
 			});
 
 			const result = await fetch(url, {
@@ -224,9 +191,11 @@ class CreateSubTask extends Component {
 								style={pickerStyle}
 								selectedValue={this.state.priorityValue} //sai chinh ta @@
 								onValueChange={this.onPriorityValueChange.bind(this)}>
-								<Picker.Item value="101" label="Cao" />
-								<Picker.Item value="102" label="Thấp" />
-								<Picker.Item value="103" label="Trung bình" />
+								{
+									this.state.listPriority.map((item, index) => (
+										<Picker.Item value={item.Value.toString()} label={item.Text.toString()} key={index} />
+									))
+								}
 							</Picker>
 						</Item>
 
@@ -239,20 +208,36 @@ class CreateSubTask extends Component {
 								style={pickerStyle}
 								selectedValue={this.state.urgencyValue}
 								onValueChange={this.onUrgencyValueChange.bind(this)}>
-								<Picker.Item value="98" label="Khẩn" />
-								<Picker.Item value="99" label="Thường" />
-								<Picker.Item value="100" label="Thượng khẩn" />
+								{
+									this.state.listUrgency.map((item, index) => (
+										<Picker.Item value={item.Value.toString()} label={item.Text.toString()} key={index} />
+									))
+								}
 							</Picker>
 						</Item>
 
-						<Item stackedLabel style={{ height: verticalScale(100) }}>
+						<Item stackedLabel>
+							<Label>Lập kế hoạch</Label>
+							<Picker
+								iosHeader='Chọn độ khẩn'
+								mode='dropdown'
+								iosIcon={<Icon name='ios-arrow-down-outline' />}
+								style={pickerStyle}
+								selectedValue={this.state.planValue}
+								onValueChange={this.onPlanValueChange.bind(this)}>
+								<Picker.Item value="1" label="Có" />
+								<Picker.Item value="0" label="Không" />
+							</Picker>
+						</Item>
+
+						<Item stackedLabel style={{ height: verticalScale(100), justifyContent: 'center' }}>
 							<Label>Hạn hoàn thành</Label>
 							<DatePicker
 								style={{ width: scale(300), alignSelf: 'center', marginTop: verticalScale(30) }}
 								date={this.state.chosenDate}
 								mode="date"
 								placeholder='Hạn hoàn thành'
-								format='YYYY-MM-DD'
+								format='DD/MM/YYYY'
 								minDate={new Date()}
 								confirmBtnText='CHỌN'
 								cancelBtnText='BỎ'
@@ -269,15 +254,13 @@ class CreateSubTask extends Component {
 								}}
 								onDateChange={this.setDate}
 							/>
-							{/* <Input placeholder={'Hạn hoàn thành'} value={this.state.deadline} editable={false} />
-							<Icon active name='ios-calendar-outline' onPress={() => this.onOpenCalendar()} /> */}
 						</Item>
 
 						<Button block danger
-							style={{ backgroundColor: HEADER_COLOR, marginTop: verticalScale(10) }}
+							style={{ backgroundColor: HEADER_COLOR, marginTop: verticalScale(20) }}
 							onPress={() => this.onCreateSubTask()}>
 							<Text>
-								TẠO CÔNG VIỆC CON
+								TẠO CÔNG VIỆC
                             </Text>
 						</Button>
 					</Form>
