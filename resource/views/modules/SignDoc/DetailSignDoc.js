@@ -18,13 +18,14 @@ import { verticalScale, indicatorResponsive, moderateScale } from '../../../asse
 
 //styles
 import { TabStyle } from '../../../assets/styles/TabStyle';
+import { DetailSignDocStyle } from '../../../assets/styles/SignDocStyle';
 import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
 import { MenuStyle, MenuOptionStyle, MenuOptionsCustomStyle, MenuOptionCustomStyle } from '../../../assets/styles/MenuPopUpStyle';
 
 //lib
 import {
     Container, Header, Left, Button,
-    Body, Icon, Title, Content,
+    Body, Icon, Title, Content, Form,
     Tabs, Tab, TabHeading, ScrollableTab,
     Text, Right
 } from 'native-base';
@@ -32,6 +33,7 @@ import { MenuProvider, Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-
 import {
     Icon as RneIcon
 } from 'react-native-elements';
+import renderIf from 'render-if';
 
 //views
 import MainInfoSignDoc from './MainInfoSignDoc';
@@ -95,15 +97,16 @@ class DetailSignDoc extends Component {
         });
     }
 
-    onSelectWorkFlowStep(item) {
-        if (!item.REQUIRED_REVIEW || this.state.docInfo.Process.IS_PENDING == false) {
+    onSelectWorkFlowStep(item, isStepBack) {
+        if (item.REQUIRED_REVIEW != true || this.state.docInfo.Process.IS_PENDING == false) {
             this.props.navigation.navigate('WorkflowStreamProcessScreen', {
                 docId: this.state.docInfo.VanBanDi.ID,
                 docType: this.state.docType,
                 processId: this.state.docInfo.Process.ID,
                 stepId: item.ID,
-                isStepBack: item.IS_RETURN,
-                stepName: item.NAME
+                isStepBack,
+                stepName: item.NAME,
+                logId: (isStepBack == true) ? item.Log.ID : 0
             });
         } else {
             this.props.navigation.navigate('WorkflowRequestReviewScreen', {
@@ -111,10 +114,19 @@ class DetailSignDoc extends Component {
                 docType: this.state.docType,
                 processId: this.state.docInfo.Process.ID,
                 stepId: item.ID,
-                isStepBack: item.IS_RETURN,
-                stepName: item.NAME
+                isStepBack: false,
+                stepName: 'GỬI REVIEW',
+                logId: 0
             })
         }
+    }
+
+    onOpenComment = () => {
+        this.props.navigation.navigate('ListCommentScreen', {
+            docId: this.state.docId,
+            docType: this.state.docType,
+            isTaskComment: false
+        });
     }
 
     render() {
@@ -133,7 +145,7 @@ class DetailSignDoc extends Component {
                 workflowMenu = (
                     <Menu>
                         <MenuTrigger>
-                            <RneIcon name='dots-three-horizontal' color={'#fff'} type='entypo' size={verticalScale(25)} />
+                            <RneIcon name='dots-three-horizontal' color={Colors.WHITE} type='entypo' size={verticalScale(25)} />
                         </MenuTrigger>
 
                         <MenuOptions>
@@ -146,7 +158,52 @@ class DetailSignDoc extends Component {
                     </Menu>
                 )
             } else {
+                let workflowMenuOptions = [];
+                if (!util.isNull(this.state.docInfo.VanBanDi.LstStepBack) && !util.isEmpty(this.state.docInfo.VanBanDi.LstStepBack)) {
+                    this.state.docInfo.VanBanDi.LstStepBack.forEach(item => {
+                        workflowMenuOptions.push(
+                            <MenuOption key={item.ID} onSelect={() => this.onSelectWorkFlowStep(item, true)}>
+                                <RnText style={MenuOptionStyle.text}>
+                                    {util.capitalize(item.NAME)}
+                                </RnText>
+                            </MenuOption>
+                        )
+                    })
+                }
+
                 if (!util.isNull(this.state.docInfo.VanBanDi.LstStep) && !util.isEmpty(this.state.docInfo.VanBanDi.LstStep)) {
+                    this.state.docInfo.VanBanDi.LstStep.forEach(item => {
+                        if (item.REQUIRED_REVIEW == true) {
+                            if (this.state.docInfo.ReviewObj != null && this.state.docInfo.ReviewObj.IS_FINISH == true && this.state.docInfo.ReviewObj.IS_REJECT != true) {
+                                workflowMenuOptions.push(
+                                    <MenuOption key={item.ID} onSelect={() => this.onSelectWorkFlowStep(item, false)}>
+                                        <RnText style={MenuOptionStyle.text}>
+                                            {util.capitalize(item.NAME)}
+                                        </RnText>
+                                    </MenuOption>
+                                )
+                            } else {
+                                workflowMenuOptions.push(
+                                    <MenuOption key={item.ID} onSelect={() => this.onSelectWorkFlowStep(item, false)}>
+                                        <RnText style={MenuOptionStyle.text}>
+                                            Gửi review
+                                        </RnText>
+                                    </MenuOption>
+                                )
+                            }
+                        } else {
+                            workflowMenuOptions.push(
+                                <MenuOption key={item.ID} onSelect={() => this.onSelectWorkFlowStep(item, false)}>
+                                    <RnText style={MenuOptionStyle.text}>
+                                        {util.capitalize(item.NAME)}
+                                    </RnText>
+                                </MenuOption>
+                            )
+                        }
+                    });
+                }
+
+                if (workflowMenuOptions.length > 0) {
                     workflowMenu = (
                         <Menu>
                             <MenuTrigger>
@@ -154,15 +211,7 @@ class DetailSignDoc extends Component {
                             </MenuTrigger>
 
                             <MenuOptions customStyles={MenuOptionsCustomStyle}>
-                                {
-                                    this.state.docInfo.VanBanDi.LstStep.map((item, index) => (
-                                        <MenuOption key={index} onSelect={() => this.onSelectWorkFlowStep(item)}>
-                                            <RnText style={MenuOptionStyle.text}>
-                                                {util.capitalize(item.NAME)}
-                                            </RnText>
-                                        </MenuOption>
-                                    ))
-                                }
+                                {workflowMenuOptions}
                             </MenuOptions>
                         </Menu>
                     )
@@ -189,6 +238,20 @@ class DetailSignDoc extends Component {
                         </Body>
 
                         <Right style={NativeBaseStyle.right}>
+                            <Button transparent onPress={this.onOpenComment}>
+                                <Form style={DetailSignDocStyle.commentButtonContainer}>
+                                    <Icon name='ios-chatbubbles-outline' style={{ color: Colors.WHITE }} />
+                                    {
+                                        renderIf(this.state.docInfo.COMMENT_COUNT > 0)(
+                                            <Form style={DetailSignDocStyle.commentCircleContainer}>
+                                                <Text style={DetailSignDocStyle.commentCountText}>
+                                                    {this.state.docInfo.COMMENT_COUNT}
+                                                </Text>
+                                            </Form>
+                                        )
+                                    }
+                                </Form>
+                            </Button>
                             {
                                 workflowMenu
                             }

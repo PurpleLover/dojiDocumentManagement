@@ -160,7 +160,8 @@ class DetailTask extends Component {
     onOpenComment = () => {
         this.props.navigation.navigate('ListCommentScreen', {
             taskId: this.state.taskId,
-            taskType: this.state.taskType
+            taskType: this.state.taskType,
+            isTaskComment: true
         });
     }
 

@@ -49,8 +49,12 @@ class ListComment extends Component {
     super(props);
     this.state = {
       userId: props.userInfo.ID,
+      isTaskComment: props.navigation.state.params.isTaskComment,
       taskId: props.navigation.state.params.taskId,
       taskType: props.navigation.state.params.taskType,
+
+      docId: props.navigation.state.params.docId,
+      docType: props.navigation.state.params.docType,
       footerFlex: 0,
       loading: false,
       loadingMore: false,
@@ -77,7 +81,14 @@ class ListComment extends Component {
   }
 
   fetchData = async () => {
-    const url = `${API_URL}/api/HscvCongViec/GetRootCommentsOfTask/${this.state.taskId}/${this.state.pageIndex}/${this.state.pageSize}`;
+    let url = `${API_URL}/api/VanBanDi/GetRootCommentsOfVanBan/${this.state.docId}/${this.state.pageIndex}/${this.state.pageSize}`;
+    
+    if(this.state.isTaskComment){
+      url = `${API_URL}/api/HscvCongViec/GetRootCommentsOfTask/${this.state.taskId}/${this.state.pageIndex}/${this.state.pageSize}`;
+    }
+
+    console.log('đường dẫn', url);
+
     const result = await fetch(url);
     const resultJson = await result.json();
     this.setState({
@@ -95,10 +106,17 @@ class ListComment extends Component {
   }
 
   navigateToDetail() {
-    this.props.navigation.navigate('DetailTaskScreen', {
-      taskId: this.state.taskId,
-      taskType: this.state.taskType
-    });
+    if(this.state.isTaskComment){
+      this.props.navigation.navigate('DetailTaskScreen', {
+        taskId: this.state.taskId,
+        taskType: this.state.taskType
+      });
+    }else{
+      this.props.navigation.navigate('DetailSignDocScreen', {
+        docId: this.state.docId,
+        docType: this.state.docType
+      })
+    }
   }
 
   componentWillMount() {
@@ -126,8 +144,12 @@ class ListComment extends Component {
   onReplyComment = (item) => {
     this.props.navigation.navigate('ReplyCommentScreen', {
       comment: item,
+      isTaskComment: this.state.isTaskComment,
       taskId: this.state.taskId,
-      taskType: this.state.taskType
+      taskType: this.state.taskType,
+      
+      docId: this.state.docId,
+      docType: this.state.docType
     });
   }
 
@@ -136,20 +158,39 @@ class ListComment extends Component {
       executing: true
     });
 
-    const url = `${API_URL}/api/HscvCongViec/SaveComment`;
-    const headers = new Headers({
+    //phần thông tin cho văn bản 
+    let url = `${API_URL}/api/VanBanDi/SaveComment`;
+
+    let headers = new Headers({
       'Accept': 'application/json',
       'Content-Type': 'application/json;charset=utf-8'
     });
 
-    const body = JSON.stringify({
+    let body = JSON.stringify({
       ID: 0,
-      CONGVIEC_ID: this.state.taskId,
-      REPLY_ID: null,
-      USER_ID: this.state.userId,
-      NOIDUNG: this.state.commentContent,
-      CREATED_BY: this.state.userId
+      VANBANDI_ID: this.state.docId,
+      PARENT_ID: null,
+      NGUOITAO: this.state.userId,
+      NOIDUNGTRAODOI : this.state.commentContent
     });
+
+    //phần thông tin cho công việc
+    if(this.state.isTaskComment){
+      url = `${API_URL}/api/HscvCongViec/SaveComment`;
+      headers = new Headers({
+        'Accept': 'application/json',
+        'Content-Type': 'application/json;charset=utf-8'
+      });
+
+      body = JSON.stringify({
+        ID: 0,
+        CONGVIEC_ID: this.state.taskId,
+        REPLY_ID: null,
+        USER_ID: this.state.userId,
+        NOIDUNG: this.state.commentContent,
+        CREATED_BY: this.state.userId
+      });
+    }
 
     await asyncDelay(1000);
 
@@ -160,20 +201,22 @@ class ListComment extends Component {
     });
 
     const resultJson = await result.json();
-    if (resultJson.Status == true && !util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)) {
-      const message = this.props.userInfo.Fullname + ' đã đăng trao đổi nội dung công việc #Công việc ' + this.state.taskId;
-      const content = {
-        title: 'TRAO ĐỔI CÔNG VIỆC',
-        message,
-        isTaskNotification: true,
-        targetScreen: 'DetailTaskScreen',
-        targetTaskId: this.state.taskId,
-        targetTaskType: this.state.taskType
+    if(this.state.isTaskComment){
+      if (resultJson.Status == true && !util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)) {
+        const message = this.props.userInfo.Fullname + ' đã đăng trao đổi nội dung công việc #Công việc ' + this.state.taskId;
+        const content = {
+          title: 'TRAO ĐỔI CÔNG VIỆC',
+          message,
+          isTaskNotification: true,
+          targetScreen: 'DetailTaskScreen',
+          targetTaskId: this.state.taskId,
+          targetTaskType: this.state.taskType
+        }
+  
+        resultJson.GroupTokens.forEach(token => {
+          pushFirebaseNotify(content, token, 'notification');
+        })
       }
-
-      resultJson.GroupTokens.forEach(token => {
-        pushFirebaseNotify(content, token, 'notification');
-      })
     }
 
     this.setState({

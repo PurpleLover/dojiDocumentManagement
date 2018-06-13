@@ -74,7 +74,8 @@ class WorkflowRequestReview extends Component {
 		});
 
 		const url = `${API_URL}/api/VanBanDi/GetFlow/${this.state.userId}/${this.state.processId}/${this.state.stepId}/${this.state.isStepBack ? 1 : 0}/0`;
-
+		console.log('đường dẫn', url);
+		
 		const result = await fetch(url);
 		const resultJson = await result.json();
 

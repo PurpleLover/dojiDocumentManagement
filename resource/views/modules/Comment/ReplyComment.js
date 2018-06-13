@@ -55,8 +55,14 @@ class ReplyComment extends Component {
     this.state = {
       userId: props.userInfo.ID,
       comment: props.navigation.state.params.comment,
+
+      isTaskComment: props.navigation.state.params.isTaskComment,
+
       taskId: props.navigation.state.params.taskId,
       taskType: props.navigation.state.params.taskType,
+
+      docId: props.navigation.state.params.docId,
+      docType: props.navigation.state.params.docType,
 
       footerFlex: 0,
       commentContent: EMPTY_STRING,
@@ -90,7 +96,11 @@ class ReplyComment extends Component {
   }
 
   fetchData = async () => {
-    const url = `${API_URL}/api/HscvCongViec/GetRepliesOfComment/${this.state.comment.ID}/${this.state.pageIndex}/${this.state.pageSize}`;
+    let url = `${API_URL}/api/VanBanDi/GetRepliesOfComment/${this.state.comment.ID}/${this.state.pageIndex}/${this.state.pageSize}`;
+    
+    if(this.state.isTaskComment){
+      url = `${API_URL}/api/HscvCongViec/GetRepliesOfComment/${this.state.comment.ID}/${this.state.pageIndex}/${this.state.pageSize}`;
+    }
     const result = await fetch(url);
     const resultJson = await result.json();
 
@@ -104,8 +114,12 @@ class ReplyComment extends Component {
 
   navigateToListComment = () => {
     this.props.navigation.navigate('ListCommentScreen', {
+      isTaskComment: this.state.isTaskComment,
       taskId: this.state.taskId,
-      taskType: this.state.taskType
+      taskType: this.state.taskType,
+      
+      docId: this.state.docId,
+      docType: this.state.docType
     });
   }
 
@@ -114,20 +128,36 @@ class ReplyComment extends Component {
       executing: true
     });
 
-    const url = `${API_URL}/api/HscvCongViec/SaveComment`;
-    const headers = new Headers({
+    let url = `${API_URL}/api/VanBanDi/SaveComment`;
+    let headers = new Headers({
       'Accept': 'application/json',
       'Content-Type': 'application/json;charset=utf-8'
     });
 
-    const body = JSON.stringify({
+    let body = JSON.stringify({
       ID: 0,
-      CONGVIEC_ID: this.state.taskId,
-      REPLY_ID: this.state.comment.ID,
-      USER_ID: this.state.userId,
-      NOIDUNG: this.state.commentContent,
-      CREATED_BY: this.state.userId
+      VANBANDI_ID: this.state.docId,
+      PARENT_ID: this.state.comment.ID,
+      NGUOITAO: this.state.userId,
+      NOIDUNGTRAODOI: this.state.commentContent
     });
+
+    if(this.state.isTaskComment){
+      url = `${API_URL}/api/HscvCongViec/SaveComment`;
+      headers = new Headers({
+        'Accept': 'application/json',
+        'Content-Type': 'application/json;charset=utf-8'
+      });
+
+      body = JSON.stringify({
+        ID: 0,
+        CONGVIEC_ID: this.state.taskId,
+        REPLY_ID: this.state.comment.ID,
+        USER_ID: this.state.userId,
+        NOIDUNG: this.state.commentContent,
+        CREATED_BY: this.state.userId
+      });
+    }
 
     await asyncDelay(1000);
 
