@@ -124,12 +124,12 @@ class ApproveEvaluationTask extends Component {
             userId: this.state.userId,
             taskId: this.state.taskId,
             comment: this.state.comment,
-            TUCHU_CAO: this.state.TUCHU_CAO == EMPTY_STRING ? 0 : this.state.TUCHU_CAO,
-            TRACHNHIEM_LON: this.state.TRACHNHIEM_LON == EMPTY_STRING ? 0 : this.state.TRACHNHIEM_LON,
-            TUONGTAC_TOT: this.state.TUONGTAC_TOT == EMPTY_STRING ? 0 : this.state.TUONGTAC_TOT,
-            TOCDO_NHANH: this.state.TOCDO_NHANH == EMPTY_STRING ? 0 : this.state.TOCDO_NHANH,
-            TIENBO_NHIEU: this.state.TIENBO_NHIEU == EMPTY_STRING ? 0 : this.state.TIENBO_NHIEU,
-            THANHTICH_VUOT: this.state.THANHTICH_VUOT == EMPTY_STRING ? 0 : this.state.THANHTICH_VUOT
+            TDG_TUCHUCAO: this.state.TUCHU_CAO == EMPTY_STRING ? 0 : this.state.TUCHU_CAO,
+            TDG_TRACHNHIEMLON: this.state.TRACHNHIEM_LON == EMPTY_STRING ? 0 : this.state.TRACHNHIEM_LON,
+            TDG_TUONGTACTOT: this.state.TUONGTAC_TOT == EMPTY_STRING ? 0 : this.state.TUONGTAC_TOT,
+            TDG_TOCDONHANH: this.state.TOCDO_NHANH == EMPTY_STRING ? 0 : this.state.TOCDO_NHANH,
+            TDG_TIENBONHIEU: this.state.TIENBO_NHIEU == EMPTY_STRING ? 0 : this.state.TIENBO_NHIEU,
+            TDG_THANHTICHVUOT: this.state.THANHTICH_VUOT == EMPTY_STRING ? 0 : this.state.THANHTICH_VUOT
         });
 
         const result = await fetch(url, {
@@ -459,7 +459,7 @@ class ApproveEvaluationTask extends Component {
                             onChangeText={(comment) => this.setState({ comment })} />
 
                         <Button block danger
-                            style={{ backgroundColor: Colors.RED_PANTONE_021C, marginTop: verticalScale(20) }}
+                            style={{ backgroundColor: Colors.RED_PANTONE_186C, marginTop: verticalScale(20) }}
                             onPress={() => this.onApproveEvaluateTask()}>
                             <Text>
                                 PHÊ DUYỆT ĐÁNH GIÁ CÔNG VIỆC

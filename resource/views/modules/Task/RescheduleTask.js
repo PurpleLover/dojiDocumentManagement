@@ -23,7 +23,7 @@ import DatePicker from 'react-native-datepicker';
 
 //utilities
 import { API_URL, EMPTY_STRING, HEADER_COLOR, Colors } from '../../../common/SystemConstant';
-import { asyncDelay, convertDateToString } from '../../../common/Utilities';
+import { asyncDelay, convertDateToString, convertDateTimeToString } from '../../../common/Utilities';
 import { executeLoading } from '../../../common/Effect';
 import { scale, verticalScale, moderateScale } from '../../../assets/styles/ScaleIndicator';
 
@@ -37,14 +37,15 @@ class RescheduleTask extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userId: this.props.userInfo.ID,
-            taskId: this.props.navigation.state.params.taskId,
-            taskType: this.props.navigation.state.params.taskType,
+            userId: props.userInfo.ID,
+            taskId: props.navigation.state.params.taskId,
+            taskType: props.navigation.state.params.taskType,
 
             reason: EMPTY_STRING,
+            currentDeadline: convertDateToString(props.navigation.state.params.currentDeadline),
             deadline: EMPTY_STRING,
             executing: false,
-            chosenDate: new Date(),
+            chosenDate: null,
         }
     }
 
@@ -61,38 +62,8 @@ class RescheduleTask extends Component {
         });
     }
 
-    // onOpenCalendar = async () => {
-    //     try {
-    //         const { action, year, month, day } = await DatePickerAndroid.open({
-    //             date: new Date()
-    //         });
-
-    //         if (action !== DatePickerAndroid.dissmissedAction) {
-    //             if (day && month && year) {
-    //                 if (day < 10) {
-    //                     day = '0' + day;
-    //                 }
-    //                 if (month < 10) {
-    //                     month = '0' + (month + 1);
-    //                 }
-
-    //                 const deadline = day + '/' + month + '/' + year;
-
-    //                 this.setState({
-    //                     deadline
-    //                 });
-    //             }
-    //         }
-    //     } catch ({ code, message }) {
-    //         console.warn('Open datepicker error', err);
-    //     }
-    // }
-
     onSaveExtendTask = async () => {
-        this.setState({
-            deadline: convertDateToString(this.state.chosenDate),
-        });
-        if (util.isNull(this.state.deadline) || util.isEmpty(this.state.deadline)) {
+        if (util.isNull(this.state.chosenDate) || util.isEmpty(this.state.chosenDate)) {
             Toast.show({
                 text: 'Vui lòng nhập thời hạn xin lùi',
                 type: 'danger',
@@ -113,15 +84,23 @@ class RescheduleTask extends Component {
                 executing: true
             });
 
-            const url = `${API_URL}/api/HscvCongViec/SaveExtendTask?id=${this.state.taskId}&userId=${this.state.userId}&extendDate=${this.state.deadline}&reason=${this.state.reason}`;
+            const url = `${API_URL}/api/HscvCongViec/SaveExtendTask`;
             const headers = new Headers({
                 'Accept': 'application/json',
                 'Content-Type': 'application/json; charset=utf-8'
             });
 
+            const body = JSON.stringify({
+                id: this.state.taskId,
+                userId: this.state.userId,
+                extendDate: this.state.chosenDate,
+                reason: this.state.reason
+            })
+
             const result = await fetch(url, {
                 method: 'post',
-                headers
+                headers,
+                body
             });
 
             const resultJson = await result.json();
@@ -150,7 +129,7 @@ class RescheduleTask extends Component {
 
             //hiển thị kết quả xử lý
             Toast.show({
-                text: resultJson.Status ? 'Xin lùi hạn công việc thành công' : 'Xin lùi hạn công việc không thành công',
+                text: resultJson.Status ? 'Gửi yêu cầu lùi hạn thành công' : resultJson.Message,
                 type: resultJson.Status ? 'success' : 'danger',
                 buttonText: "OK",
                 buttonStyle: { backgroundColor: Colors.WHITE },
@@ -185,13 +164,19 @@ class RescheduleTask extends Component {
 
                 <Content>
                     <Form>
-                        <Item>
+                        <Item stackedLabel>
+                            <Label>Ngày hoàn thành mong muốn</Label>
+                            <Input editable={false} value={this.state.currentDeadline} />
+                        </Item>
+
+                        <Item stackedLabel style={{ height: verticalScale(100), justifyContent: 'center' }}>
+                            <Label>Xin lùi tới ngày</Label>
                             <DatePicker
                                 style={{ width: scale(300), alignSelf: 'center', marginTop: verticalScale(30) }}
                                 date={this.state.chosenDate}
                                 mode="date"
-                                placeholder='Hạn hoàn thành'
-                                format='YYYY-MM-DD'
+                                placeholder='Lùi tới ngày'
+                                format='DD/MM/YYYY'
                                 minDate={new Date()}
                                 confirmBtnText='CHỌN'
                                 cancelBtnText='BỎ'
@@ -208,14 +193,11 @@ class RescheduleTask extends Component {
                                 }}
                                 onDateChange={this.setDate}
                             />
-                            {/* <Input placeholder='Xin lùi tới ngày' value={this.state.deadline} editable={false}
-                                onChangeText={(deadline) => this.setState({ deadline })} />
-                            <Icon active name='ios-calendar-outline' onPress={() => this.onOpenCalendar()} /> */}
                         </Item>
 
-                        <Item>
-                            <Input placeholder='Nguyên nhân xin lùi'
-                                value={this.state.reason}
+                        <Item stackedLabel>
+                            <Label>Nguyên nhân xin lùi</Label>
+                            <Input value={this.state.reason}
                                 onChangeText={(reason) => this.setState({ reason })} />
                         </Item>
                     </Form>
@@ -225,7 +207,7 @@ class RescheduleTask extends Component {
                         onPress={() => this.onSaveExtendTask()}>
                         <Text>
                             LÙI HẠN CÔNG VIỆC
-                            </Text>
+                        </Text>
                     </Button>
                 </Content>
 

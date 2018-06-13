@@ -45,7 +45,7 @@ class HistoryRescheduleTask extends Component {
 
 			taskId: props.navigation.state.params.taskId,
 			taskType: props.navigation.state.params.taskType,
-			canApprove: props.canApprove,
+			canApprove: props.navigation.state.params.canApprove,
 			data: [],
 			loading: false,
 			loadingMore: false,
@@ -60,6 +60,8 @@ class HistoryRescheduleTask extends Component {
 	}
 
 	componentWillMount() {
+		console.log('demo', this.state.canApprove);
+
 		this.setState({
 			loading: true
 		}, () => {
@@ -114,9 +116,9 @@ class HistoryRescheduleTask extends Component {
 				'Phản hồi yêu cầu lùi hạn của \n' + item.FullName,
 				[
 					{
-						'text': 'ĐỒNG Ý', onPress: () => { this.onApproveReschedule(true, item.ID) }
+						'text': 'ĐỒNG Ý', onPress: () => { this.onApproveReschedule(true, item.ID, item.HANKETHUC) }
 					}, {
-						'text': 'KHÔNG ĐỒNG Ý', onPress: () => { this.onApproveReschedule(false, item.ID) }
+						'text': 'KHÔNG ĐỒNG Ý', onPress: () => { this.onApproveReschedule(false, item.ID, item.HANKETHUC) }
 					}, {
 						'text': 'THOÁT', onPress: () => { }
 					}
@@ -125,64 +127,16 @@ class HistoryRescheduleTask extends Component {
 		})
 	}
 
-	onApproveReschedule = async (isApprove, id) => {
-		this.setState({
-			executing: true
-		});
+	onApproveReschedule = async (isApprove, extendId, deadline) => {
+		const screenName = isApprove ? 'ApproveRescheduleTaskScreen' : 'DenyRescheduleTaskScreen';
+		this.props.navigation.navigate(screenName, {
+			taskId: this.state.taskId,
+			taskType: this.state.taskType,
+			canApprove: this.state.canApprove,
 
-		const status = isApprove ? 1 : 0;
-
-		const url = `${API_URL}/api/HscvCongViec/ApproveExtendTask?id=${id}&userId=${this.state.userId}&status=${status}`;
-		const headers = new Headers({
-			'Accept': 'application/json',
-			'Content-Type': 'application/json; charset=utf-8',
+			extendId,
+			deadline
 		})
-		const result = await fetch(url, {
-			method: 'POST',
-			headers
-		});
-
-		const resultJson = await result.json();
-
-		await asyncDelay(2000);
-
-		this.setState({
-			executing: false
-		});
-
-		if (resultJson.Status == true && !util.isNull(resultJson.GroupTokens) && !util.isEmpty(resultJson.GroupTokens)) {
-			const message = this.props.userInfo.Fullname + ' đã ' + (isApprove ? 'phê duyệt' : 'từ chối') + ' yêu cầu lùi hạn';
-			const content = {
-				title: (isApprove ? 'ĐỒNG Ý' : 'TỪ CHỐI') + ' YÊU CẦU GIA HẠN CÔNG VIỆC',
-				message,
-				isTaskNotification: true,
-				targetScreen: 'DetailTaskScreen',
-				targetTaskId: this.state.taskId,
-				targetTaskType: this.state.taskType
-			}
-
-			resultJson.GroupTokens.forEach(token => {
-				pushFirebaseNotify(content, token, 'notification');
-			})
-		}
-
-		Toast.show({
-			text: resultJson.Status ? 'Phản hồi yêu cầu lùi hạn thành công' : 'Phản hồi yêu cầu lùi hạn không thành công',
-			type: resultJson.Status ? 'success' : 'danger',
-			buttonText: "OK",
-			buttonStyle: { backgroundColor: Colors.WHITE },
-			buttonTextStyle: { color: resultJson.Status ? Colors.GREEN_PANTONE_364C : Colors.RED_PANTONE_186C },
-			duration: 3000,
-			onClose: () => {
-				if (resultJson.Status) {
-					this.setState({
-						loading: true
-					}, () => {
-						this.fetchData();
-					})
-				}
-			}
-		});
 	}
 
 	renderItem = ({ item }) => {
@@ -190,7 +144,7 @@ class HistoryRescheduleTask extends Component {
 			<SwipeRow
 				leftOpenValue={75}
 				rightOpenValue={-75}
-				disableLeftSwipe={!util.isNull(item.IS_APPROVED) && this.state.canApprove != true}
+				disableLeftSwipe={!util.isNull(item.IS_APPROVED) || this.state.canApprove == false}
 				left={
 					<Button style={{ backgroundColor: '#d1d2d3' }} onPress={() => this.onShowRescheduleInfo(item)}>
 						<RneIcon name='info' type='foundation' size={verticalScale(30)} color={Colors.WHITE} />
@@ -200,11 +154,11 @@ class HistoryRescheduleTask extends Component {
 					<RnView style={styles.rowContainer}>
 						<RnText style={styles.rowDateContainer}>
 							<RnText>
-								{'Lùi đến: '}
+								{'Xin lùi đến: '}
 							</RnText>
 
 							<RnText style={styles.rowDate}>
-								{convertDateToString(item.HANKETHUC)}
+								{convertDateToString(item.HANKETHUC) + ' '}
 							</RnText>
 						</RnText>
 						<RnText>
@@ -314,7 +268,10 @@ class HistoryRescheduleTask extends Component {
 				{/* hiển thị thông tin lùi hạn công việc */}
 
 				<PopupDialog
-					dialogTitle={<DialogTitle title='THÔNG TIN LÙI HẠN' />}
+					dialogTitle={<DialogTitle title='THÔNG TIN LÙI HẠN' titleStyle = {{
+						height: verticalScale(50),
+						justifyContent: 'center',
+					}}/>}
 					ref={(popupDialog) => { this.popupDialog = popupDialog }}
 					width={0.8}
 					height={'auto'}
@@ -322,17 +279,19 @@ class HistoryRescheduleTask extends Component {
 						<DialogButton
 							align={'center'}
 							buttonStyle={{
-								//height: verticalScale(100),
-								justifyContent: 'flex-end',
-								backgroundColor: '#4FA800',
+								height: verticalScale(50),
+								justifyContent: 'center',
+								backgroundColor: Colors.GREEN_PANTON_396C,
 								alignSelf: 'stretch',
+								alignItems: 'center',
 								borderBottomLeftRadius: 8,
 								borderBottomRightRadius: 8,
 							}}
 							text="ĐÓNG"
 							textStyle={{
-								fontSize: moderateScale(18, 1.5),
-								color: '#fff'
+								fontSize: moderateScale(14, 1.5),
+								color: '#fff',
+								textAlign: 'center'
 							}}
 							onPress={() => {
 								this.popupDialog.dismiss();
@@ -363,11 +322,31 @@ class HistoryRescheduleTask extends Component {
 
 						<Item stackedLabel>
 							<Label style={styles.dialogLabel}>
+								Đồng ý lùi tới ngày
+							</Label>
+
+							<Label style={styles.dialogText}>
+								{convertDateToString(this.state.rescheduleInfo.HANKETTHUC_LANHDAODUYET)}
+							</Label>
+						</Item>
+
+						<Item stackedLabel>
+							<Label style={styles.dialogLabel}>
 								Lý do xin lùi hạn
 							</Label>
 
 							<Label style={styles.dialogText}>
 								{(this.state.rescheduleInfo.NOIDUNG)}
+							</Label>
+						</Item>
+
+						<Item stackedLabel>
+							<Label style={styles.dialogLabel}>
+								Nội dung phê duyệt
+							</Label>
+
+							<Label style={styles.dialogText}>
+								{(this.state.rescheduleInfo.BUTPHELANHDAO)}
 							</Label>
 						</Item>
 
@@ -436,8 +415,6 @@ const styles = StyleSheet.create({
 		fontSize: moderateScale(14, 1.3)
 	}
 });
-
-
 
 const mapStateToProps = (state) => {
 	return {

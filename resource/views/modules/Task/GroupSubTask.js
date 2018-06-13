@@ -54,14 +54,16 @@ class GroupSubTask extends Component {
             loadingMore: false,
             refreshing: false,
             searching: false,
-            executing: false
+            executing: false,
+
+            canFinishTask: props.navigation.state.params.canFinishTask,
+            canAssignTask: props.navigation.state.params.canAssignTask
         }
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.searchData();
     }
-
 
     searchData = () => {
         this.setState({
@@ -102,14 +104,38 @@ class GroupSubTask extends Component {
     }
 
     onEditSubTask = (item) => {
-        Alert.alert(
-            'XỬ LÝ CÔNG VIỆC CON',
-            `Xử lý công việc #${item.ID}`,
-            [
-                { 'text': 'HOÀN THÀNH', onPress: () => this.onConfirmCompleteTask(item.ID) },
-                { 'text': 'GIAO VIỆC', onPress: () => this.onNavigateToAssignTask(item.ID) }
-            ]
-        )
+        let canAssign = this.state.canAssignTask && item.DAGIAOVIEC != true;
+        let canFinish = this.state.canFinishTask && item.DAGIAOVIEC != true;
+
+        if (canAssign && canFinish) {
+            Alert.alert(
+                'XỬ LÝ CÔNG VIỆC CON',
+                `Xử lý công việc #${item.ID}`,
+                [
+                    { 'text': 'HOÀN THÀNH', onPress: () => this.onConfirmCompleteTask(item.ID) },
+                    { 'text': 'GIAO VIỆC', onPress: () => this.onNavigateToAssignTask(item.ID) }
+                ]
+            )
+        }
+        else if (canAssign && !canFinish) {
+            Alert.alert(
+                'XỬ LÝ CÔNG VIỆC CON',
+                `Xử lý công việc #${item.ID}`,
+                [
+                    { 'text': 'GIAO VIỆC', onPress: () => this.onNavigateToAssignTask(item.ID) },
+                    { 'text': 'THOÁT', onPress: () => { } },
+                ]
+            )
+        } else {
+            Alert.alert(
+                'XỬ LÝ CÔNG VIỆC CON',
+                `Xử lý công việc #${item.ID}`,
+                [
+                    { 'text': 'HOÀN THÀNH', onPress: () => this.onConfirmCompleteTask(item.ID) },
+                    { 'text': 'THOÁT', onPress: () => { } },
+                ]
+            )
+        }
     }
 
     handleRefresh = () => {
@@ -181,11 +207,14 @@ class GroupSubTask extends Component {
     }
 
     renderItem = ({ item }) => {
+        let canAssign = this.state.canAssignTask && item.DAGIAOVIEC != true;
+        let canFinish = this.state.canFinishTask && item.DAGIAOVIEC != true;
+
         return (
             <SwipeRow
                 leftOpenValue={75}
                 rightOpenValue={-75}
-                disableLeftSwipe={item.TRANGTHAI_ID > 0}
+                disableLeftSwipe={(!canAssign && !canFinish) || item.TRANGTHAI_ID > 0}
                 left={
                     <Button style={{ backgroundColor: '#d1d2d3' }} onPress={() => this.onShowSubTaskInfo(item)}>
                         <RneIcon name='info' type='foundation' size={verticalScale(30)} color={Colors.WHITE} />
@@ -196,11 +225,11 @@ class GroupSubTask extends Component {
                     <RnView>
                         <RnText style={styles.rowItem}>
                             <RnText style={styles.rowItemLabel}>
-                                {'Người thực hiện: '}
+                                {'Tên công việc: '}
                             </RnText>
 
                             <RnText>
-                                {(util.isNull(item.NGUOITHUCHIEN) || util.isEmpty(item.NGUOITHUCHIEN)) ? 'N/A' : formatLongText(item.NGUOITHUCHIEN, 30)}
+                                {'Công việc #' + item.ID}
                             </RnText>
 
                             <RnText style={item.TRANGTHAI_ID > 0 ? styles.complete : styles.inComplete}>
@@ -258,7 +287,7 @@ class GroupSubTask extends Component {
                     <Item>
                         <Icon name='ios-search' />
                         <Input
-                            placeholder={'Tên người thực hiện'}
+                            placeholder={'Tên công việc'}
                             onSubmitEditing={() => this.searchData()}
                             value={this.state.filterValue}
                             onChangeText={(filterValue) => this.setState({ filterValue })} />
@@ -313,7 +342,11 @@ class GroupSubTask extends Component {
 
                 {/* hiển thị thông tin công việc con*/}
                 <PopupDialog
-                    dialogTitle={<DialogTitle title={`THÔNG TIN CÔNG VIỆC #${this.state.dataItem.CONGVIEC_ID}`} />}
+                    dialogTitle={<DialogTitle title={`THÔNG TIN CÔNG VIỆC #${this.state.dataItem.CONGVIEC_ID}`}
+                        titleStyle={{
+                            height: verticalScale(50),
+                            justifyContent: 'center',
+                        }} />}
                     ref={(popupDialog) => { this.popupDialog = popupDialog }}
                     width={0.8}
                     height={'auto'}
@@ -321,16 +354,19 @@ class GroupSubTask extends Component {
                         <DialogButton
                             align={'center'}
                             buttonStyle={{
-                                justifyContent: 'flex-end',
-                                backgroundColor: '#4FA800',
+                                height: verticalScale(50),
+                                justifyContent: 'center',
+                                backgroundColor: Colors.GREEN_PANTON_396C,
                                 alignSelf: 'stretch',
+                                alignItems: 'center',
                                 borderBottomLeftRadius: 8,
                                 borderBottomRightRadius: 8,
                             }}
                             text="ĐÓNG"
                             textStyle={{
-                                fontSize: moderateScale(18, 1.5),
-                                color: '#fff'
+                                fontSize: moderateScale(14, 1.5),
+                                color: '#fff',
+                                textAlign: 'center'
                             }}
                             onPress={() => {
                                 this.popupDialog.dismiss();

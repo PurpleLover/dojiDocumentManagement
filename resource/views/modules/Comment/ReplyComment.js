@@ -43,7 +43,6 @@ import {
 import { scale, verticalScale, moderateScale, indicatorResponsive } from '../../../assets/styles/ScaleIndicator';
 import { dataLoading, executeLoading } from '../../../common/Effect';
 
-
 //firebase
 import { pushFirebaseNotify } from '../../../firebase/FireBaseClient';
 
