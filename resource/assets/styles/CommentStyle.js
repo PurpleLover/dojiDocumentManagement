@@ -130,7 +130,21 @@ export const FooterCommentStyle = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: Colors.WHITE,
     borderTopWidth: 1,
-    borderColor: '#e5e5e5'
+    borderColor: '#e5e5e5',
+    flexWrap: 'wrap',
+  }, footerCommentContent: {
+    paddingLeft: moderateScale(10), 
+    maxHeight: verticalScale(50),
+  },
+  footerUploader: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  }, footerUploadWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  }, imageUpload: {
+    height: moderateScale(200),
+    width: moderateScale(200),
   }
 });
 

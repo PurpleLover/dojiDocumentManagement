@@ -24,7 +24,8 @@ import { dataLoading, executeLoading } from '../../../common/Effect';
 import renderIf from 'render-if';
 import {
   Alert, ActivityIndicator, FlatList, View, Text,
-  TouchableOpacity, Image, Keyboard, Platform
+  TouchableOpacity, Image, Keyboard, Platform,
+  Animated,
 } from 'react-native';
 import {
   Container, Header, Left, Right, Body, Title, Input,
@@ -33,6 +34,8 @@ import {
 import { Icon as RneIcon } from 'react-native-elements';
 import * as util from 'lodash';
 import RNFetchBlob from 'react-native-fetch-blob';
+import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
+import ImagePicker from 'react-native-image-picker';
 
 //styles
 import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
@@ -59,7 +62,12 @@ class ListComment extends Component {
       data: [],
       pageIndex: DEFAULT_PAGE_INDEX,
       pageSize: DEFAULT_PAGE_SIZE,
-      commentContent: EMPTY_STRING
+      commentContent: EMPTY_STRING,
+
+      avatarSource: EMPTY_STRING,
+      avatarSourceURI: EMPTY_STRING,
+      isOpen: false,
+      heightAnimation: verticalScale(50),
     }
   }
 
@@ -132,6 +140,14 @@ class ListComment extends Component {
   }
 
   sendComment = async () => {
+    const data = new FormData();
+    data.append('UPloadedImage', {
+      uri: this.state.avatarSourceURI,
+      type: 'image/jpeg',
+      name: convertDateTimeToString(new Date())
+    });
+
+
     this.setState({
       executing: true
     });
@@ -148,7 +164,8 @@ class ListComment extends Component {
       REPLY_ID: null,
       USER_ID: this.state.userId,
       NOIDUNG: this.state.commentContent,
-      CREATED_BY: this.state.userId
+      CREATED_BY: this.state.userId,
+
     });
 
     await asyncDelay(1000);
@@ -306,7 +323,101 @@ class ListComment extends Component {
     )
   }
 
+  onOpenSendFile = async () => {
+    // DocumentPicker.show({
+    //   filetype: [DocumentPickerUtil.allFiles()],
+    // },(error,res) => {
+    //   // Android
+    //   console.log(
+    //      res.uri,
+    //      res.type, // mime type
+    //      res.fileName,
+    //      res.fileSize
+    //   );
+    // });
+    if (this.state.isOpen === true) {
+      this.setState({
+        avatarSource: EMPTY_STRING,
+        avatarSourceURI: EMPTY_STRING,
+        isOpen: false,
+        footerFlex: 0,
+        heightAnimation: verticalScale(50)
+      });
+      return;
+    }
+    else {
+      this.setState({
+        executing: true,
+        isOpen: true,
+      });
+      const options = {
+        title: 'Select Image',
+        storageOptions: {
+          skipBackup: true,
+          path: 'images'
+        },
+        quality: 1.0,
+        maxWidth: 500,
+        maxHeight: 500,
+      };
+
+      /**
+       * The first arg is the options object for customization (it can also be null or omitted for default options),
+       * The second arg is the callback which sends object: response (more info below in README)
+       */
+      ImagePicker.showImagePicker(options, (response) => {
+        console.log('Response = ', response);
+        console.log('Response.URI = ', response.uri);
+        console.log('Response Data = ', response.data);
+        console.log('Response Size = ', response.fileSize);
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+          this.setState({
+            isOpen: false,
+            footerFlex: 0
+          });
+        }
+        else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+          Alert.alert(
+            'THÔNG BÁO',
+            'KIỂM TRA LẠI MÁY ẢNH CỦA BẠN',
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  this.setState({
+                    isOpen: false,
+                    footerFlex: 0
+                  });
+                }
+              }
+            ]
+          );
+        }
+        else {
+          let source = { uri: response.uri };
+          console.log('Source = ', source);
+          console.log('Source URI = ', source.uri);
+          // You can also display the image using data:
+          // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+          this.setState({
+            avatarSource: source,
+            avatarSourceURI: source.uri,
+            executing: false,
+            footerFlex: 1,
+            heightAnimation: verticalScale(250),
+          });
+        }
+      });
+    }
+  }
+
   render() {
+    // const footerFlexWhenImage = (this.state.avatarSource === EMPTY_STRING) ? this.state.footerFlex : 2;
+    const commentChosenImageIcon = (this.state.isOpen) ? Colors.BLUE_PANTONE_640C : Colors.GRAY;
+    const commentSendableIcon = (this.state.avatarSource !== EMPTY_STRING || this.state.commentContent !== EMPTY_STRING) ? Colors.BLUE_PANTONE_640C : Colors.GRAY;
     return (
       <Container>
         <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
@@ -355,14 +466,29 @@ class ListComment extends Component {
           }
         </Content>
 
-        <Footer style={[{ flex: this.state.footerFlex }, FooterCommentStyle.footerComment]}>
-          <Input style={{ paddingLeft: moderateScale(10) }}
-            placeholder='Nhập nội dung trao đổi'
-            value={this.state.commentContent}
-            onChangeText={(commentContent) => this.setState({ commentContent })} />
-          <Button transparent onPress={this.sendComment}>
-            <RneIcon name='md-send' size={moderateScale(40)} color={Colors.GRAY} type='ionicon' />
-          </Button>
+        <Footer style={[FooterCommentStyle.footerUploader, { height: this.state.heightAnimation }]}>
+          <View style={[FooterCommentStyle.footerComment]}>
+            <Button transparent onPress={this.onOpenSendFile}>
+              <RneIcon name='md-images' size={moderateScale(40)} color={commentChosenImageIcon} type='ionicon' />
+            </Button>
+            <Input
+              style={FooterCommentStyle.footerCommentContent}
+              placeholder='Nhập nội dung trao đổi'
+              value={this.state.commentContent}
+              onChangeText={(commentContent) => this.setState({ commentContent })}
+              multiline={true}
+            />
+            <Button transparent onPress={this.sendComment}>
+              <RneIcon name='md-send' size={moderateScale(40)} color={commentSendableIcon} type='ionicon' />
+            </Button>
+          </View>
+          {
+            renderIf(this.state.avatarSource !== EMPTY_STRING)(
+              <View style={FooterCommentStyle.footerUploadWrapper}>
+                <Image source={this.state.avatarSource} style={FooterCommentStyle.imageUpload} />
+              </View>
+            )
+          }
         </Footer>
 
         {

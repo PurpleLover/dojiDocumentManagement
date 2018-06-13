@@ -10,6 +10,10 @@ target 'VanBanDOJI' do
   target 'VanBanDOJI-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
+    pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker'
+
+    pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
   end
 
   target 'VanBanDOJITests' do
