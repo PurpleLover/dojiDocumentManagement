@@ -32,7 +32,14 @@ export const works_Quested_Neutral = require('../images/SideBar/Works/Quested-Ne
 export const works_Completed_Active = require('../images/SideBar/Works/Completed-Active.png');
 export const works_Completed_Neutral = require('../images/SideBar/Works/Completed-Neutral.png');
 
-//Signout
+// Signout
 export const signout_Active = require('../images/SideBar/SignOut/Signout-Active.png');
 export const signout_Neutral = require('../images/SideBar/SignOut/Signout-Neutral.png');
 export const signout_Turnoff = require('../images/SideBar/SignOut/Turnoff.png');
+
+// Account Info
+export const accountInfo_Active = require('../images/SideBar/Accounts/AccountInfo-Active.png');
+export const accountInfo_Neutral = require('../images/SideBar/Accounts/AccountInfo-Neutral.png');
+// Account Password
+export const password_Active = require('../images/SideBar/Accounts/Password-Active.png');
+export const password_Neutral = require('../images/SideBar/Accounts/Password-Neutral.png');

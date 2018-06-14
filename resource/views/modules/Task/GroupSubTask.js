@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import {
     Alert, ActivityIndicator, StyleSheet, RefreshControl,
-    View as RnView, Text as RnText, FlatList
+    View as RnView, Text as RnText, FlatList, Platform
 } from 'react-native';
 
 //redux
@@ -344,8 +344,12 @@ class GroupSubTask extends Component {
                 <PopupDialog
                     dialogTitle={<DialogTitle title={`THÔNG TIN CÔNG VIỆC #${this.state.dataItem.CONGVIEC_ID}`}
                         titleStyle={{
-                            height: verticalScale(50),
-                            justifyContent: 'center',
+                            ...Platform.select({
+                                android: {
+                                    height: verticalScale(50),
+                                    justifyContent: 'center',
+                                }
+                            })
                         }} />}
                     ref={(popupDialog) => { this.popupDialog = popupDialog }}
                     width={0.8}
@@ -354,13 +358,20 @@ class GroupSubTask extends Component {
                         <DialogButton
                             align={'center'}
                             buttonStyle={{
-                                height: verticalScale(50),
-                                justifyContent: 'center',
                                 backgroundColor: Colors.GREEN_PANTON_396C,
                                 alignSelf: 'stretch',
                                 alignItems: 'center',
                                 borderBottomLeftRadius: 8,
                                 borderBottomRightRadius: 8,
+                                ...Platform.select({
+                                    ios: {
+                                        justifyContent: 'flex-end',
+                                    },
+                                    android: {
+                                        height: verticalScale(50),
+                                        justifyContent: 'center',
+                                    },
+                                })
                             }}
                             text="ĐÓNG"
                             textStyle={{

@@ -63,7 +63,11 @@ export default class SideBar extends Component {
         this.setState({
             onFocusNow: ref,
         });
-        this.navigate(screenName);
+        if (this.onFocusNow !== '10') {
+            this.navigate(screenName);
+        } else {
+            this.navigate(screenName);
+        }
     }
 
     render() {
@@ -95,8 +99,8 @@ export default class SideBar extends Component {
                 <View style={SideBarStyle.body}>
                     <ScrollView>
                         <Panel title='VĂN BẢN TRÌNH KÝ'>
-                            <TouchableOpacity 
-                                onPress={() => this.setCurrentFocus('ListIsNotProcessedScreen', '1')} 
+                            <TouchableOpacity
+                                onPress={() => this.setCurrentFocus('ListIsNotProcessedScreen', '1')}
                                 style={this.state.onFocusNow === '1' && SideBarStyle.listItemFocus}
                             >
                                 <ListItem
@@ -244,15 +248,52 @@ export default class SideBar extends Component {
                             </TouchableOpacity>
                         </Panel>
 
-                        <TouchableOpacity onPress={() => this.onLogOut()}>
-                            <ListItem
-                                leftIcon={<Image source={SBIcons.signout_Turnoff} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}></Image>}
-                                hideChevron={true}
-                                containerStyle={SideBarStyle.listItemContainer}
-                                title={'ĐĂNG XUẤT'}
-                                titleStyle={SideBarStyle.listItemTitle}
-                            />
-                        </TouchableOpacity>
+                        {/*Truy vấn thông tin tài khoản người dùng*/}
+                        <Panel title='TÀI KHOẢN'>
+                            <TouchableOpacity onPress={() => this.setCurrentFocus('AccountInfoScreen', '10')} style={this.state.onFocusNow === '10' && SideBarStyle.listItemFocus}>
+                                <ListItem
+                                    leftIcon={
+                                        this.state.onFocusNow !== '10' ?
+                                            <Image source={SBIcons.accountInfo_Neutral} style={SideBarStyle.listItemLeftIcon} /> :
+                                            <Image source={SBIcons.accountInfo_Active} style={SideBarStyle.listItemLeftIcon} />
+                                    }
+                                    rightIcon={
+                                        this.state.onFocusNow !== '10' ? mainItemIcon : subItemIcon
+                                    }
+                                    title={'Thông tin tài khoản'}
+                                    containerStyle={SideBarStyle.subItemContainer}
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '10' && SideBarStyle.listItemSubTitleContainerFocus]}
+                                    style={SideBarStyle.subItemContainer} />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => this.setCurrentFocus('AccountChangePasswordScreen', '11')} style={this.state.onFocusNow === '11' && SideBarStyle.listItemFocus}>
+                                <ListItem
+                                    leftIcon={
+                                        this.state.onFocusNow !== '11' ?
+                                            <Image source={SBIcons.password_Neutral} style={SideBarStyle.listItemLeftIcon} /> :
+                                            <Image source={SBIcons.password_Active} style={SideBarStyle.listItemLeftIcon} />
+                                    }
+                                    rightIcon={
+                                        this.state.onFocusNow !== '11' ? mainItemIcon : subItemIcon
+                                    }
+                                    title={'Đổi mật khẩu'}
+                                    containerStyle={SideBarStyle.subItemContainer}
+                                    titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '11' && SideBarStyle.listItemSubTitleContainerFocus]}
+                                    style={SideBarStyle.subItemContainer} />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => this.onLogOut()}>
+                                <ListItem
+                                    leftIcon={<Image source={SBIcons.signout_Turnoff} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}></Image>}
+                                    hideChevron={true}
+                                    containerStyle={SideBarStyle.listItemContainer}
+                                    title={'ĐĂNG XUẤT'}
+                                    titleStyle={SideBarStyle.listItemTitle}
+                                />
+                            </TouchableOpacity>
+                        </Panel>
+
+
                     </ScrollView>
                 </View>
 
