@@ -77,7 +77,6 @@ class AccountInfo extends Component {
   navigateToEditAccount = () => {
     this.props.navigation.navigate('AccountEditorScreen', {
       fullName: this.state.fullName,
-      email: this.state.email,
       dateOfBirth: this.state.dateOfBirth,
       mobilePhone: this.state.mobilePhone,
       address: this.state.address,
