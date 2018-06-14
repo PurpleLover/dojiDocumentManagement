@@ -15,7 +15,7 @@ import { ListItem } from 'react-native-elements';
 //styles
 import { PanelStyle } from '../../assets/styles/PanelStyle';
 import { SideBarStyle } from '../../assets/styles/SideBarStyle';
-import { doc_Default, work_Default } from '../../assets/styles/SideBarIcons';
+import { doc_Default, work_Default, account_Default } from '../../assets/styles/SideBarIcons';
 import { verticalScale } from '../../assets/styles/ScaleIndicator';
 
 import SideBar from './SideBar';
@@ -84,8 +84,17 @@ export default class Panel extends Component {
                 }
             ]
         };
-
-        const titleLeftIcon = (this.state.title === 'VĂN BẢN TRÌNH KÝ' || this.state.title === 'VĂN BẢN ĐÃ PHÁT HÀNH') ? <Image source={doc_Default} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}></Image> : <Image source={work_Default} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}></Image>
+        let titleLeftIcon = <Image 
+            source={doc_Default} 
+            style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}/>
+        if (this.state.title === 'CÔNG VIỆC') {
+            titleLeftIcon = <Image source={work_Default} 
+                style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}/>
+        }
+        if (this.state.title === 'TÀI KHOẢN') {
+            titleLeftIcon = <Image source={account_Default} 
+            style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}/>
+        }
 
         return (
             <Animated.View style={[PanelStyle.container, { height: this.state.heightAnimation }]}>

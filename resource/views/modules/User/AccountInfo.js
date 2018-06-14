@@ -47,7 +47,7 @@ const userAvatar = require('../../../assets/images/avatar.png');
 class AccountInfo extends Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       id: props.userInfo.ID,
 
@@ -87,8 +87,8 @@ class AccountInfo extends Component {
   componentWillMount = async () => {
     const url = `${API_URL}/api/account/GetUserInfo/${this.state.id}`;
     let result = await fetch(url)
-      .then(response=>response.json())
-      .then(responseJson=>responseJson);
+      .then(response => response.json())
+      .then(responseJson => responseJson);
 
     console.log('Result sau khi mount = ', result);
     this.setState({
@@ -102,6 +102,14 @@ class AccountInfo extends Component {
   }
 
   render() {
+    const { fullName, email, dateOfBirth, mobilePhone, address } = this.state;
+
+    const fullNameText = (fullName === EMPTY_STRING) ? '(Không có)' : fullName;
+    const emailText = (email === EMPTY_STRING) ? '(Không có)' : email;
+    const dateOfBirthText = (dateOfBirth === EMPTY_STRING) ? '(Không có)' : dateOfBirth;
+    const mobilePhoneText = (mobilePhone === EMPTY_STRING) ? '(Không có)' : mobilePhone;
+    const addressText = (address === EMPTY_STRING) ? '(Không có)' : address;
+
     return (
       <Container>
         <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
@@ -127,34 +135,46 @@ class AccountInfo extends Component {
             <Form>
               <Item stackedLabel>
                 <Label>Tên đăng nhập</Label>
-                <Label style={{ fontSize: moderateScale(16, 1.3), color: Colors.BLACK }}>{this.state.userName}</Label>
+                <Label style={{ fontSize: moderateScale(16, 1.3), color: Colors.BLACK }}>
+                  {this.state.userName}
+                </Label>
               </Item>
               <Item stackedLabel>
                 <Label>Họ và tên</Label>
-                <Label style={{ fontSize: moderateScale(16, 1.3), color: Colors.BLACK }}>{this.state.fullName}</Label>
+                <Label style={{ fontSize: moderateScale(16, 1.3), color: Colors.BLACK }}>
+                  {fullNameText}
+                </Label>
               </Item>
               <Item stackedLabel>
                 <Label>Email</Label>
-                <Label style={{ fontSize: moderateScale(16, 1.3), color: Colors.BLACK }}>{this.state.email}</Label>
+                <Label style={{ fontSize: moderateScale(16, 1.3), color: Colors.BLACK }}>
+                  {emailText}
+                </Label>
               </Item>
               <Item stackedLabel>
                 <Label>Ngày sinh</Label>
-                <Label style={{ fontSize: moderateScale(16, 1.3), color: Colors.BLACK }}>{this.state.dateOfBirth}</Label>
+                <Label style={{ fontSize: moderateScale(16, 1.3), color: Colors.BLACK }}>
+                  {dateOfBirthText}
+                </Label>
               </Item>
               <Item stackedLabel>
                 <Label>Điện thoại</Label>
-                <Label style={{ fontSize: moderateScale(16, 1.3), color: Colors.BLACK }}>{this.state.mobilePhone}</Label>
+                <Label style={{ fontSize: moderateScale(16, 1.3), color: Colors.BLACK }}>
+                  {mobilePhoneText}
+                </Label>
               </Item>
-              <Item stackedLabel last style={{height:'auto'}}>
+              <Item stackedLabel style={{ height: 'auto' }}>
                 <Label>Địa chỉ</Label>
-                <Label style={{ fontSize: moderateScale(16, 1.3), color: Colors.BLACK, marginBottom: verticalScale(15) }}>{this.state.address}</Label>
+                <Label style={{ fontSize: moderateScale(16, 1.3), color: Colors.BLACK, marginBottom: verticalScale(15) }}>
+                  {addressText}
+                </Label>
               </Item>
             </Form>
             <TouchableOpacity
               onPress={() => this.navigateToEditAccount()}
-              style={[LoginStyle.formButtonLogin, {backgroundColor: '#da2032', marginTop: verticalScale(30)}]}
+              style={[LoginStyle.formButtonLogin, { backgroundColor: Colors.RED_PANTONE_186C, marginTop: verticalScale(20), borderRadius: 0 }]}
             >
-              <Text style={[LoginStyle.formButtonText, {color: Colors.WHITE}]}>SỬA THÔNG TIN</Text>
+              <Text style={[LoginStyle.formButtonText, { color: Colors.WHITE }]}>SỬA THÔNG TIN</Text>
             </TouchableOpacity>
           </Content>
         </ImageBackground>
@@ -168,7 +188,7 @@ class AccountInfo extends Component {
 
 const mapStatetoProps = (state) => {
   return {
-      userInfo: state.userState.userInfo
+    userInfo: state.userState.userInfo
   }
 }
 

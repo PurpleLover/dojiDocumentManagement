@@ -310,7 +310,7 @@ class AccountEditor extends Component {
                   autoCorrect={false}
                 />
               </Item>
-              <Item stackedLabel last>
+              <Item stackedLabel>
                 <Label>Địa chỉ</Label>
                 <Input
                   onChangeText={this._handleFieldNameChange('address')}
@@ -321,7 +321,7 @@ class AccountEditor extends Component {
             </Form>
             <TouchableOpacity
               onPress={() => this.onSaveAccountInfo()}
-              style={[LoginStyle.formButtonLogin, { backgroundColor: '#da2032', marginTop: verticalScale(30) }]}
+              style={[LoginStyle.formButtonLogin, { backgroundColor: Colors.RED_PANTONE_186C, marginTop: verticalScale(20), borderRadius: 0 }]}
             >
               <Text style={[LoginStyle.formButtonText, { color: Colors.WHITE }]}>LƯU THÔNG TIN</Text>
             </TouchableOpacity>

@@ -281,18 +281,19 @@ export default class SideBar extends Component {
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '11' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     style={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
-
-                            <TouchableOpacity onPress={() => this.onLogOut()}>
-                                <ListItem
-                                    leftIcon={<Image source={SBIcons.signout_Turnoff} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}></Image>}
-                                    hideChevron={true}
-                                    containerStyle={SideBarStyle.listItemContainer}
-                                    title={'ĐĂNG XUẤT'}
-                                    titleStyle={SideBarStyle.listItemTitle}
-                                />
-                            </TouchableOpacity>
                         </Panel>
-
+                        
+                        <TouchableOpacity onPress={() => this.onLogOut()}>
+                        <ListItem
+                            leftIcon={
+                                <Image source={SBIcons.signout_Turnoff} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}/>
+                            }
+                            hideChevron={true}
+                            containerStyle={SideBarStyle.listItemContainer}
+                            title={'ĐĂNG XUẤT'}
+                            titleStyle={SideBarStyle.listItemTitle}
+                        />
+                    </TouchableOpacity>
 
                     </ScrollView>
                 </View>
