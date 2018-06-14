@@ -275,7 +275,7 @@ class Login extends Component {
                             <View style={LoginStyle.formInputs}>
                                 <View style={LoginStyle.formLabel}>
                                     <Text style={LoginStyle.formLabelText}>
-                                        Tên đăng nhập
+                                        Địa chỉ email
                                     </Text>
                                 </View>
                                 <View style={LoginStyle.formInput}>

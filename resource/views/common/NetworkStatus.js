@@ -4,7 +4,7 @@ import { View, Modal, NetInfo, Text, StyleSheet } from 'react-native';
 //lib + redux
 import { connect } from 'react-redux';
 import * as action from '../../redux/modules/network/NetworkAction';
-import { Header } from 'react-native-elements';
+import { Header, Icon } from 'react-native-elements';
 
 //constant
 import { Colors } from '../../common/SystemConstant';
@@ -38,19 +38,24 @@ class NetworkStatus extends Component {
                 <View style={styles.container}>
                     <View style={styles.body}>
                         <Header
+                            leftComponent={
+                                <Icon name='signal-wifi-off' type='MaterialIcons'
+                                    size={moderateScale(40)} color={Colors.WHITE} />
+                            }
                             outerContainerStyle={styles.headerOuter}
                             centerComponent={
                                 <Text style={styles.headerTitle}>
-                                    LỖI KẾT NỐI
+                                    THÔNG BÁO NGOẠI TUYẾN
                                 </Text>
                             }
                         />
-                    </View>
 
-                    <View style={styles.content}>
-                        <Text style={styles.bodyTitle}>
-                            VUI LÒNG KIỂM TRA KẾT NỐI CỦA BẠN
-                        </Text>
+                        <View style={styles.content}>
+                            <Text style={styles.bodyTitle}>
+                                Thiết bị hiện đang ở trạng thái ngoại tuyến! 
+                                Vui lòng kiểm tra lại kết nối của bạn.
+                            </Text>
+                        </View>
                     </View>
                 </View>
             </Modal>
@@ -63,30 +68,31 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(52, 52, 52, 0.8)'
+        backgroundColor: 'rgba(52, 52, 52, 0.8)',
     }, body: {
+        borderRadius: 15,
         width: scale(300),
         height: verticalScale(200),
         borderRadius: 3,
-        borderWidth:1,
-        borderColor: '#ececec',
         backgroundColor: Colors.WHITE,
-        justifyContent: 'center',
-        alignItems: 'center'
     }, headerOuter: {
         backgroundColor: Colors.BLUE_PANTONE_640C,
         height: verticalScale(50),
+        width: '100%',
+        borderRadius: 15
     }, headerTitle: {
-        color: Colors.WHITE, 
+        color: Colors.WHITE,
         fontWeight: 'bold',
         fontSize: moderateScale(16)
     }, bodyTitle: {
         color: Colors.BLACK,
-        fontSize: moderateScale(15)
+        fontSize: moderateScale(15),
+        textAlign: 'center'
     }, content: {
-        height: verticalScale(250),
+        flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: Colors.WHITE
     }
 })
 

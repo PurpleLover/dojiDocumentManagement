@@ -37,6 +37,8 @@ export const signout_Active = require('../images/SideBar/SignOut/Signout-Active.
 export const signout_Neutral = require('../images/SideBar/SignOut/Signout-Neutral.png');
 export const signout_Turnoff = require('../images/SideBar/SignOut/Turnoff.png');
 
+// Account Default
+export const account_Default = require('../images/SideBar/Accounts/Account-Neutral.png');
 // Account Info
 export const accountInfo_Active = require('../images/SideBar/Accounts/AccountInfo-Active.png');
 export const accountInfo_Neutral = require('../images/SideBar/Accounts/AccountInfo-Neutral.png');
