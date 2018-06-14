@@ -1,5 +1,5 @@
 /**
- * @description: màn hình đăng ký người dùng
+ * @description: màn hình truy vấn thông tin người dùng
  * @author: duynn
  * @since: 04/05/2018
  */
@@ -19,13 +19,14 @@ import {
 import { Icon } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as util from 'lodash';
+import DatePicker from 'react-native-datepicker';
 //constants
 import { EMPTY_STRING, API_URL, Colors } from '../../../common/SystemConstant';
 
 //styles
 import { LoginStyle } from '../../../assets/styles/LoginStyle';
 import { NativeBaseStyle } from '../../../assets/styles/NativeBaseStyle';
-import { moderateScale, verticalScale } from '../../../assets/styles/ScaleIndicator';
+import { scale, moderateScale, verticalScale } from '../../../assets/styles/ScaleIndicator';
 
 import { authenticateLoading } from '../../../common/Effect';
 import { asyncDelay, emptyDataPage } from '../../../common/Utilities'
@@ -42,16 +43,29 @@ const uriBackground = require('../../../assets/images/background.png');
 const dojiBigIcon = require('../../../assets/images/doji-big-icon.png');
 const showPasswordIcon = require('../../../assets/images/visible-eye.png');
 const hidePasswordIcon = require('../../../assets/images/hidden-eye.png');
+const userAvatar = require('../../../assets/images/avatar.png');
 
-class Signup extends Component {
+class AccountEditor extends Component {
   constructor(props) {
     super(props);
 
+    const { fullName, email, dateOfBirth, mobilePhone, address } = props.navigation.state.params;
+
     this.state = {
-      userName: EMPTY_STRING,
-      fullName: EMPTY_STRING,
-      email: EMPTY_STRING,
-      password: EMPTY_STRING,
+      id: props.userInfo.ID,
+
+      // state hiện tại
+      fullName: fullName,
+      email: email,
+      dateOfBirth: dateOfBirth,
+      mobilePhone: mobilePhone,
+      address: address,
+      // state cũ
+      TMPfullName: fullName,
+      TMPemail: email,
+      TMPdateOfBirth: dateOfBirth,
+      TMPmobilePhone: mobilePhone,
+      TMPaddress: address,
 
       headerComponentsDisplayStatus: 'flex',
 
@@ -85,111 +99,45 @@ class Signup extends Component {
     })
   }
 
-  onRememberPassword() {
+  _handleFieldNameChange = fieldName => text => {
     this.setState({
-      isRememberPassword: !this.state.isRememberPassword
-    })
-  }
-
-  onChangeFullNameText(fullName) {
-    this.setState({
-      fullName
-    }, () => {
-      this.setState({
-        isDisabledLoginButton: (fullName.length <= 0 || this.state.password.length <= 0)
-      });
+      [fieldName]: text
     });
   }
 
-  onChangeEmailText(email) {
-    this.setState({
-      email
-    }, () => {
-      this.setState({
-        isDisabledLoginButton: (email.length <= 0 || this.state.password.length <= 0)
-      });
-    });
+  navigateBackToAccountInfo = () => {
+    this.props.navigation.navigate('AccountInfoScreen');
   }
 
-  onChangeUserNameText(userName) {
-    this.setState({
-      userName
-    }, () => {
-      this.setState({
-        isDisabledLoginButton: (userName.length <= 0 || this.state.password.length <= 0)
-      });
-    });
-  }
-
-  onChangePasswordText(password) {
-    if (password.length > 0) {
-      this.setState({
-        password,
-        passwordIconDisplayStatus: 'flex'
-      }, () => {
-        if (this.state.userName.length > 0) {
-          this.setState({
-            isDisabledLoginButton: false
-          })
-        }
-      });
-    } else {
-      this.setState({
-        isHidePassword: true,
-        password,
-        passwordIconDisplayStatus: 'none'
-      }, () => {
-        this.setState({
-          isDisabledLoginButton: true
-        })
-      })
-    }
-  }
-
-  onChangePasswordVisibility() {
-    //show and hide password
-    this.setState({
-      isHidePassword: !this.state.isHidePassword
-    });
-  }
-
-  async onSignup() {
+  async onSaveAccountInfo() {
 
     this.setState({
       loading: true
     });
-
-    if (this.state.fullName.length < 0) {
+    if (this.state.fullName === EMPTY_STRING) {
       this.setState({
-        loading: false
-      }, () => {
-        Toast.show({
-          text: 'Bạn phải nhập họ và tên của mình',
-          textStyle: { fontSize: moderateScale(12, 1.5), color: Colors.WHITE },
-          buttonText: "OK",
-          buttonStyle: { backgroundColor: Colors.WHITE },
-          buttonTextStyle: { color: Colors.RED_PANTONE_186C },
-          duration: 3000
-        });
+        fullName: this.state.TMPfullName
       });
-      return;
     }
-
-    if (this.state.userName.length < 6 || this.state.userName.length > 16) {
+    if (this.state.email === EMPTY_STRING) {
       this.setState({
-        loading: false
-      }, () => {
-        Toast.show({
-          text: 'Tên đăng nhập phải có 6 - 16 kí tự',
-          type: 'danger',
-          textStyle: { fontSize: moderateScale(12, 1.5), color: Colors.WHITE },
-          buttonText: "OK",
-          buttonStyle: { backgroundColor: Colors.WHITE },
-          buttonTextStyle: { color: Colors.RED_PANTONE_186C },
-          duration: 3000
-        });
+        email: this.state.TMPemail
       });
-      return;
+    }
+    if (this.state.dateOfBirth === EMPTY_STRING) {
+      this.setState({
+        dateOfBirth: this.state.TMPdateOfBirth
+      });
+    }
+    if (this.state.mobilePhone === EMPTY_STRING) {
+      this.setState({
+        mobilePhone: this.state.TMPmobilePhone
+      });
+    }
+    if (this.state.address === EMPTY_STRING) {
+      this.setState({
+        address: this.state.TMPaddress
+      });
     }
 
     if (!this.state.email.match(/\S+@\S+\.\S+/)) {
@@ -209,12 +157,12 @@ class Signup extends Component {
       return;
     }
 
-    if (!this.state.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[!@#$%^&*])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{8,}$/)) {
+    if (!this.state.mobilePhone.match(/^\d{8,13}$/)) {
       this.setState({
         loading: false
       }, () => {
         Toast.show({
-          text: 'Mật khẩu phải có ít nhất 8 kí tự, 1 kí tự số,\n1 kí tự viết hoa và 1 kí tự đặc biệt',
+          text: 'Hãy nhập đúng số điện thoại',
           type: 'danger',
           textStyle: { fontSize: moderateScale(12, 1.5), color: Colors.WHITE },
           buttonText: "OK",
@@ -226,18 +174,25 @@ class Signup extends Component {
       return;
     }
 
-    const url = `${API_URL}/api/Account/SignUp`;
+    const url = `${API_URL}/api/Account/UpdatePersonalInfo`;
     const headers = new Headers({
       'Accept': 'application/json',
       'Content-Type': 'application/json; charset=utf-8',
     });
 
+    let DateFormat = this.state.dateOfBirth.split('/');
+    let ConvertDateFormat = DateFormat[1] + '/' + DateFormat[0] + '/' + DateFormat[2];
+
     const body = JSON.stringify({
-      EMAIL: this.state.email,
+      ID: this.state.id,
       HOTEN: this.state.fullName,
-      MATKHAU: this.state.password,
-      TENDANGNHAP: this.state.userName,
+      NGAYSINH: new Date(ConvertDateFormat),
+      EMAIL: this.state.email,
+      DIENTHOAI: this.state.mobilePhone,
+      DIACHI: this.state.address
     });
+
+    console.log(new Date(this.state.dateOfBirth));
 
     await asyncDelay(2000);
 
@@ -256,7 +211,7 @@ class Signup extends Component {
       });
     if (result.Status) {
       Toast.show({
-        text: 'Đăng ký tài khoản thành công',
+        text: 'Đã lưu thông tin tài khoản!',
         type: 'success',
         textStyle: { fontSize: moderateScale(12, 1.5), color: Colors.WHITE },
         buttonText: "OK",
@@ -264,7 +219,7 @@ class Signup extends Component {
         buttonTextStyle: { color: Colors.GREEN_PANTONE_364C },
         duration: 3000,
         onClose: () => {
-          this.props.navigation.navigate('LoginScreen');
+          this.props.navigation.navigate('AccountInfoScreen');
         }
       })
     }
@@ -281,80 +236,95 @@ class Signup extends Component {
     }
   }
 
-  navigateBackToLogin = () => {
-    this.props.navigation.navigate('LoginScreen');
-  }
-
   render() {
-    const { fullName, userName, email, password } = this.state;
-    const toggleLoginStyleButton = (userName !== EMPTY_STRING && fullName !== EMPTY_STRING && email !== EMPTY_STRING && password !== EMPTY_STRING) ? { backgroundColor: '#da2032' } : { backgroundColor: 'lightgrey' };
-    const toggleLoginStyleText = (userName !== EMPTY_STRING && fullName !== EMPTY_STRING && email !== EMPTY_STRING && password !== EMPTY_STRING) ? { color: 'white' } : { color: 'grey' };
     return (
       <Container>
         <Header style={{ backgroundColor: Colors.RED_PANTONE_186C }}>
           <Left style={NativeBaseStyle.left}>
-            <Button transparent onPress={() => this.navigateBackToLogin()}>
+            <Button transparent onPress={() => this.navigateBackToAccountInfo()}>
               <Icon name='ios-arrow-round-back' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
             </Button>
           </Left>
 
           <Body style={NativeBaseStyle.body}>
             <Title style={NativeBaseStyle.bodyTitle}>
-              ĐĂNG KÝ
+              TÀI KHOẢN
             </Title>
           </Body>
-          <Right style={NativeBaseStyle.right} />
+          <Right style={NativeBaseStyle.right}>
+            {/* <Button transparent onPress={() => this.navigateToEditAccount()}>
+              <Icon name='ios-save' size={moderateScale(40)} color={Colors.WHITE} type='ionicon' />
+            </Button> */}
+          </Right>
         </Header>
-        <ImageBackground source={uriBackground} style={{ flex: 1 }}>
+        <ImageBackground style={{ flex: 1 }}>
           <Content>
             <Form>
-              {/* <View style={{ justifyContent: 'center', flexDirection: 'row', marginTop: verticalScale(this.state.logoMargin) }}>
-                <Image source={dojiBigIcon} />
-              </View> */}
               <Item stackedLabel>
                 <Label>Họ và tên</Label>
                 <Input
-                  onChangeText={(fullName) => this.onChangeFullNameText(fullName)}
-                  value={this.state.fullName}
-                  autoCorrect={false}
-                />
-              </Item>
-              <Item stackedLabel>
-                <Label>Tên đăng nhập</Label>
-                <Input
-                  onChangeText={(userName) => this.onChangeUserNameText(userName)}
-                  value={this.state.userName}
+                  onChangeText={this._handleFieldNameChange('fullName')}
+                  placeholder={this.state.fullName}
                   autoCorrect={false}
                 />
               </Item>
               <Item stackedLabel>
                 <Label>Email</Label>
                 <Input
-                  onChangeText={(email) => this.onChangeEmailText(email)}
-                  value={this.state.email}
-                  keyboardType={'email-address'}
+                  onChangeText={this._handleFieldNameChange('email')}
+                  placeholder={this.state.email}
+                  autoCorrect={false}
+                />
+              </Item>
+              <Item stackedLabel style={{ height: verticalScale(100) }}>
+                <Label>Ngày sinh</Label>
+                <DatePicker
+                  style={{ width: scale(300), alignSelf: 'center', marginVertical: 30 }}
+                  date={this.state.dateOfBirth}
+                  mode='date'
+                  placeholder='Chọn ngày sinh'
+                  format='DD/MM/YYYY'
+                  minDate={'01/01/1900'}
+                  maxDate={new Date()}
+                  confirmBtnText='XÁC NHẬN'
+                  cancelBtnText='HUỶ'
+                  customStyles={{
+                    dateIcon: {
+                      position: 'absolute',
+                      left: 0,
+                      top: 4,
+                      marginLeft: 0
+                    },
+                    dateInput: {
+                      marginLeft: scale(36),
+                    }
+                  }}
+                  onDateChange={this._handleFieldNameChange('dateOfBirth')}
+                />
+              </Item>
+              <Item stackedLabel>
+                <Label>Điện thoại</Label>
+                <Input
+                  onChangeText={this._handleFieldNameChange('mobilePhone')}
+                  placeholder={this.state.mobilePhone}
                   autoCorrect={false}
                 />
               </Item>
               <Item stackedLabel last>
-                <Label>Mật khẩu</Label>
+                <Label>Địa chỉ</Label>
                 <Input
-                  onChangeText={(password) => this.onChangePasswordText(password)}
-                  value={this.state.password}
-                  secureTextEntry={this.state.isHidePassword}
+                  onChangeText={this._handleFieldNameChange('address')}
+                  placeholder={this.state.address}
                   autoCorrect={false}
                 />
               </Item>
-              <View style={[LoginStyle.formInputs, LoginStyle.formButton]}>
-                <TouchableOpacity
-                  disabled={this.state.isDisabledLoginButton}
-                  onPress={() => this.onSignup()}
-                  style={[LoginStyle.formButtonLogin, toggleLoginStyleButton]}
-                >
-                  <Text style={[LoginStyle.formButtonText, toggleLoginStyleText]}>ĐĂNG KÝ</Text>
-                </TouchableOpacity>
-              </View>
             </Form>
+            <TouchableOpacity
+              onPress={() => this.onSaveAccountInfo()}
+              style={[LoginStyle.formButtonLogin, { backgroundColor: '#da2032', marginTop: verticalScale(30) }]}
+            >
+              <Text style={[LoginStyle.formButtonText, { color: Colors.WHITE }]}>LƯU THÔNG TIN</Text>
+            </TouchableOpacity>
           </Content>
         </ImageBackground>
         {
@@ -365,10 +335,16 @@ class Signup extends Component {
   }
 }
 
+const mapStatetoProps = (state) => {
+  return {
+    userInfo: state.userState.userInfo
+  }
+}
+
 const mapDispatchToProps = (dispatch) => {
   return {
     setUserInfo: (data) => dispatch(userAction.setUserInfo(data))
   }
 }
 
-export default connect(null, mapDispatchToProps)(Signup);
+export default connect(mapStatetoProps, mapDispatchToProps)(AccountEditor);

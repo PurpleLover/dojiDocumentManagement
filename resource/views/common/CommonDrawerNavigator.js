@@ -43,9 +43,12 @@ import ApproveRescheduleTask from '../modules/Task/ApproveRescheduleTask';
 import DenyRescheduleTask from '../modules/Task/DenyRescheduleTask';
 
 
-//đăng nhập
+//đăng nhập + đăng ký + truy vấn tài khoản
 import Login from '../modules/User/Login';
 import Signup from '../modules/User/Signup';
+import AccountInfo from '../modules/User/AccountInfo';
+import AccountEditor from '../modules/User/AccountEditor';
+import AccountChangePassword from '../modules/User/AccountChangePassword';
 
 import Loading from '../common/Loading';
 //sidebar
@@ -166,12 +169,19 @@ const appRoutes = {
         screen: ApproveRescheduleTask
     }, DenyRescheduleTaskScreen: {
         screen: DenyRescheduleTask
+    },
+    AccountInfoScreen: {
+        screen: AccountInfo
+    }, AccountEditorScreen: {
+        screen: AccountEditor
+    }, AccountChangePasswordScreen: {
+        screen: AccountChangePassword
     }
 }
 const appConfig = {
     headerMode: 'none',
     initialRouteName: 'ListIsNotProcessedScreen',
-
+    //initialRouteName: 'AccountInfoScreen',
     drawerWidth: width * 0.8,
     contentComponent: props => <SideBar {...props} />
 }

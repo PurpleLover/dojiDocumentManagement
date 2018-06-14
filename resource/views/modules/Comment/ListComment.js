@@ -510,9 +510,9 @@ class ListComment extends Component {
 
         <Footer style={[FooterCommentStyle.footerUploader, { height: this.state.heightAnimation }]}>
           <View style={[FooterCommentStyle.footerComment]}>
-            <Button transparent onPress={this.onOpenSendFile}>
+            {/* <Button transparent onPress={this.onOpenSendFile}>
               <RneIcon name='md-images' size={moderateScale(40)} color={commentChosenImageIcon} type='ionicon' />
-            </Button>
+            </Button> */}
             <Input
               style={FooterCommentStyle.footerCommentContent}
               placeholder='Nhập nội dung trao đổi'
