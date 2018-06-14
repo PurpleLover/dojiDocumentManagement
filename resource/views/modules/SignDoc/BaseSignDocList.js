@@ -48,7 +48,7 @@ class BaseSignDocList extends Component {
     }
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.setState({
       loadingData: true
     }, () => {

@@ -5,12 +5,6 @@
  */
 
 import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-} from 'react-native';
-// import { Container, Header, Content, SwipeRow, View, Text, Icon, Button } from 'native-base';
-//views
 import { Root } from 'native-base';
 import { CommonDrawerNavigator } from './resource/views/common/CommonDrawerNavigator';
 
@@ -18,13 +12,17 @@ import { CommonDrawerNavigator } from './resource/views/common/CommonDrawerNavig
 import { Provider } from 'react-redux';
 import { globalStore } from './resource/redux/common/GlobalStore'
 
+//network status
+import NetworkStatus from './resource/views/common/NetworkStatus';
+
 export default class App extends Component {
   render() {
     return (
       <Provider store={globalStore}>
-        <Root>
-          <CommonDrawerNavigator/>
-        </Root>
+          <Root>
+            <CommonDrawerNavigator />
+            <NetworkStatus/>
+          </Root>
       </Provider>
     );
   }
