@@ -49,20 +49,18 @@ class AccountEditor extends Component {
   constructor(props) {
     super(props);
 
-    const { fullName, email, dateOfBirth, mobilePhone, address } = props.navigation.state.params;
+    const { fullName, dateOfBirth, mobilePhone, address } = props.navigation.state.params;
 
     this.state = {
       id: props.userInfo.ID,
 
       // state hiện tại
       fullName: fullName,
-      email: email,
       dateOfBirth: dateOfBirth,
       mobilePhone: mobilePhone,
       address: address,
       // state cũ
       TMPfullName: fullName,
-      TMPemail: email,
       TMPdateOfBirth: dateOfBirth,
       TMPmobilePhone: mobilePhone,
       TMPaddress: address,
@@ -119,11 +117,6 @@ class AccountEditor extends Component {
         fullName: this.state.TMPfullName
       });
     }
-    if (this.state.email === EMPTY_STRING) {
-      this.setState({
-        email: this.state.TMPemail
-      });
-    }
     if (this.state.dateOfBirth === EMPTY_STRING) {
       this.setState({
         dateOfBirth: this.state.TMPdateOfBirth
@@ -138,23 +131,6 @@ class AccountEditor extends Component {
       this.setState({
         address: this.state.TMPaddress
       });
-    }
-
-    if (!this.state.email.match(/\S+@\S+\.\S+/)) {
-      this.setState({
-        loading: false
-      }, () => {
-        Toast.show({
-          text: 'Hãy nhập đúng Email',
-          type: 'danger',
-          textStyle: { fontSize: moderateScale(12, 1.5), color: Colors.WHITE },
-          buttonText: "OK",
-          buttonStyle: { backgroundColor: Colors.WHITE },
-          buttonTextStyle: { color: Colors.RED_PANTONE_186C },
-          duration: 3000
-        });
-      });
-      return;
     }
 
     if (!this.state.mobilePhone.match(/^\d{8,13}$/)) {
@@ -187,7 +163,6 @@ class AccountEditor extends Component {
       ID: this.state.id,
       HOTEN: this.state.fullName,
       NGAYSINH: new Date(ConvertDateFormat),
-      EMAIL: this.state.email,
       DIENTHOAI: this.state.mobilePhone,
       DIACHI: this.state.address
     });
@@ -265,14 +240,6 @@ class AccountEditor extends Component {
                 <Input
                   onChangeText={this._handleFieldNameChange('fullName')}
                   placeholder={this.state.fullName}
-                  autoCorrect={false}
-                />
-              </Item>
-              <Item stackedLabel>
-                <Label>Email</Label>
-                <Input
-                  onChangeText={this._handleFieldNameChange('email')}
-                  placeholder={this.state.email}
                   autoCorrect={false}
                 />
               </Item>
