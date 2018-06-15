@@ -41,7 +41,7 @@ class Loading extends Component {
     }
 
     async componentDidMount() {
-        let intervalId = setInterval(this.progressing.bind(this), 100);
+        let intervalId = setInterval(this.progressing.bind(this), 1000);
         this.setState({
             intervalId
         });
@@ -91,7 +91,7 @@ class Loading extends Component {
                     marginBottom: verticalScale(20)
                 }}/>
 
-                <ProgressBar progress={this.state.progress} duration={100} />
+                <ProgressBar progress={this.state.progress} duration={1000} />
             </ImageBackground>
         );
     }

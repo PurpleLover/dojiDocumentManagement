@@ -229,7 +229,7 @@ class GroupSubTask extends Component {
                             </RnText>
 
                             <RnText>
-                                {'Công việc #' + item.ID}
+                                {item.TENCONGVIEC}
                             </RnText>
 
                             <RnText style={item.TRANGTHAI_ID > 0 ? styles.complete : styles.inComplete}>
