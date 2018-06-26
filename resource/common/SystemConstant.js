@@ -6,8 +6,8 @@ import { Dimensions } from'react-native'
 // export const WEB_URL = 'http://192.168.1.7:8355';
 // export const API_URL = 'http://192.168.1.7:26633';
 
-export const WEB_URL = 'http://103.1.210.108';
-export const API_URL = 'http://103.1.210.108:81';
+// export const WEB_URL = 'http://103.1.210.108';
+// export const API_URL = 'http://103.1.210.108:81';
 
 export const DEFAULT_PAGE_SIZE = 20;
 export const DEFAULT_PAGE_INDEX = 1;
@@ -76,7 +76,8 @@ export const Colors = {
 	RED: '#f00',
 	GRAY: '#bdc6cf',
 	CLOUDS: '#ecf0f1',
-	GREEN_PANTON_396C: '#4FA800',
+	GREEN_PANTON_376C: '#7DBA00',
+	GREEN_PANTON_369C: '#4FA800',
 	GREEN_PANTONE_364C: '#337321',
 	BLUE_PANTONE_640C: '#0082ba',
 	RED_PANTONE_186C: '#FF0033',

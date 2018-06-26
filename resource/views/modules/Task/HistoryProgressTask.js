@@ -224,7 +224,7 @@ class HistoryProgressTask extends Component {
 						<DialogButton
 							align={'center'}
 							buttonStyle={{
-								backgroundColor: Colors.GREEN_PANTON_396C,
+								backgroundColor: Colors.GREEN_PANTON_369C,
 								alignSelf: 'stretch',
 								alignItems: 'center',
 								borderBottomLeftRadius: 8,

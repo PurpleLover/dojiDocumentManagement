@@ -44,15 +44,15 @@ export const DetailTaskStyle = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'row'
     }, commentCircleContainer: {
-        width: 20,
-        height: 20,
-        marginLeft: -15,
+        width: moderateScale(20),
+        height: moderateScale(20),
+        marginLeft: moderateScale(-15),
         backgroundColor: Colors.BLUE_PANTONE_640C,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 10
+        borderRadius: moderateScale(10)
     }, commentCountText: {
-        fontSize: 10,
+        fontSize: moderateScale(10),
         color: Colors.WHITE,
         fontWeight: 'bold'
     }
