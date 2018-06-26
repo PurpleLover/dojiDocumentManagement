@@ -271,11 +271,11 @@ class Chatter extends Component {
       return (
         <View>
           <View style={{ flexDirection: 'row', marginTop: verticalScale(10) }}>
-            <View style={ListCommentStyle.commentAvatarContainer}>
+            <View style={[ListCommentStyle.commentAvatarContainer, {alignItems: 'flex-start'}]}>
               <Image source={avatarSource} style={ListChatterStyle.chatterAvatar} />
             </View>
-            <View style={ChatterStyle.chatterMessageContainer}>
-              <View style={[ChatterStyle.chatterMessageContent, {backgroundColor: Colors.GRAY}]}>
+            <View style={[ChatterStyle.chatterMessageContainer, {alignItems: 'flex-start'}]}>
+              <View style={[ChatterStyle.chatterMessageContent, {backgroundColor: Colors.GRAY, justifyContent: 'flex-start', marginRight: scale(30)}]}>
                 <Text style={item.IS_READ ? ChatterStyle.chatterReadMessage : ChatterStyle.chatterUnreadMessage}>
                   {item.message}
                 </Text>
@@ -293,8 +293,8 @@ class Chatter extends Component {
       return (
         <View>
           <View style={{ flexDirection: 'row', marginTop: verticalScale(10) }}>
-            <View style={ChatterStyle.chatterMessageContainer}>
-              <View style={[ChatterStyle.chatterMessageContent, {backgroundColor: Colors.BLUE_PANTONE_640C}]}>
+            <View style={[ChatterStyle.chatterMessageContainer, {alignItems: 'flex-end'}]}>
+              <View style={[ChatterStyle.chatterMessageContent, {backgroundColor: Colors.BLUE_PANTONE_640C, justifyContent: 'flex-end', marginLeft: scale(30)}]}>
                 <Text style={[ChatterStyle.chatterReadMessage, {color: Colors.WHITE, textAlign:'right'}]}>
                   {item.message}
                 </Text>
@@ -305,8 +305,7 @@ class Chatter extends Component {
                 </Text>
               </View>
             </View>
-            <View style={ListCommentStyle.commentAvatarContainer}>
-            </View>
+            
           </View>
         </View>
       )

@@ -72,11 +72,11 @@ export const ChatterStyle = StyleSheet.create({
     padding: moderateScale(10), 
     borderRadius: moderateScale(15)
   }, chatterMessageContainer: {
-    flex: 4,
+    flex: 8,
     flexDirection: 'column',
     justifyContent: 'flex-start',
     paddingHorizontal: moderateScale(5),
-    marginBottom: verticalScale(15)
+    marginBottom: verticalScale(15),
   }
 });
 
