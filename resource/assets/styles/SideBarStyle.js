@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { scale, verticalScale, moderateScale } from './ScaleIndicator';
+import { Colors } from '../../common/SystemConstant';
 
 export const SideBarStyle = StyleSheet.create({
     container: {
@@ -33,6 +34,7 @@ export const SideBarStyle = StyleSheet.create({
         height: moderateScale(80),
         borderRadius: moderateScale(80 / 2), // to create cirlce, width == height && borderRadius == width/2
         resizeMode: 'stretch',
+        backgroundColor: Colors.WHITE, // make sure your avatar not seen through
     }, headerUserName: {
         justifyContent: 'center',
         textAlign: 'left', // Change from 'center' to 'left'
@@ -71,5 +73,21 @@ export const SideBarStyle = StyleSheet.create({
         height: verticalScale(30),
         resizeMode: 'contain',
         marginLeft: scale(10)
+    },
+    chatNotificationContainer: {
+        justifyContent: 'center',
+        flexDirection: 'row'
+    }, chatNotificationCircle: {
+        width: moderateScale(20),
+        height: moderateScale(20),
+        marginLeft: moderateScale(-15),
+        backgroundColor: Colors.RED_PANTONE_186C,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: moderateScale(10)
+    }, chatNotificationText: {
+        fontSize: moderateScale(10),
+        color: Colors.WHITE,
+        fontWeight: 'bold'
     }
 });

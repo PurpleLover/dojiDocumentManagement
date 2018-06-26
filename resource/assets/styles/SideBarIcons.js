@@ -45,3 +45,10 @@ export const accountInfo_Neutral = require('../images/SideBar/Accounts/AccountIn
 // Account Password
 export const password_Active = require('../images/SideBar/Accounts/Password-Active.png');
 export const password_Neutral = require('../images/SideBar/Accounts/Password-Neutral.png');
+
+// Chat
+export const chat_Single = require('../images/SideBar/Chat/Chat-Single.png');
+export const chat_Couple = require('../images/SideBar/Chat/Chat-Couple.png');
+// Chat on Sidebar
+export const chat_Active = require('../images/SideBar/Chat/Chat-Active.png');
+export const chat_Neutral = require('../images/SideBar/Chat/Chat-Neutral.png');

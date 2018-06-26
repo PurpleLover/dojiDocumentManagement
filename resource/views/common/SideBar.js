@@ -25,7 +25,7 @@ import * as SBIcons from '../../assets/styles/SideBarIcons';
 import Panel from './Panel';
 import Confirm from './Confirm';
 import { width, Colors } from '../../common/SystemConstant';
-import { verticalScale } from '../../assets/styles/ScaleIndicator';
+import { verticalScale, moderateScale } from '../../assets/styles/ScaleIndicator';
 
 const headerBackground = require('../../assets/images/background.png');
 const userAvatar = require('../../assets/images/avatar.png');
@@ -40,6 +40,7 @@ export default class SideBar extends Component {
 
             },
             onFocusNow: '1',
+            hasNoti: 100,
         }
     }
 
@@ -71,8 +72,30 @@ export default class SideBar extends Component {
     }
 
     render() {
+        const {hasNoti} = this.state;
         const subItemIcon = <Image source={subItemIconLink} />;
         const mainItemIcon = <Icon name='chevron-right' type='entypo' size={verticalScale(30)} color={Colors.GRAY} />
+        
+        let notificationIcon = <View></View>;
+        if(hasNoti > 0 && hasNoti < 100) {
+            notificationIcon = <View style={SideBarStyle.chatNotificationContainer}>
+                <View style={SideBarStyle.chatNotificationCircle}>
+                    <Text style={SideBarStyle.chatNotificationText}>
+                        {hasNoti}
+                    </Text>
+                </View>
+            </View>
+        }
+        if (hasNoti >= 100) {
+            notificationIcon = <View style={SideBarStyle.chatNotificationContainer}>
+            <View style={[SideBarStyle.chatNotificationCircle, {width: moderateScale(25), height: moderateScale(25), borderRadius: moderateScale(25/2)}]}>
+                <Text style={SideBarStyle.chatNotificationText}>
+                    99+
+                </Text>
+            </View>
+        </View>
+        }
+
         return (
             <View style={SideBarStyle.container}>
                 <View style={SideBarStyle.header}>
@@ -98,6 +121,25 @@ export default class SideBar extends Component {
 
                 <View style={SideBarStyle.body}>
                     <ScrollView>
+                        <TouchableOpacity
+                            onPress={() => this.setCurrentFocus('ListChatScreen', '0')}
+                            style={this.state.onFocusNow === '0' && SideBarStyle.listItemFocus}
+                        >
+                            <ListItem
+                                leftIcon={
+                                    this.state.onFocusNow !== '0' ?
+                                        <Image source={SBIcons.chat_Neutral} style={[SideBarStyle.listItemLeftIcon, {marginLeft: 0}]} /> :
+                                        <Image source={SBIcons.chat_Active} style={[SideBarStyle.listItemLeftIcon, {marginLeft: 0}]} />
+                                }
+                                rightIcon={
+                                    notificationIcon
+                                }
+                                containerStyle={SideBarStyle.listItemContainer}
+                                title={'HỘI THOẠI'}
+                                titleStyle={[SideBarStyle.listItemTitle, {marginLeft: 5}]} 
+                                />
+                        </TouchableOpacity>
+
                         <Panel title='VĂN BẢN TRÌNH KÝ'>
                             <TouchableOpacity
                                 onPress={() => this.setCurrentFocus('ListIsNotProcessedScreen', '1')}
@@ -282,18 +324,18 @@ export default class SideBar extends Component {
                                     style={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
                         </Panel>
-                        
+
                         <TouchableOpacity onPress={() => this.onLogOut()}>
-                        <ListItem
-                            leftIcon={
-                                <Image source={SBIcons.signout_Turnoff} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]}/>
-                            }
-                            hideChevron={true}
-                            containerStyle={SideBarStyle.listItemContainer}
-                            title={'ĐĂNG XUẤT'}
-                            titleStyle={SideBarStyle.listItemTitle}
-                        />
-                    </TouchableOpacity>
+                            <ListItem
+                                leftIcon={
+                                    <Image source={SBIcons.signout_Turnoff} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]} />
+                                }
+                                hideChevron={true}
+                                containerStyle={SideBarStyle.listItemContainer}
+                                title={'ĐĂNG XUẤT'}
+                                titleStyle={SideBarStyle.listItemTitle}
+                            />
+                        </TouchableOpacity>
 
                     </ScrollView>
                 </View>
