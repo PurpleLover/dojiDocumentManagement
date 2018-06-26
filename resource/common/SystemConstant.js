@@ -3,8 +3,8 @@ import { Dimensions } from'react-native'
 // export const WEB_URL = 'http://www.dartist-doji-web.com:8354';
 // export const WEB_URL = 'http://192.168.1.75:89';
 
-export const WEB_URL = 'http://192.168.1.5:8355';
-export const API_URL = 'http://192.168.1.5:26633';
+// export const WEB_URL = 'http://192.168.1.7:8355';
+// export const API_URL = 'http://192.168.1.7:26633';
 
 // export const WEB_URL = 'http://103.1.210.108';
 // export const API_URL = 'http://103.1.210.108:81';
