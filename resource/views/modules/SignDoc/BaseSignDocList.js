@@ -71,6 +71,8 @@ class BaseSignDocList extends Component {
 
     const url = `${API_URL}/api/VanBanDi/${apiUrlParam}/${this.state.userId}/${this.state.pageSize}/${this.state.pageIndex}?query=${this.state.filterValue}`;
 
+    console.log('đường dẫn', url);
+    
     const result = await fetch(url);
     const resultJson = await result.json();
 

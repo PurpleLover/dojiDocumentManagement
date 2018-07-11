@@ -39,7 +39,7 @@ export default class SideBar extends Component {
             userInfo: {
 
             },
-            onFocusNow: '1',
+            onFocusNow: '6',
         }
     }
 
@@ -47,7 +47,8 @@ export default class SideBar extends Component {
         const storageUserInfo = await AsyncStorage.getItem('userInfo');
         const userInfo = JSON.parse(storageUserInfo);
         this.setState({
-            userInfo
+            userInfo,
+            onFocusNow: userInfo.hasRoleAssignUnit ? '6' : '7'
         });
     }
 
@@ -164,7 +165,7 @@ export default class SideBar extends Component {
                             </TouchableOpacity>
                         </Panel>
 
-                        <Panel title='VĂN BẢN ĐÃ PHÁT HÀNH'>
+                        {/* <Panel title='VĂN BẢN ĐÃ PHÁT HÀNH'>
                             <TouchableOpacity onPress={() => this.setCurrentFocus('ListIsPublishedScreen', '5')} style={this.state.onFocusNow === '5' && SideBarStyle.listItemFocus}>
                                 <ListItem
                                     leftIcon={
@@ -180,7 +181,7 @@ export default class SideBar extends Component {
                                     titleStyle={[SideBarStyle.listItemSubTitleContainer, this.state.onFocusNow === '5' && SideBarStyle.listItemSubTitleContainerFocus]}
                                     contentContainerStyle={SideBarStyle.subItemContainer} />
                             </TouchableOpacity>
-                        </Panel>
+                        </Panel> */}
 
                         <Panel title='CÔNG VIỆC'>
 
