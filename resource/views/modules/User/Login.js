@@ -201,7 +201,13 @@ class Login extends Component {
             if (activeTokenResult) {
                 AsyncStorage.setItem('userInfo', JSON.stringify(resultJson)).then(() => {
                     this.props.setUserInfo(resultJson);
-                    this.props.navigation.navigate('App');
+
+                    if (resultJson.hasRoleAssignUnit) {
+                        this.props.navigation.navigate('ListPersonalTaskScreen');
+                    } else {
+                        this.props.navigation.navigate('ListAssignedTaskScreen');
+                    }
+
                 });
             } else {
                 this.setState({
@@ -253,7 +259,7 @@ class Login extends Component {
                         { display: this.state.headerComponentsDisplayStatus }]}>
                             TẬP ĐOÀN VÀNG BẠC ĐÁ QUÝ DOJI
                         </Text> */}
-                        
+
                         <Text style={[LoginStyle.formHeaderSoftwareTitle,
                         { display: this.state.headerComponentsDisplayStatus }]}>
                             PHẦN MỀM QUẢN LÝ ĐIỀU HÀNH VĂN BẢN
@@ -320,7 +326,7 @@ class Login extends Component {
                                 <TouchableOpacity
                                     onPress={this.onSignupPress}
                                 >
-                                    <Text style={[LoginStyle.formButtonText, {color: Colors.GRAY, fontSize: moderateScale(16,1.2)}]}>Chưa có tài khoản?</Text>
+                                    <Text style={[LoginStyle.formButtonText, { color: Colors.GRAY, fontSize: moderateScale(16, 1.2) }]}>Chưa có tài khoản?</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

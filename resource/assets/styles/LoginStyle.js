@@ -79,7 +79,7 @@ export const LoginStyle = StyleSheet.create({
         color: '#666666',
         height: moderateScale(40,2),
         paddingLeft: scale(10),
-        fontSize: moderateScale(18, 1.5),
+        // fontSize: moderateScale(18, 1.5),
         alignSelf: 'stretch'
     }, formPasswordVisibility: {
         position: 'absolute',
