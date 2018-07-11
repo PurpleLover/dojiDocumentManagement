@@ -39,12 +39,7 @@ export default class SideBar extends Component {
             userInfo: {
 
             },
-<<<<<<< HEAD
             onFocusNow: '6',
-=======
-            onFocusNow: '1',
-            hasNoti: 100,
->>>>>>> 96f2aafb5b813aaa24b550fd2a86e19c8cd87c09
         }
     }
 

@@ -27,7 +27,7 @@ import FCM from 'react-native-fcm';
 import { registerAppListener } from '../../firebase/FireBaseListener';
 
 //style
-import {verticalScale} from '../../assets/styles/ScaleIndicator';
+import { verticalScale } from '../../assets/styles/ScaleIndicator';
 
 class Loading extends Component {
     state = {
@@ -64,17 +64,21 @@ class Loading extends Component {
     async componentDidUpdate(preveProps, prevState) {
         if (this.state.progress >= 1) {
             clearInterval(this.state.intervalId);
-            
-            const userInfoStorage = await AsyncStorage.getItem('userInfo').then((result)=> {
+
+            const userInfoStorage = await AsyncStorage.getItem('userInfo').then((result) => {
                 return JSON.parse(result);
             });
 
-            if(userInfoStorage){
+            if (userInfoStorage) {
                 this.props.setUserInfo(userInfoStorage);
-                setTimeout(()=> {
-                    this.props.navigation.navigate('App');
+                setTimeout(() => {
+                    if (userInfoStorage.hasRoleAssignUnit) {
+                        this.props.navigation.navigate('ListPersonalTaskScreen');
+                    } else {
+                        this.props.navigation.navigate('ListAssignedTaskScreen');
+                    }
                 }, 1000)
-            }else{
+            } else {
                 this.props.navigation.navigate('Auth');
             }
         }
@@ -89,7 +93,7 @@ class Loading extends Component {
             }}>
                 <Image source={uriLogo} style={{
                     marginBottom: verticalScale(20)
-                }}/>
+                }} />
 
                 <ProgressBar progress={this.state.progress} duration={1} />
             </ImageBackground>
