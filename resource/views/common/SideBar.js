@@ -117,7 +117,7 @@ export default class SideBar extends Component {
 
                 <View style={SideBarStyle.body}>
                     <ScrollView>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             onPress={() => this.setCurrentFocus('ListChatterScreen', '0')}
                             style={this.state.onFocusNow === '0' && SideBarStyle.listItemFocus}
                         >
@@ -132,9 +132,9 @@ export default class SideBar extends Component {
                                 }
                                 containerStyle={SideBarStyle.subItemContainer}
                                 title={'HỘI THOẠI'}
-                                titleStyle={[SideBarStyle.listItemTitle, { marginLeft: 5 }]}
-                            /> */}
-                        </TouchableOpacity>
+                                titleStyle={[SideBarStyle.listItemTitle, {marginLeft: 5}]} 
+                                />
+                        </TouchableOpacity> */}
 
                         <Panel title='VĂN BẢN TRÌNH KÝ'>
                             <TouchableOpacity
