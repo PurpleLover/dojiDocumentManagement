@@ -133,7 +133,7 @@ export default class AttachSignDoc extends Component {
         <ListItem
             rightIcon={
                 <TouchableOpacity onPress={() => this.onDownloadFile(item.TENTAILIEU, item.DUONGDAN_FILE, item.DINHDANG_FILE)}>
-                    <RneIcon name='download' color={Colors.GREEN_PANTON_396C} size={verticalScale(25)} type='entypo' />
+                    <RneIcon name='download' color={Colors.GREEN_PANTON_369C} size={verticalScale(25)} type='entypo' />
                 </TouchableOpacity>
             }
             title={item.TENTAILIEU}
