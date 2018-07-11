@@ -64,11 +64,7 @@ export default class SideBar extends Component {
         this.setState({
             onFocusNow: ref,
         });
-        if (this.onFocusNow !== '10') {
-            this.navigate(screenName);
-        } else {
-            this.navigate(screenName);
-        }
+        this.navigate(screenName);
     }
 
     render() {
@@ -121,8 +117,8 @@ export default class SideBar extends Component {
 
                 <View style={SideBarStyle.body}>
                     <ScrollView>
-                        <TouchableOpacity
-                            onPress={() => this.setCurrentFocus('ListChatScreen', '0')}
+                        {/* <TouchableOpacity
+                            onPress={() => this.setCurrentFocus('ListChatterScreen', '0')}
                             style={this.state.onFocusNow === '0' && SideBarStyle.listItemFocus}
                         >
                             <ListItem
@@ -134,11 +130,11 @@ export default class SideBar extends Component {
                                 rightIcon={
                                     notificationIcon
                                 }
-                                containerStyle={SideBarStyle.listItemContainer}
+                                containerStyle={SideBarStyle.subItemContainer}
                                 title={'HỘI THOẠI'}
                                 titleStyle={[SideBarStyle.listItemTitle, {marginLeft: 5}]} 
                                 />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
 
                         <Panel title='VĂN BẢN TRÌNH KÝ'>
                             <TouchableOpacity
