@@ -39,7 +39,7 @@ export default class SideBar extends Component {
             userInfo: {
 
             },
-            onFocusNow: '6',
+            onFocusNow: '',
         }
     }
 
@@ -68,29 +68,29 @@ export default class SideBar extends Component {
     }
 
     render() {
-        const {hasNoti} = this.state;
+        // const { hasNoti } = this.state;
         const subItemIcon = <Image source={subItemIconLink} />;
         const mainItemIcon = <Icon name='chevron-right' type='entypo' size={verticalScale(30)} color={Colors.GRAY} />
-        
-        let notificationIcon = <View></View>;
-        if(hasNoti > 0 && hasNoti < 100) {
-            notificationIcon = <View style={SideBarStyle.chatNotificationContainer}>
-                <View style={SideBarStyle.chatNotificationCircle}>
-                    <Text style={SideBarStyle.chatNotificationText}>
-                        {hasNoti}
-                    </Text>
-                </View>
-            </View>
-        }
-        if (hasNoti >= 100) {
-            notificationIcon = <View style={SideBarStyle.chatNotificationContainer}>
-            <View style={[SideBarStyle.chatNotificationCircle, {width: moderateScale(25), height: moderateScale(25), borderRadius: moderateScale(25/2)}]}>
-                <Text style={SideBarStyle.chatNotificationText}>
-                    99+
-                </Text>
-            </View>
-        </View>
-        }
+
+        // let notificationIcon = <View></View>;
+        // if (hasNoti > 0 && hasNoti < 100) {
+        //     notificationIcon = <View style={SideBarStyle.chatNotificationContainer}>
+        //         <View style={SideBarStyle.chatNotificationCircle}>
+        //             <Text style={SideBarStyle.chatNotificationText}>
+        //                 {hasNoti}
+        //             </Text>
+        //         </View>
+        //     </View>
+        // }
+        // if (hasNoti >= 100) {
+        //     notificationIcon = <View style={SideBarStyle.chatNotificationContainer}>
+        //         <View style={[SideBarStyle.chatNotificationCircle, { width: moderateScale(25), height: moderateScale(25), borderRadius: moderateScale(25 / 2) }]}>
+        //             <Text style={SideBarStyle.chatNotificationText}>
+        //                 99+
+        //         </Text>
+        //         </View>
+        //     </View>
+        // }
 
         return (
             <View style={SideBarStyle.container}>
@@ -121,19 +121,19 @@ export default class SideBar extends Component {
                             onPress={() => this.setCurrentFocus('ListChatterScreen', '0')}
                             style={this.state.onFocusNow === '0' && SideBarStyle.listItemFocus}
                         >
-                            <ListItem
+                            {/* <ListItem
                                 leftIcon={
                                     this.state.onFocusNow !== '0' ?
-                                        <Image source={SBIcons.chat_Neutral} style={[SideBarStyle.listItemLeftIcon, {marginLeft: 0}]} /> :
-                                        <Image source={SBIcons.chat_Active} style={[SideBarStyle.listItemLeftIcon, {marginLeft: 0}]} />
+                                        <Image source={SBIcons.chat_Neutral} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]} /> :
+                                        <Image source={SBIcons.chat_Active} style={[SideBarStyle.listItemLeftIcon, { marginLeft: 0 }]} />
                                 }
                                 rightIcon={
                                     notificationIcon
                                 }
                                 containerStyle={SideBarStyle.subItemContainer}
                                 title={'HỘI THOẠI'}
-                                titleStyle={[SideBarStyle.listItemTitle, {marginLeft: 5}]} 
-                                />
+                                titleStyle={[SideBarStyle.listItemTitle, { marginLeft: 5 }]}
+                            /> */}
                         </TouchableOpacity>
 
                         <Panel title='VĂN BẢN TRÌNH KÝ'>

@@ -66,9 +66,9 @@ import ListComment from '../modules/Comment/ListComment';
 import ReplyComment from '../modules/Comment/ReplyComment';
 
 //chat
-import ListChatter from '../modules/Chat/ListChatter';
-import Chatter from '../modules/Chat/Chatter';
-import DetailChatter from '../modules/Chat/DetailChatter';
+// import ListChatter from '../modules/Chat/ListChatter';
+// import Chatter from '../modules/Chat/Chatter';
+// import DetailChatter from '../modules/Chat/DetailChatter';
 
 const appRoutes = {
     ListIsNotProcessedScreen: {
@@ -182,19 +182,19 @@ const appRoutes = {
     }, AccountChangePasswordScreen: {
         screen: AccountChangePassword
     },
-    ListChatterScreen: {
-        screen: ListChatter
-    }, ChatterScreen: {
-        screen: Chatter
-    }, 
-    DetailChatterScreen: {
-        screen: DetailChatter
-    }
+    // ListChatterScreen: {
+    //     screen: ListChatter
+    // }, ChatterScreen: {
+    //     screen: Chatter
+    // }, 
+    // DetailChatterScreen: {
+    //     screen: DetailChatter
+    // }
 }
 const appConfig = {
     headerMode: 'none',
-    //initialRouteName: 'ListIsNotProcessedScreen',
-    initialRouteName: 'ListChatterScreen',
+    initialRouteName: 'ListAssignedTaskScreen',
+    //initialRouteName: 'ListChatterScreen',
     drawerWidth: width * 0.8,
     contentComponent: props => <SideBar {...props} />
 }
